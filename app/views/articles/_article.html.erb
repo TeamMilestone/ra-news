@@ -8,11 +8,7 @@
         <% end %>
     </ul>
     <div>
-        <% if article.summary_detail['main_content'].is_a?(Array) %>
-            <%= article.summary_detail['main_content'].join("<br />").html_safe %>
-        <% else %>
-            <%= article.summary_detail['main_content'] %>
-        <% end%>
+        <%= article.main_content %>
     </div>
     <div>
         <% if article.summary_detail['conclusion'].is_a?(Array) %>

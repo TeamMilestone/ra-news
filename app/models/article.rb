@@ -17,4 +17,10 @@ class Article < ApplicationRecord
     title = doc.at("title").text
     update(title:) if title.is_a?(String)
   end
+
+  def main_content
+    Kramdown::Document.new(summary_detail["main_content"]).to_html if summary_detail["main_content"].is_a?(String)
+
+    summary_detail["main_content"].map { Kramdown::Document.new(it).to_html }.join("").html_safe
+  end
 end
