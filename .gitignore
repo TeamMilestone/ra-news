@@ -33,5 +33,5 @@
 # Ignore master key for decrypting credentials and more.
 /config/master.key
 .idea
-db/schema.rb
+# db/schema.rb
 .gem_rbs_collection
