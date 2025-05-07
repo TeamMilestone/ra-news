@@ -1,0 +1,46 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+        "rubyLsp.rubyVersionManager": {
+            "identifier": "auto"
+        },
+        "rubyLsp.enabledFeatures": {
+            "codeActions": true,
+            "diagnostics": true,
+            "documentHighlights": true,
+            "documentLink": true,
+            "documentSymbols": true,
+            "foldingRanges": true,
+            "formatting": true,
+            "hover": true,
+            "inlayHint": true,
+            "onTypeFormatting": true,
+            "selectionRanges": true,
+            "semanticHighlighting": true,
+            "completion": true,
+            "codeLens": true,
+            "definition": true,
+            "workspaceSymbol": true,
+            "signatureHelp": true,
+            "typeHierarchy": true
+        },
+        "rubyLsp.indexing": {
+            "excludedPatterns": ["**/test/**/*.rb"],
+            "includedPatterns": ["**/bin/**/*"]
+        },
+        "rubyLsp.erbSupport": true,
+        "sorbet.enabled": true
+    },
+    "extensions": {
+        "recommendations": [
+            "sorbet.sorbet-vscode-extension",
+            "shopify.ruby-lsp",
+            "shopify.ruby-extensions-pack",
+            "soutaro.rbs-syntax"
+        ]
+    }
+}
