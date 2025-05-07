@@ -14,12 +14,12 @@ class ArticleJob < ApplicationJob
 제공한 링크의 본문을 주의 깊게 읽고 요약, 정리 한 내용을 한국어로 제공합니다.
 간단한 핵심 요약과 상세 요약을 제공합니다. 요약, 정리를 하기 위해 다른 사이트를 참고 해야 할 수 있습니다.
 핵심 요약은 3줄 이내로 작성합니다.
-상세 요약은 주요 내용(main_content)과 결론(conclusion)의 형식으로 작성합니다.
+상세 요약은 주요 내용(main_content)과 결론(conclusion)의 형식으로 작성합니다. 주요 내용은 200자 이상 500자 이내로 작성합니다. 결론은 100자 이상 200자 이내로 작성합니다. 상세 요약은 마크다운 형식으로 작성합니다.
 출력 결과는 파싱하기 쉽도록 JSON 형태로 제목(title_ko), 핵심 요약(summary_key), 상세 요약(summary_detail) 세 항목을 출력합니다.
     PROMPT
 
     chat = RubyLLM.chat
-    chat.with_instructions("You are a Ruby land and RubyOnRails framework expert.")
+    chat.with_instructions("You are a Ruby programming lang and RubyOnRails framework expert.")
     response = chat.ask("#{prompt} #{article.url}")
     # logger.debug response.content
 

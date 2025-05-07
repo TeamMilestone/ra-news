@@ -1,7 +1,41 @@
-<p style="color: green"><%= notice %></p>
+<div class="max-w-4xl mx-auto" id="<%= dom_id @article %>">
+  <%= link_to articles_path, class: "inline-flex items-center text-primary-600 hover:text-primary-700 mb-6" do %>
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M9.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L7.414 9H15a1 1 0 110 2H7.414l2.293 2.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+      </svg>
+      목록으로 돌아가기
+  <% end %>
 
-<%= render @article %>
+  <div id="articleDetail" class="bg-white rounded-xl shadow-md overflow-hidden border border-gray-100">
+    <div class="p-8">
+        <h1 class="text-3xl font-bold text-gray-800 mb-3"><%= @article.title_ko %></h1>
 
-<div>
-  <%= link_to "Back to articles", articles_path %>
+        <div class="flex flex-wrap items-center text-sm text-gray-500 mb-6">
+            <span class="mr-4">작성자: <%= @article.user %></span>
+            <span class="mr-4"><%= @article.created_at.strftime("%Y-%m-%d %H:%M") %></span>
+            <%= link_to @article.url, @article.url, target: "_blank", class:"text-primary-600 hover:text-primary-700 hover:underline" %>
+        </div>
+
+        <div class="border-t border-b border-gray-100 py-6">
+            <h2 class="text-xl font-semibold mb-4">3줄 요약</h2>
+            <% if @article.summary_key.is_a?(Array) %>
+                <ul>
+                    <% @article.summary_key&.each do %>
+                        <li><%= it %></li>
+                    <% end %>
+                </ul>
+            <% end %>
+        </div>
+
+        <div class="py-6">
+            <h2 class="text-xl font-semibold mb-4">본문</h2>
+            <div class="prose max-w-none text-gray-700">
+                <%= Kramdown::Document.new(@article.summary_detail["main_content"]).to_html.html_safe %>
+            </div>
+            <h3 class="text-lg font-semibold mt-6 mb-4">결론</h3>
+            <div class="prose max-w-none text-gray-700">
+                <%= @article.summary_detail['conclusion'] %>
+        </div>
+    </div>
+  </div>
 </div>
