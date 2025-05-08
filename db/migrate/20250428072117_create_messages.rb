@@ -1,7 +1,7 @@
 class CreateMessages < ActiveRecord::Migration[8.0]
   def change
     create_table :messages do |t|
-      t.references :chat, null: false, foreign_key: true
+      t.references :chat, null: false
       t.string :role
       t.text :content
       # Optional fields for tracking usage/metadata

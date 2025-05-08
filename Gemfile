@@ -52,6 +52,7 @@ group :development, :test do
   gem "tapioca", require: false
   gem "steep", require: false
   gem "dotenv-rails"
+  gem "faker"
 end
 
 group :development do
