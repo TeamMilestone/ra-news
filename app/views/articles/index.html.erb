@@ -1,4 +1,4 @@
-<% content_for :title, "Articles" %>
+<% content_for :title, "알 || AL 뉴스" %>
 
 <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
   <div class="w-full md:w-auto flex-grow">
@@ -22,10 +22,10 @@
     <div id="<%= dom_id article %>" class="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow overflow-hidden flex flex-col border border-gray-100">
       <div class="p-6 flex flex-col flex-grow">
         <div class="mb-2">
-          <h2 class="text-xl font-bold text-gray-800 inline"><%= link_to article.title || article.title_ko, article %></h2>
+          <h2 class="text-xl font-bold text-gray-800 inline"><%= link_to article.title_ko || article.title, article %></h2>
           <%= link_to article.url, article.url, target: "_blank", class: "block md:inline ml-0 md:ml-2 text-sm text-primary-600 hover:text-primary-700 hover:underline truncate" %>
         </div>
-        <p class="text-gray-600 mb-4 line-clamp-3">
+        <div class="text-gray-600 mb-4">
           <% if article.summary_key.is_a?(Array) %>
           <ul class="list-none pl-5 space-y-1">
               <% article.summary_key&.each do %>
@@ -33,9 +33,9 @@
               <% end %>
           </ul>
           <% end %>
-        </p>
+        </div>
         <div class="mt-auto pt-4 flex justify-between text-sm text-gray-500 border-t border-gray-100">
-            <span>작성자: ${article.author}</span>
+            <span>작성자: <%= article.user %></span>
             <span><%= article.created_at.strftime("%Y-%m-%d %H:%M") %></span>
         </div>
       </div>

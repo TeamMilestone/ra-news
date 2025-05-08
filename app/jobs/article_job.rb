@@ -12,16 +12,26 @@ class ArticleJob < ApplicationJob
 
     prompt = <<~PROMPT
 제공한 링크의 본문을 주의 깊게 읽고 요약, 정리 한 내용을 한국어로 제공합니다.
-간단한 핵심 요약과 상세 요약을 제공합니다. 요약, 정리를 하기 위해 다른 사이트를 참고 해야 할 수 있습니다.
+간단한 핵심 요약과 상세 요약을 제공합니다. 요약, 정리를 하기 위해 또 다른 사이트나 문서를 참고 할 수 있습니다.
 핵심 요약은 3줄 이내로 작성합니다.
-상세 요약은 주요 내용(main_content)과 결론(conclusion)의 형식으로 작성합니다. 주요 내용은 200자 이상 500자 이내로 작성합니다. 결론은 100자 이상 200자 이내로 작성합니다. 상세 요약은 마크다운 형식으로 작성합니다.
-출력 결과는 파싱하기 쉽도록 JSON 형태로 제목(title_ko), 핵심 요약(summary_key), 상세 요약(summary_detail) 세 항목을 출력합니다.
+상세 요약은 서론(introduction)-본론(body)-결론(conclusion)의 3단 구조를 기본으로, 문단 간 연결어와 논리 전개 유지형 요약, OREO 기법, 피라미드 구조 및 전환 표현을 적극 활용합니다. 상세 요약은 500자 이상 1000자 이내로 작성합니다.
+출력 결과는 JSON 형태로 제목(title_ko), 핵심 요약(summary_key), 상세 요약(summary_detail) 세 항목을 출력합니다.
+출력 예제
+{
+  "title_ko": "",
+  "summary_key": [
+    "",
+    "",
+    ""
+  ],
+  "summary_detail": { "introduction": "", "body": "", "conclusion": "" }
+}
     PROMPT
 
     chat = RubyLLM.chat
     chat.with_instructions("You are a Ruby programming lang and RubyOnRails framework expert.")
     response = chat.ask("#{prompt} #{article.url}")
-    # logger.debug response.content
+    logger.debug response.content
 
     # JSON 데이터 추출 및 파싱
     json_string = response.content.match(/\{.*\}/m).to_s # 첫 번째 JSON 객체만 추출
