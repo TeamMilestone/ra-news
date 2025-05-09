@@ -23,4 +23,8 @@ class Article < ApplicationRecord
     title = doc.at("title").text
     update(title:) if title.is_a?(String)
   end
+
+  def is_youtube? #: bool
+    url.start_with?("https://www.youtube.com/watch?v=") || url.start_with?("https://youtu.be/")
+  end
 end

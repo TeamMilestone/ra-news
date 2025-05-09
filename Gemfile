@@ -69,10 +69,9 @@ group :test do
 end
 
 gem "sorbet-runtime"
+
 gem "ruby_llm", "~> 1.2"
 gem "pagy", "~> 9.3" # omit patch digit
-gem "kramdown"
-
 gem "honeybadger", "~> 5.28"
-
 gem "tailwindcss-rails", "~> 4.2"
+gem "google-protobuf", require: false
