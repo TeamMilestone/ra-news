@@ -24,11 +24,14 @@ module Youtube
         params: params
       }
 
-      @response = Faraday.new(headers:).post(url) do |req|
-        req.body = body.to_json
+      @response = Faraday.new(headers:) do
+        it.request :json
+        it.response :json
+      end.post(url) do
+        it.body = body.to_json
       end
 
-      JSON.parse(@response.body)
+      @response.body
     end
 
     def self.get(video_id)

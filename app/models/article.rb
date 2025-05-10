@@ -27,4 +27,17 @@ class Article < ApplicationRecord
   def is_youtube? #: bool
     url.start_with?("https://www.youtube.com/watch?v=") || url.start_with?("https://youtu.be/")
   end
+
+
+  def youtube_id #: string?
+    url.split("?v=").last.split("&").first if is_youtube?
+  end
+
+  def youtube_transcript #: string?
+    return unless is_youtube?
+
+    rc = Youtube::Transcript.get(youtube_id)
+    tsr = rc.dig("actions").first.dig("updateEngagementPanelAction", "content", "transcriptRenderer", "content", "transcriptSearchPanelRenderer", "body", "transcriptSegmentListRenderer", "initialSegments")
+    tsr.map { |it| it.dig("transcriptSegmentRenderer", "startTimeText", "simpleText").to_s + " - " + it.dig("transcriptSegmentRenderer", "snippet", "runs").map { |it| it.dig("text") }.join(" ") }.join("\n")
+  end
 end
