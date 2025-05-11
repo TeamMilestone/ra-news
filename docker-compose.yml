@@ -2,14 +2,33 @@ version: "3.3"
 
 services:
   al-news:
-    image: "ghcr.io/stadia/al-news:latest"
-    container_name: "al-news"
+    image: ghcr.io/stadia/al-news:main
+    container_name: al-news
+    environment:
+      - RAILS_MASTER_KEY=${RAILS_MASTER_KEY}
+      - SOLID_QUEUE_IN_PUMA=true
+      - RAILS_LOG_LEVEL=debug
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - DATABASE_URL=${DATABASE_URL}
     labels:
-      - "al-news.enable=true"
+      - al-news.enable=true
     networks:
       - homeNetwork
     restart: unless-stopped
+  db:
+    image: postgres:17
+    container_name: postgresql
+    restart: always
+    volumes:
+      - postgresql_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    network_mode: host
 
 networks:
   homeNetwork:
+    external: true
+
+volumes:
+  postgresql_data:
     external: true
