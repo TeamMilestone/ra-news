@@ -75,3 +75,5 @@ gem "pagy", "~> 9.3" # omit patch digit
 gem "honeybadger", "~> 5.28"
 gem "tailwindcss-rails", "~> 4.2"
 gem "google-protobuf", require: false
+# silence Ruby 3.4 warnings
+gem "ostruct"
