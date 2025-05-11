@@ -12,7 +12,7 @@ class ApplicationClient
   class InternalError < Error; end
 
   BASE_URI = "https://example.org"
-  NET_HTTP_ERRORS = [Timeout::Error, Errno::EINVAL, Errno::ECONNRESET, EOFError, Net::HTTPBadResponse, Net::HTTPHeaderSyntaxError, Net::ProtocolError]
+  NET_HTTP_ERRORS = [ Timeout::Error, Errno::EINVAL, Errno::ECONNRESET, EOFError, Net::HTTPBadResponse, Net::HTTPHeaderSyntaxError, Net::ProtocolError ]
 
   def initialize(token: nil)
     @token = token
@@ -30,7 +30,7 @@ class ApplicationClient
   end
 
   def authorization_header
-    token ? {"Authorization" => "Bearer #{token}"} : {}
+    token ? { "Authorization" => "Bearer #{token}" } : {}
   end
 
   def default_query_params

@@ -3,7 +3,7 @@ module RubyConferences
     BASE_URI = "https://raw.githubusercontent.com/ruby-conferences/ruby-conferences.github.io/refs/heads/main"
 
     def conferences
-      YAML.load(get("/_data/conferences.yml").body, permitted_classes: [Date])
+      YAML.load(get("/_data/conferences.yml").body, permitted_classes: [ Date ])
     end
 
     def conferences_cached
