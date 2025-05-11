@@ -1,0 +1,15 @@
+version: "3.3"
+
+services:
+  al-news:
+    image: "ghcr.io/stadia/al-news:latest"
+    container_name: "al-news"
+    labels:
+      - "al-news.enable=true"
+    networks:
+      - homeNetwork
+    restart: unless-stopped
+
+networks:
+  homeNetwork:
+    external: true

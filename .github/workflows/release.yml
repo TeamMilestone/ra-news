@@ -2,7 +2,8 @@ name: Releasee
 
 on:
   push:
-    branches: [ v*.*.* ]
+    # branches: [ v*.*.* ]
+    branches: [ main ]
 
 env:
   REGISTRY: ghcr.io
@@ -38,5 +39,6 @@ jobs:
           with:
             context: .
             push: true
-            tags: ${{ steps.meta.outputs.tags }}
+            # tags: ${{ steps.meta.outputs.tags }}
+            tags: latest
             labels: ${{ steps.meta.outputs.labels }}
