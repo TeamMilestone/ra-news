@@ -7,6 +7,12 @@ class Article < ApplicationRecord
 
   after_create :generate_title
 
+  after_create do
+    return unless url.is_a?(String)
+
+    ArticleJob.perform_later(id)
+  end
+
   after_commit do
     next unless saved_change_to_url?
 
