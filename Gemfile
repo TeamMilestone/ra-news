@@ -77,3 +77,4 @@ gem "tailwindcss-rails", "~> 4.2"
 gem "google-protobuf", require: false
 # silence Ruby 3.4 warnings
 gem "ostruct"
+gem "mission_control-jobs"
