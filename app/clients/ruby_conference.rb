@@ -1,5 +1,8 @@
-module RubyConferences
-  class Client < ApplicationClient
+# frozen_string_literal: true
+
+# rbs_inline: enabled
+
+class RubyConference < ApplicationClient
     BASE_URI = "https://raw.githubusercontent.com/ruby-conferences/ruby-conferences.github.io/refs/heads/main"
 
     def conferences
@@ -17,5 +20,4 @@ module RubyConferences
     def content_type
       "text/yaml"
     end
-  end
 end

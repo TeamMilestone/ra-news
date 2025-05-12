@@ -1,0 +1,17 @@
+# Generated from app/clients/youtube/transcript.rb with RBS::Inline
+
+module Youtube
+  class Transcript
+    attr_reader response: untyped
+
+    def get: (untyped video_id) -> untyped
+
+    def self.get: (untyped video_id) -> untyped
+
+    private
+
+    def encode_message: (untyped message, untyped typedef) -> untyped
+
+    def get_base64_protobuf: (untyped message, untyped typedef) -> untyped
+  end
+end

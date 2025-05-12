@@ -1,0 +1,13 @@
+# Generated from app/clients/ruby_conference.rb with RBS::Inline
+
+class RubyConference < ApplicationClient
+  BASE_URI: ::String
+
+  def conferences: () -> untyped
+
+  def conferences_cached: () -> untyped
+
+  private
+
+  def content_type: () -> untyped
+end

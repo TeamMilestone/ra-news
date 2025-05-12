@@ -1,0 +1,55 @@
+# Generated from app/clients/application_client.rb with RBS::Inline
+
+class ApplicationClient
+  class Error < StandardError
+  end
+
+  class Forbidden < Error
+  end
+
+  class Unauthorized < Error
+  end
+
+  class RateLimit < Error
+  end
+
+  class NotFound < Error
+  end
+
+  class InternalError < Error
+  end
+
+  BASE_URI: ::String
+
+  NET_HTTP_ERRORS: ::Array[untyped]
+
+  def initialize: (?token: untyped, ?base_uri: untyped) -> untyped
+
+  def default_headers: () -> untyped
+
+  def content_type: () -> untyped
+
+  def authorization_header: () -> untyped
+
+  def default_query_params: () -> untyped
+
+  def get: (untyped path, ?headers: untyped, ?query: untyped) -> untyped
+
+  def post: (untyped path, ?headers: untyped, ?query: untyped, ?body: untyped, ?form_data: untyped) -> untyped
+
+  def patch: (untyped path, ?headers: untyped, ?query: untyped, ?body: untyped, ?form_data: untyped) -> untyped
+
+  def put: (untyped path, ?headers: untyped, ?query: untyped, ?body: untyped, ?form_data: untyped) -> untyped
+
+  def delete: (untyped path, ?headers: untyped, ?query: untyped, ?body: untyped) -> untyped
+
+  attr_reader token: untyped
+
+  attr_reader base_uri: untyped
+
+  def make_request: (klass: untyped, path: untyped, ?headers: untyped, ?body: untyped, ?query: untyped, ?form_data: untyped) -> untyped
+
+  def handle_response: (untyped response) -> untyped
+
+  def build_body: (untyped body) -> untyped
+end
