@@ -41,3 +41,6 @@ jobs:
             push: true
             tags: ghcr.io/stadia/al-news:latest
             labels: ${{ steps.meta.outputs.labels }}
+        - uses: honeybadger-io/github-notify-deploy-action@v1
+          with:
+            api_key: ${{ secrets.HONEYBADGER_API_KEY }}
