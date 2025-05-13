@@ -136,11 +136,6 @@ GEM
       raabro (~> 1.4)
     globalid (1.2.1)
       activesupport (>= 6.1)
-    gmail (0.7.1)
-      gmail_xoauth (>= 0.3.0)
-      mail (>= 2.2.1)
-    gmail_xoauth (0.4.3)
-      oauth (>= 0.3.6)
     google-protobuf (4.30.2-aarch64-linux)
       bigdecimal
       rake (>= 13)
@@ -150,7 +145,6 @@ GEM
     google-protobuf (4.30.2-x86_64-linux)
       bigdecimal
       rake (>= 13)
-    hashie (5.0.0)
     honeybadger (5.28.0)
       logger
       ostruct
@@ -213,7 +207,7 @@ GEM
     mutex_m (0.3.0)
     net-http (0.6.0)
       uri
-    net-imap (0.4.22)
+    net-imap (0.5.8)
       date
       net-protocol
     net-pop (0.1.2)
@@ -239,12 +233,6 @@ GEM
       racc (~> 1.4)
     nokogiri (1.18.8-x86_64-linux-musl)
       racc (~> 1.4)
-    oauth (1.1.0)
-      oauth-tty (~> 1.0, >= 1.0.1)
-      snaky_hash (~> 2.0)
-      version_gem (~> 1.1)
-    oauth-tty (1.0.5)
-      version_gem (~> 1.1, >= 1.1.1)
     ostruct (0.6.1)
     pagy (9.3.4)
     parallel (1.27.0)
@@ -370,9 +358,6 @@ GEM
       rexml (~> 3.2, >= 3.2.5)
       rubyzip (>= 1.2.2, < 3.0)
       websocket (~> 1.0)
-    snaky_hash (2.0.1)
-      hashie
-      version_gem (~> 1.1, >= 1.1.1)
     solid_cable (3.0.8)
       actioncable (>= 7.2)
       activejob (>= 7.2)
@@ -468,7 +453,6 @@ GEM
     unicode-emoji (4.0.4)
     uri (1.0.3)
     useragent (0.16.11)
-    version_gem (1.1.8)
     web-console (4.2.1)
       actionview (>= 6.0.0)
       activemodel (>= 6.0.0)
@@ -504,14 +488,12 @@ DEPENDENCIES
   debug
   dotenv-rails
   faker
-  gmail
   google-protobuf
   honeybadger (~> 5.28)
   importmap-rails
   jbuilder
   kamal
   mission_control-jobs
-  net-imap (~> 0.4.9)
   ostruct
   pagy (~> 9.3)
   pg (~> 1.1)
