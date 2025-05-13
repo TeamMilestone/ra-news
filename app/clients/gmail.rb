@@ -1,3 +1,7 @@
+# frozen_string_literal: true
+
+# rbs_inline: enabled
+
 class Gmail
   def initialize
     email ||= ENV["GMAIL_ADDRESS"] || "stadia@gmail.com"
@@ -10,7 +14,6 @@ class Gmail
                               password: password,
                               enable_ssl: true
     end
-    Rails.logger.debug "Gmail 클라이언트 초기화: #{conn}"
   end
 
   def fetch_emails(options = {})
@@ -30,5 +33,53 @@ class Gmail
     emails = Mail.find(order: :desc, keys: query)
     Rails.logger.info "검색된 이메일 수: #{emails.length}"
     emails
+  end
+
+  IGNORE_HOSTS = [ "www.meetup.com", "maily.so", "github.com", "bsky.app", "threadreaderapp.com", "x.com",
+  "www.linkedin.com", "meet.google.com", "www.twitch.tv", "inf.run", "lu.ma" ]
+
+  def fetch_email_links(options = {})
+    links = []
+    fetch_emails(options)&.each do |body|
+      html_content = nil
+      if body.multipart?
+        # HTML 부분 찾기
+        html_part = body.parts.find { |p| p.mime_type == "text/html" }
+        if html_part
+          # 인코딩 처리를 포함한 디코딩
+          html_content = html_part.body.decoded
+        end
+      elsif body.mime_type == "text/html"
+        # 멀티파트가 아닌 경우 직접 확인
+        html_content = body.body.decoded
+      end
+
+      next unless html_content
+
+      # 특수 문자 및 인코딩 문제 해결
+      html_content = html_content.gsub(/[\r\n]+/, " ")  # 줄바꿈 제거
+                                  .gsub(/3D\"/, '"')     # 3D\" 문자 치환
+                                  .gsub(/=\r?\n/, "")    # quoted-printable 줄바꿈 제거
+
+      # Nokogiri로 파싱
+      html_doc = Nokogiri::HTML5(html_content)
+
+      # 링크 추출
+      html_doc.css("a[href]").each {
+        uri = URI.parse(it["href"])
+        # URI 객체가 query를 지원하는지 확인 (예: URI::HTTP, URI::HTTPS)
+        if uri.respond_to?(:query) && uri.query
+          # 쿼리 문자열을 해시(맵)으로 변환
+          query_params = URI.decode_www_form(uri.query).to_h
+          if query_params["url"].is_a?(String)
+            url = URI.parse(query_params["url"])
+            next if IGNORE_HOSTS.include?(url.host) || url.path.size < 2
+
+            links << url
+          end
+        end
+      }
+    end
+    links.uniq
   end
 end

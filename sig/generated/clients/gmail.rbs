@@ -1,0 +1,11 @@
+# Generated from app/clients/gmail.rb with RBS::Inline
+
+class Gmail
+  def initialize: () -> untyped
+
+  def fetch_emails: (?untyped options) -> untyped
+
+  IGNORE_HOSTS: ::Array[untyped]
+
+  def fetch_email_links: (?untyped options) -> untyped
+end
