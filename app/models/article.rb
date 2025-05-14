@@ -25,7 +25,7 @@ class Article < ApplicationRecord
     published_at = Time.zone.now if published_at.blank?
   end
 
-  IGNORE_HOSTS = %w[bsky.app threadreaderapp.com x.com]
+  IGNORE_HOSTS = %w[www.meetup.com maily.so github.com bsky.app threadreaderapp.com x.com www.linkedin.com meet.google.com www.twitch.tv inf.run lu.ma newsletter.shortruby.com] #: Array[String]
 
   before_create do
     next unless url.is_a?(String)

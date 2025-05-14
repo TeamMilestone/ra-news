@@ -35,8 +35,6 @@ class Gmail
     emails
   end
 
-  IGNORE_HOSTS = %w[www.meetup.com maily.so github.com bsky.app threadreaderapp.com x.com www.linkedin.com meet.google.com www.twitch.tv inf.run lu.ma newsletter.shortruby.com]
-
   def fetch_email_links(options = {})
     links = []
     fetch_emails(options)&.each do |body|
@@ -60,29 +58,30 @@ class Gmail
 
       # Nokogiri로 파싱
       html_doc = Nokogiri::HTML5(html_content)
+
       # 링크 추출
       html_doc.css("a[href]").each {
         uri = URI.parse(it["href"])
-        links << case uri.host
+        case uri.host
         when "maily.so"
           # URI 객체가 query를 지원하는지 확인 (예: URI::HTTP, URI::HTTPS)
           if uri.respond_to?(:query) && uri.query
             # 쿼리 문자열을 해시(맵)으로 변환
             query_params = URI.decode_www_form(uri.query).to_h
-            if query_params["url"].is_a?(String)
-              url = URI.parse(query_params["url"])
-              next if IGNORE_HOSTS.include?(url.host) || url.path.size < 2
-
-              url.to_s
-            end
+            links << check_link(URI.parse(query_params["url"])) if query_params["url"].is_a?(String)
           end
         else
-                   next if IGNORE_HOSTS.include?(uri.host) || uri.path.size < 2
-
-                   uri.to_s
+          links << check_link(uri)
         end
       }
     end
     links.uniq
+  end
+
+  #: (uri URI::HTTPS) -> string?
+  def check_link(uri)
+    return if Article::IGNORE_HOSTS.include?(uri.host) || uri.path.nil? || uri.path.size < 2
+
+    uri.to_s
   end
 end

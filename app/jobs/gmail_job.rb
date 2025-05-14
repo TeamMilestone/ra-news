@@ -15,7 +15,13 @@ class GmailJob < ApplicationJob
     return if links.empty?
 
     links.each do |link|
-      Article.create(url: link) unless Article.exists?(url: link)
+      next if Article.exists?(url: link)
+
+      begin
+        Article.create(url: link)
+      rescue StandardError => e
+        logger.error e
+      end
     end
   end
 end
