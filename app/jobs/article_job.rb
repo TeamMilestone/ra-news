@@ -33,19 +33,28 @@ class ArticleJob < ApplicationJob
     response =  if article.is_youtube?
       # YouTube URL인 경우
       transcript = article.youtube_transcript
-      chat.ask("제공한 유튜브의 링크와 자막을 #{prompt} #{article.url} #{transcript}")
+      transcript.nil? ? nil : chat.ask("제공한 유튜브의 링크와 자막을 #{prompt} #{article.url} #{transcript}")
     else
       # YouTube URL이 아닌 경우
       logger.debug "제공한 링크의 본문을 #{prompt} #{article.url}"
       chat.ask("제공한 링크의 본문을 #{prompt} #{article.url}")
     end
-    logger.debug response.content
 
+    unless response.respond_to?(:content)
+      article.update(deleted_at: Time.zone.now)
+      return
+    end
+
+    logger.debug response.content
     # JSON 데이터 추출 및 파싱
     json_string = response.content.match(/\{.*\}/m).to_s # 첫 번째 JSON 객체만 추출
     parsed_json = JSON.load(json_string) # JSON 파싱
+    if parsed_json.blank? || parsed_json.empty?
+      article.update(deleted_at: Time.zone.now)
+      return
+    end
+
     # JSON 데이터 저장
     article.update(parsed_json.slice("summary_key", "summary_detail", "title_ko"))
-    # JSON 데이터 저장
   end
 end

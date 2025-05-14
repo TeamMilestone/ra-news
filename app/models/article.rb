@@ -50,9 +50,8 @@ class Article < ApplicationRecord
   end
 
   def is_youtube? #: bool
-    url.start_with?("https://www.youtube.com/watch?v=") || url.start_with?("https://youtu.be/")
+    url.start_with?("https://www.youtube.com/watch?") || url.start_with?("https://youtu.be/")
   end
-
 
   def youtube_id #: string?
     url.split("?v=").last.split("&").first if is_youtube?
@@ -63,6 +62,8 @@ class Article < ApplicationRecord
 
     rc = Youtube::Transcript.get(youtube_id)
     tsr = rc.dig("actions").first.dig("updateEngagementPanelAction", "content", "transcriptRenderer", "content", "transcriptSearchPanelRenderer", "body", "transcriptSegmentListRenderer", "initialSegments")
+    return unless tsr
+
     tsr.map { |it| it.dig("transcriptSegmentRenderer", "startTimeText", "simpleText").to_s + " - " + it.dig("transcriptSegmentRenderer", "snippet", "runs").map { |it| it.dig("text") }.join(" ") }.join("\n")
   end
 end

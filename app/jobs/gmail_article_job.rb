@@ -2,11 +2,11 @@
 
 # rbs_inline: enabled
 
-class GmailJob < ApplicationJob
+class GmailArticleJob < ApplicationJob
   #: (email String) -> void
   def perform(email = nil)
     if email.nil?
-      jobs = Site.where.not(email: nil).map { GmailJob.new(it.email) }
+      jobs = Site.where.not(email: nil).map { GmailArticleJob.new(it.email) }
       ActiveJob.perform_all_later(jobs)
       return
     end
