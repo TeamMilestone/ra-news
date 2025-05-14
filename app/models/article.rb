@@ -9,7 +9,7 @@ class Article < ApplicationRecord
 
   validates :url, :origin_url, presence: true, uniqueness: true
 
-  after_create :generate_title
+  after_create :generate_metadata
 
   after_create do
     next unless url.is_a?(String)
