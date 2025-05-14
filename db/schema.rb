@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_05_12_080745) do
+ActiveRecord::Schema[8.0].define(version: 2025_05_14_013806) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -24,6 +24,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_12_080745) do
     t.jsonb "summary_detail"
     t.string "title_ko"
     t.datetime "published_at"
+    t.datetime "deleted_at"
     t.index ["url"], name: "index_articles_on_url", unique: true
     t.index ["user_id"], name: "index_articles_on_user_id"
   end
@@ -44,6 +45,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_12_080745) do
     t.datetime "last_checked_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "email"
   end
 
   create_table "users", force: :cascade do |t|
