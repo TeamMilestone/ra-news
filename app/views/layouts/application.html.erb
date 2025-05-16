@@ -45,9 +45,17 @@
             <li>
               <%= link_to "홈", root_path, class: "block py-2 px-3 text-white bg-blue-700 rounded-sm md:bg-transparent md:text-black-700 md:p-0 md:dark:text-black-500", "aria-current" => "page" %>
             </li>
+            <% if authenticated? %>
+              <li>
+                <%= link_to "글 등록", new_article_path, class: "block py-2 px-3 text-white bg-blue-700 rounded-sm md:bg-transparent md:text-black-700 md:p-0 md:dark:text-black-500", "aria_current" => "page" %>
+              </li>
+              <li>
+                <span class="block py-2 px-3 text-white bg-blue-700 rounded-sm md:bg-transparent md:text-black-700 md:p-0 md:dark:text-black-500" aria-current="page"><%= Current.user.name %></span>
+              </li>
+            <% end %>
             <li>
               <% if authenticated? %>
-                <span class="block py-2 px-3 text-white bg-blue-700 rounded-sm md:bg-transparent md:text-black-700 md:p-0 md:dark:text-black-500" aria-current="page"><%= Current.user.name %></span>
+                <%= link_to "로그아웃", logout_path, class: "block py-2 px-3 text-white bg-blue-700 rounded-sm md:bg-transparent md:text-black-700 md:p-0 md:dark:text-black-500", "aria_current" => "page" %>
               <% else %>
                 <%= link_to "로그인", new_session_path, id: "loginLink", class: "block py-2 px-3 text-white bg-blue-700 rounded-sm md:bg-transparent md:text-black-700 md:p-0 md:dark:text-black-500", "aria_current" => "page" %>
               <% end %>

@@ -9,7 +9,7 @@ class Article < ApplicationRecord
 
   validates :url, :origin_url, presence: true, uniqueness: true
 
-  after_create :generate_metadata
+  before_create :generate_metadata
 
   after_create do
     next unless url.is_a?(String)
@@ -33,12 +33,19 @@ class Article < ApplicationRecord
     return unless url.is_a?(String)
 
     response = Faraday.get(url)
-    self.url = response.headers["location"] if response.status >= 300 && response.status < 400
+    if response.status >= 300 && response.status < 400
+      # 3xx 응답인 경우 리다이렉트된 URL을 사용
+      self.url = if response.headers["location"].start_with?("http")
+        response.headers["location"]
+      else
+        self.url = URI.join(url, response.headers["location"]).to_s
+      end
+    end
 
     parsed_url = URI.parse(url)
     self.host = parsed_url.host
     self.published_at = url_to_published_at || parse_to_published_at(response.body) || Time.zone.now if published_at.blank?
-    self.deleted_at = Time.zone.now if parsed_url.path.nil? || parsed_url.path.size < 2 || Article::IGNORE_HOSTS.any? { |pattern| parsed_url.host.match?(/#{pattern}/i) }
+    self.deleted_at = Time.zone.now if parsed_url.path.nil? || parsed_url.path.size < 2 || Article::IGNORE_HOSTS.any? { |pattern| parsed_url.host&.match?(/#{pattern}/i) }
 
     doc = Nokogiri::HTML(response.body)
     temp_title = doc.at("title")&.text

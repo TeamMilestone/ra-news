@@ -81,7 +81,7 @@ class Gmail
 
   #: (uri URI::HTTPS) -> string?
   def check_link(uri)
-    return if uri.path.nil? || uri.path.size < 2 || Article::IGNORE_HOSTS.any? { |pattern| uri.host.match?(/#{pattern}/i) }
+    return if uri.path.nil? || uri.path.size < 2 || Article::IGNORE_HOSTS.any? { |pattern| uri.host&.match?(/#{pattern}/i) }
 
     uri.to_s
   end

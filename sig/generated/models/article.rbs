@@ -3,11 +3,17 @@
 class Article < ApplicationRecord
   IGNORE_HOSTS: Array[String]
 
-  def generate_title: () -> void
+  def generate_metadata: () -> void
 
   def is_youtube?: () -> bool
 
   def youtube_id: () -> string?
 
   def youtube_transcript: () -> string?
+
+  def url_to_published_at: () -> DateTime?
+
+  private
+
+  def parse_to_published_at: (untyped body) -> DateTime?
 end

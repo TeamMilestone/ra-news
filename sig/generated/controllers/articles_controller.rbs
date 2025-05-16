@@ -7,8 +7,26 @@ class ArticlesController < ApplicationController
   # GET /articles/1 or /articles/1.json
   def show: () -> untyped
 
+  # GET /articles/new
+  def new: () -> untyped
+
+  # GET /articles/1/edit
+  def edit: () -> untyped
+
+  # POST /articles
+  def create: () -> untyped
+
+  # PATCH/PUT /articles/1
+  def update: () -> untyped
+
+  # DELETE /articles/1
+  def destroy: () -> untyped
+
   private
 
   # Use callbacks to share common setup or constraints between actions.
   def set_article: () -> untyped
+
+  # Only allow a list of trusted parameters through.
+  def article_params: () -> untyped
 end
