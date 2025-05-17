@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_05_14_070127) do
+ActiveRecord::Schema[8.0].define(version: 2025_05_17_095427) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -28,7 +28,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_14_070127) do
     t.string "origin_url", default: "", null: false
     t.string "host"
     t.bigint "site_id", default: 0, null: false
+    t.string "slug"
     t.index ["origin_url"], name: "index_articles_on_origin_url", unique: true
+    t.index ["slug"], name: "index_articles_on_slug", unique: true
     t.index ["url"], name: "index_articles_on_url", unique: true
     t.index ["user_id"], name: "index_articles_on_user_id"
   end

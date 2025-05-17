@@ -12,7 +12,6 @@ class ArticlesController < ApplicationController
     @articles = Article.where(deleted_at: nil).all.order(published_at: :desc, id: :desc)
   end
 
-  # GET /articles/1 or /articles/1.json
   def show
   end
 
@@ -61,7 +60,7 @@ class ArticlesController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_article
-      @article = Article.where(deleted_at: nil).find(params.expect(:id))
+      @article = Article.where(deleted_at: nil).find_by!(slug: params.expect(:id))
     end
 
     # Only allow a list of trusted parameters through.

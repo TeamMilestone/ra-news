@@ -79,3 +79,4 @@ gem "google-protobuf", require: false
 gem "ostruct"
 gem "mission_control-jobs"
 gem "rss"
+gem "kramdown"

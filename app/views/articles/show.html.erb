@@ -36,9 +36,9 @@
                         <%= @article.summary_detail["introduction"] %>
                     </p>
 
-                    <p class="mb-6">
-                        <%= @article.summary_detail["body"] %>
-                    </p>
+                    <div class="mb-6">
+                        <%= Kramdown::Document.new(@article.summary_detail["body"]).to_html.html_safe %>
+                    </div>
 
                     <h2 className="text-2xl font-semibold text-gray-900 mt-8 mb-4">결론</h2>
 

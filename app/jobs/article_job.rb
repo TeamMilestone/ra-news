@@ -15,8 +15,14 @@ class ArticleJob < ApplicationJob
 간단한 핵심 요약과 상세 요약을 제공합니다. 요약, 정리를 하기 위해 또 다른 사이트나 문서를 참고 할 수 있습니다.
 핵심 요약은 3줄 이내로 작성합니다.
 상세 요약은 서론(introduction)-본론(body)-결론(conclusion)의 3단 구조를 기본으로 합니다. 상세 요약은 800자 이상 1600자 이내로 작성합니다.
-출력 결과는 JSON 형태로 제목(title_ko), 핵심 요약(summary_key), 상세 요약(summary_detail) 세 항목을 출력합니다.
-출력 예제
+1. 입력 포맷
+- Expect Markdown-formatted text
+- Process both inline formatting (bold, italic, links) and block elements (headings, lists, code blocks)
+- Preserve the context of structured content
+- Handle nested Markdown elements appropriately
+2. 출력 결과
+- JSON 형태로 제목(title_ko), 핵심 요약(summary_key), 상세 요약(summary_detail) 세 항목을 출력합니다.
+- 출력 예제
 {
   "title_ko": "",
   "summary_key": [
@@ -33,11 +39,11 @@ PROMPT
     response =  if article.is_youtube?
       # YouTube URL인 경우
       transcript = article.youtube_transcript
-      transcript.nil? ? nil : chat.ask("제공한 유튜브의 링크와 자막을 #{prompt} #{article.url} #{transcript}")
+      transcript.nil? ? nil : chat.ask("제공한 유튜브의 링크와 자막을 #{prompt} #{article.url}\n#{transcript}")
     else
       # YouTube URL이 아닌 경우
-      logger.debug "제공한 링크의 본문을 #{prompt} #{article.url}"
-      chat.ask("제공한 링크의 본문을 #{prompt} #{article.url}")
+      logger.debug "제공한 링크의 본문을 #{prompt} #{markdown(article.url)}"
+      chat.ask("제공한 본문을 #{prompt} #{markdown(article.url)}")
     end
 
     unless response.respond_to?(:content)
@@ -56,5 +62,11 @@ PROMPT
 
     # JSON 데이터 저장
     article.update(parsed_json.slice("summary_key", "summary_detail", "title_ko"))
+  end
+
+  def markdown(url)
+    response = Faraday.get(url)
+    body_content = Nokogiri::HTML(response.body).at_css("body")&.inner_html
+    Kramdown::Document.new(body_content, input: "html").to_kramdown
   end
 end

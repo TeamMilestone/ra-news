@@ -44,6 +44,7 @@ class Article < ApplicationRecord
 
     parsed_url = URI.parse(url)
     self.host = parsed_url.host
+    self.slug = is_youtube? ? youtube_id : parsed_url.path.split("/").last
     self.published_at = url_to_published_at || parse_to_published_at(response.body) || Time.zone.now if published_at.blank?
     self.deleted_at = Time.zone.now if parsed_url.path.nil? || parsed_url.path.size < 2 || Article::IGNORE_HOSTS.any? { |pattern| parsed_url.host&.match?(/#{pattern}/i) }
 
@@ -57,7 +58,7 @@ class Article < ApplicationRecord
   end
 
   def youtube_id #: string?
-    url.split("v=").last.split("&").first if is_youtube?
+    URI.decode_www_form(URI.parse(url).query).to_h["v"]
   end
 
   def youtube_transcript #: string?
