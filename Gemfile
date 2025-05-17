@@ -50,7 +50,7 @@ group :development, :test do
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem "rubocop", require: false
   gem "rubocop-rails-omakase", require: false
-  # gem "tapioca", require: false
+  gem "tapioca", require: false
   gem "steep", require: false
   gem "dotenv-rails"
   gem "faker"
@@ -59,7 +59,7 @@ end
 group :development do
   # Use console on exceptions pages [https://github.com/rails/web-console]
   gem "web-console"
-  # gem "sorbet"
+  gem "sorbet"
 end
 
 group :test do
@@ -68,7 +68,7 @@ group :test do
   gem "selenium-webdriver"
 end
 
-# gem "sorbet-runtime"
+gem "sorbet-runtime"
 
 gem "ruby_llm", "~> 1.2"
 gem "pagy", "~> 9.3" # omit patch digit
