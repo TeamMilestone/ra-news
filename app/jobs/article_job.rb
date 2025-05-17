@@ -22,6 +22,7 @@ class ArticleJob < ApplicationJob
 - Handle nested Markdown elements appropriately
 2. 출력 결과
 - JSON 형태로 제목(title_ko), 핵심 요약(summary_key), 상세 요약(summary_detail) 세 항목을 출력합니다.
+- 상세 요약은 markdown 형식으로 작성합니다.
 - 출력 예제
 {
   "title_ko": "",
