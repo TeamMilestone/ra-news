@@ -8,7 +8,7 @@ Rails.application.routes.draw do
   get "up" => "rails/health#show", as: :rails_health_check
 
   # Render dynamic PWA files from app/views/pwa/* (remember to link manifest in application.html.erb)
-  # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
+  get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
   # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
 
   # Defines the root path route ("/")
@@ -17,4 +17,9 @@ Rails.application.routes.draw do
   get "login" => "sessions#new", as: :new_session
   post "login" => "sessions#create", as: :session
   get "logout" => "sessions#destroy", as: :logout
+
+  resource :users, only: %i[edit update destroy]
+
+  get "signup" => "users#new", as: :new_user
+  post "signup" => "users#create", as: :user
 end

@@ -43,6 +43,9 @@ module GeneratedUrlHelpersModule
   def passwords_url(*args); end
 
   sig { params(args: T.untyped).returns(String) }
+  def pwa_manifest_url(*args); end
+
+  sig { params(args: T.untyped).returns(String) }
   def rails_blob_representation_proxy_url(*args); end
 
   sig { params(args: T.untyped).returns(String) }
