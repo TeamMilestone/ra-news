@@ -1,0 +1,6 @@
+# Generated from app/jobs/rss_site_job.rb with RBS::Inline
+
+class RssSiteJob < ApplicationJob
+  # : (id Integer) -> void
+  def perform: (id Integer) -> void
+end

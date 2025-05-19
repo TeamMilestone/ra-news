@@ -1,0 +1,6 @@
+# Generated from app/clients/rss_client.rb with RBS::Inline
+
+class RssClient < ApplicationClient
+  # : (path String) -> RSS::Rss?
+  def feed: (path String) -> RSS::Rss?
+end
