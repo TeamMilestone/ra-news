@@ -19,6 +19,6 @@ SitemapGenerator::Sitemap.create do
   #
   #   add articles_path, :priority => 0.7, :changefreq => 'daily'
   Article.find_each do |article|
-    add article_path(article), lastmod: article.updated_at
+    add article_path(article.slug), lastmod: article.updated_at
   end
 end
