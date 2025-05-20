@@ -14,6 +14,8 @@ gem "importmap-rails"
 gem "turbo-rails"
 # Hotwire's modest JavaScript framework [https://stimulus.hotwired.dev]
 gem "stimulus-rails"
+# Use Tailwind CSS [https://github.com/rails/tailwindcss-rails]
+gem "tailwindcss-rails", "~> 4.2"
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 gem "jbuilder"
 
@@ -73,7 +75,6 @@ gem "sorbet-runtime"
 gem "ruby_llm", "~> 1.2"
 gem "pagy", "~> 9.3" # omit patch digit
 gem "honeybadger", "~> 5.28"
-gem "tailwindcss-rails", "~> 4.2"
 gem "google-protobuf", require: false
 # silence Ruby 3.4 warnings
 gem "ostruct"
