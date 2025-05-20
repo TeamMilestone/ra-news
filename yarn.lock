@@ -65,6 +65,7 @@ __metadata:
   resolution: "al-news@workspace:."
   dependencies:
     flowbite: "npm:^3.1.2"
+    flowbite-typography: "npm:^1.0.5"
   languageName: unknown
   linkType: soft
 
@@ -89,6 +90,17 @@ __metadata:
     "@rollup/plugin-node-resolve": "npm:^15.2.3"
     flowbite: "npm:^2.0.0"
   checksum: 10/ef55f5267775d243c84dd7c30b0ad90a3103a339d64c03a7ac74b287384f85368b93691bbe31d9313297006127a57d6a80ab5790d495437d0c97d76ffc1462de
+  languageName: node
+  linkType: hard
+
+"flowbite-typography@npm:^1.0.5":
+  version: 1.0.5
+  resolution: "flowbite-typography@npm:1.0.5"
+  dependencies:
+    lodash.castarray: "npm:^4.4.0"
+    lodash.isplainobject: "npm:^4.0.6"
+    lodash.merge: "npm:^4.6.2"
+  checksum: 10/c9ae031e59793a1e442d488df7e6e6c07825e3ab423c1a0ae33411f52f1cf8bb6ee482c856dd238ed35fc3b3f6a8b41a17c01ae498742b989c0c094a50e4c210
   languageName: node
   linkType: hard
 
@@ -144,6 +156,27 @@ __metadata:
   version: 1.0.0
   resolution: "is-module@npm:1.0.0"
   checksum: 10/8cd5390730c7976fb4e8546dd0b38865ee6f7bacfa08dfbb2cc07219606755f0b01709d9361e01f13009bbbd8099fa2927a8ed665118a6105d66e40f1b838c3f
+  languageName: node
+  linkType: hard
+
+"lodash.castarray@npm:^4.4.0":
+  version: 4.4.0
+  resolution: "lodash.castarray@npm:4.4.0"
+  checksum: 10/fca8c7047e0ae2738b0b2503fb00157ae0ff6d8a1b716f87ed715b22560e09de438c75b65e01a7e44ceb41c5b31dce2eb576e46db04beb9c699c498e03cbd00f
+  languageName: node
+  linkType: hard
+
+"lodash.isplainobject@npm:^4.0.6":
+  version: 4.0.6
+  resolution: "lodash.isplainobject@npm:4.0.6"
+  checksum: 10/29c6351f281e0d9a1d58f1a4c8f4400924b4c79f18dfc4613624d7d54784df07efaff97c1ff2659f3e085ecf4fff493300adc4837553104cef2634110b0d5337
+  languageName: node
+  linkType: hard
+
+"lodash.merge@npm:^4.6.2":
+  version: 4.6.2
+  resolution: "lodash.merge@npm:4.6.2"
+  checksum: 10/d0ea2dd0097e6201be083865d50c3fb54fbfbdb247d9cc5950e086c991f448b7ab0cdab0d57eacccb43473d3f2acd21e134db39f22dac2d6c9ba6bf26978e3d6
   languageName: node
   linkType: hard
 
