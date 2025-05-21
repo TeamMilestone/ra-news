@@ -6,8 +6,7 @@ class GmailArticleJob < ApplicationJob
   #: (email String) -> void
   def perform(email = nil)
     if email.nil?
-      jobs = Site.where.not(email: nil).map { GmailArticleJob.new(it.email) }
-      ActiveJob.perform_all_later(jobs) unless jobs.empty?
+      Site.where.not(email: nil).map { GmailArticleJob.perform_later(it.email) }
       return
     end
 
