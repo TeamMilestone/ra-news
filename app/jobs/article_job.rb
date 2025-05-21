@@ -14,7 +14,7 @@ class ArticleJob < ApplicationJob
 주의 깊게 읽고 요약, 정리 한 내용을 한국어로 제공합니다.
 간단한 핵심 요약과 상세 요약을 제공합니다. 요약, 정리를 하기 위해 또 다른 사이트나 문서를 참고 할 수 있습니다.
 핵심 요약은 3줄 이내로 작성합니다.
-상세 요약은 서론(introduction)-본론(body)-결론(conclusion)의 3단 구조를 기본으로 합니다. 상세 요약은 800자 이상 1600자 이내로 작성합니다.
+상세 요약은 서론(introduction)-본론(body)-결론(conclusion)의 3단 구조를 기본으로 합니다. 상세 요약(summary_detail)은 800자 이상 1500자 이내로 작성합니다.
 1. 입력 포맷
 - Expect Markdown-formatted text
 - Process both inline formatting (bold, italic, links) and block elements (headings, lists, code blocks)
@@ -24,15 +24,17 @@ class ArticleJob < ApplicationJob
 - JSON 형태로 제목(title_ko), 핵심 요약(summary_key), 상세 요약(summary_detail) 세 항목을 출력합니다.
 - 상세 요약은 markdown 형식으로 작성합니다.
 - 출력 예제
+```json
 {
-  "title_ko": "",
-  "summary_key": [
-    "",
-    "",
-    ""
-  ],
-  "summary_detail": { "introduction": "", "body": "", "conclusion": "" }
+ "title_ko": "",
+ "summary_key": [
+   "",
+   "",
+   ""
+ ],
+ "summary_detail": { "introduction": "", "body": "", "conclusion": "" }
 }
+```
 PROMPT
 
     chat = RubyLLM.chat(model: "gemini-2.5-flash-preview-04-17", provider: :gemini, assume_model_exists: true)
@@ -40,11 +42,12 @@ PROMPT
     response =  if article.is_youtube?
       # YouTube URL인 경우
       transcript = article.youtube_transcript
-      transcript.nil? ? nil : chat.ask("제공한 유튜브의 링크와 자막을 #{prompt} #{article.url}\n#{transcript}")
+      logger.debug "<Link>#{article.url}</Link> <Transcript>#{transcript}</Transcript> 제공한 youtube의 Link와 Transcript를 #{prompt}"
+      transcript.nil? ? nil : chat.ask("<Link>#{article.url}</Link> <Transcript>#{transcript}</Transcript> 제공한 youtube의 Link와 Transcript를 #{prompt}")
     else
       # YouTube URL이 아닌 경우
-      logger.debug "제공한 링크의 본문을 #{prompt} #{markdown(article.url)}"
-      chat.ask("제공한 본문을 #{prompt} #{markdown(article.url)}")
+      logger.debug "<Document>#{markdown(article.url)}</Document> 제공한 Document를 #{prompt}"
+      chat.ask("<Document>#{markdown(article.url)}</Document> 제공한 Document를 #{prompt}")
     end
 
     unless response.respond_to?(:content)
