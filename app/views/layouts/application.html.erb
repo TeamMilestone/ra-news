@@ -33,31 +33,31 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <body class="bg-gray-50 text-gray-800 min-h-screen flex flex-col">
+  <body class="text-gray-800 min-h-screen flex flex-col">
 
-    <nav class="bg-white border-gray-200 dark:bg-green-900">
+    <nav class="bg-white border-gray-200">
       <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
         <%= link_to root_path, class: "flex items-center space-x-3 rtl:space-x-reverse" do %>
-          <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">알 || AL 뉴스</span>
+          <span class="self-center text-2xl font-semibold whitespace-nowrap">알 || AL 뉴스</span>
         <% end %>
         <div class="items-center justify-between hidden w-full md:flex md:w-auto md:order-1" id="navbar-search">
-          <ul class="flex flex-col p-4 md:p-0 mt-4 font-medium border border-gray-100 rounded-lg bg-green-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white dark:bg-green-800 md:dark:bg-green-900 dark:border-gray-700">
+          <ul class="flex flex-col p-4 md:p-0 mt-4 font-medium border border-gray-100 rounded-lg bg-green-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white">
             <li>
-              <%= link_to "홈", root_path, class: "block py-2 px-3 text-white bg-blue-700 rounded-sm md:bg-transparent md:text-black-700 md:p-0 md:dark:text-black-500", "aria-current" => "page" %>
+              <%= link_to "홈", root_path, class: "block py-2 px-3 text-white bg-blue-700 rounded-sm md:bg-transparent md:text-black-700 md:p-0", "aria-current" => "page" %>
             </li>
             <% if authenticated? %>
               <li>
-                <%= link_to "글 등록", new_article_path, class: "block py-2 px-3 text-white bg-blue-700 rounded-sm md:bg-transparent md:text-black-700 md:p-0 md:dark:text-black-500", "aria_current" => "page" %>
+                <%= link_to "글 등록", new_article_path, class: "block py-2 px-3 text-white bg-blue-700 rounded-sm md:bg-transparent md:text-black-700 md:p-0", "aria_current" => "page" %>
               </li>
               <li>
-                <span class="block py-2 px-3 text-white bg-blue-700 rounded-sm md:bg-transparent md:text-black-700 md:p-0 md:dark:text-black-500" aria-current="page"><%= Current.user.name %></span>
+                <span class="block py-2 px-3 text-white bg-blue-700 rounded-sm md:bg-transparent md:text-black-700 md:p-0" aria-current="page"><%= Current.user.name %></span>
               </li>
             <% end %>
             <li>
               <% if authenticated? %>
-                <%= link_to "로그아웃", logout_path, class: "block py-2 px-3 text-white bg-blue-700 rounded-sm md:bg-transparent md:text-black-700 md:p-0 md:dark:text-black-500", "aria_current" => "page" %>
+                <%= link_to "로그아웃", logout_path, class: "block py-2 px-3 text-white bg-blue-700 rounded-sm md:bg-transparent md:text-black-700 md:p-0", "aria_current" => "page" %>
               <% else %>
-                <%= link_to "로그인", new_session_path, id: "loginLink", class: "block py-2 px-3 text-white bg-blue-700 rounded-sm md:bg-transparent md:text-black-700 md:p-0 md:dark:text-black-500", "aria_current" => "page" %>
+                <%= link_to "로그인", new_session_path, id: "loginLink", class: "block py-2 px-3 text-white bg-blue-700 rounded-sm md:bg-transparent md:text-black-700 md:p-0", "aria_current" => "page" %>
               <% end %>
             </li>
           </ul>
@@ -69,10 +69,10 @@
         <%= yield %>
     </main>
 
-    <footer class="bg-white rounded-lg shadow-sm m-4 dark:bg-green-800">
+    <footer class="bg-white rounded-lg shadow-sm m-4">
         <div class="w-full mx-auto max-w-screen-xl p-4 md:flex md:items-center md:justify-between">
-          <span class="text-sm text-gray-500 sm:text-center dark:text-gray-400">© 2025 <a href="https://flowbite.com/" class="hover:underline">알 || AL 뉴스</a>. All Rights Reserved.</span>
-          <ul class="flex flex-wrap items-center mt-3 text-sm font-medium text-gray-500 dark:text-gray-400 sm:mt-0">
+          <span class="text-sm text-gray-500 sm:text-center">© 2025 <a href="https://flowbite.com/" class="hover:underline">알 || AL 뉴스</a>. All Rights Reserved.</span>
+          <ul class="flex flex-wrap items-center mt-3 text-sm font-medium text-gray-500 sm:mt-0">
           </ul>
         </div>
     </footer>
