@@ -329,6 +329,20 @@ class Article
   end
 
   module GeneratedAssociationMethods
+    sig { returns(T::Array[T.untyped]) }
+    def base_tag_ids; end
+
+    sig { params(ids: T::Array[T.untyped]).returns(T::Array[T.untyped]) }
+    def base_tag_ids=(ids); end
+
+    # This method is created by ActiveRecord on the `Article` class because it declared `has_many :base_tags, through: :taggings`.
+    # 🔗 [Rails guide for `has_many_through` association](https://guides.rubyonrails.org/association_basics.html#the-has-many-through-association)
+    sig { returns(::ActsAsTaggableOn::Tag::PrivateCollectionProxy) }
+    def base_tags; end
+
+    sig { params(value: T::Enumerable[::ActsAsTaggableOn::Tag]).void }
+    def base_tags=(value); end
+
     sig { params(args: T.untyped, blk: T.untyped).returns(::Site) }
     def build_site(*args, &blk); end
 
@@ -370,6 +384,48 @@ class Article
 
     sig { returns(T::Boolean) }
     def site_previously_changed?; end
+
+    sig { returns(T::Array[T.untyped]) }
+    def tag_ids; end
+
+    sig { params(ids: T::Array[T.untyped]).returns(T::Array[T.untyped]) }
+    def tag_ids=(ids); end
+
+    sig { returns(T::Array[T.untyped]) }
+    def tag_tagging_ids; end
+
+    sig { params(ids: T::Array[T.untyped]).returns(T::Array[T.untyped]) }
+    def tag_tagging_ids=(ids); end
+
+    # This method is created by ActiveRecord on the `Article` class because it declared `has_many :tag_taggings`.
+    # 🔗 [Rails guide for `has_many` association](https://guides.rubyonrails.org/association_basics.html#the-has-many-association)
+    sig { returns(::ActsAsTaggableOn::Tagging::PrivateCollectionProxy) }
+    def tag_taggings; end
+
+    sig { params(value: T::Enumerable[::ActsAsTaggableOn::Tagging]).void }
+    def tag_taggings=(value); end
+
+    sig { returns(T::Array[T.untyped]) }
+    def tagging_ids; end
+
+    sig { params(ids: T::Array[T.untyped]).returns(T::Array[T.untyped]) }
+    def tagging_ids=(ids); end
+
+    # This method is created by ActiveRecord on the `Article` class because it declared `has_many :taggings`.
+    # 🔗 [Rails guide for `has_many` association](https://guides.rubyonrails.org/association_basics.html#the-has-many-association)
+    sig { returns(::ActsAsTaggableOn::Tagging::PrivateCollectionProxy) }
+    def taggings; end
+
+    sig { params(value: T::Enumerable[::ActsAsTaggableOn::Tagging]).void }
+    def taggings=(value); end
+
+    # This method is created by ActiveRecord on the `Article` class because it declared `has_many :tags, through: :tag_taggings`.
+    # 🔗 [Rails guide for `has_many_through` association](https://guides.rubyonrails.org/association_basics.html#the-has-many-through-association)
+    sig { returns(::ActsAsTaggableOn::Tag::PrivateCollectionProxy) }
+    def tags; end
+
+    sig { params(value: T::Enumerable[::ActsAsTaggableOn::Tag]).void }
+    def tags=(value); end
 
     sig { returns(T.nilable(::User)) }
     def user; end
@@ -899,6 +955,9 @@ class Article
     def restore_summary_key!; end
 
     sig { void }
+    def restore_tag_list!; end
+
+    sig { void }
     def restore_title!; end
 
     sig { void }
@@ -978,6 +1037,12 @@ class Article
 
     sig { returns(T::Boolean) }
     def saved_change_to_summary_key?; end
+
+    sig { returns(T.nilable([T.untyped, T.untyped])) }
+    def saved_change_to_tag_list; end
+
+    sig { returns(T::Boolean) }
+    def saved_change_to_tag_list?; end
 
     sig { returns(T.nilable([T.nilable(::String), T.nilable(::String)])) }
     def saved_change_to_title; end
@@ -1188,6 +1253,51 @@ class Article
 
     sig { void }
     def summary_key_will_change!; end
+
+    sig { returns(T.untyped) }
+    def tag_list; end
+
+    sig { params(value: T.untyped).returns(T.untyped) }
+    def tag_list=(value); end
+
+    sig { returns(T::Boolean) }
+    def tag_list?; end
+
+    sig { returns(T.untyped) }
+    def tag_list_before_last_save; end
+
+    sig { returns(T.untyped) }
+    def tag_list_before_type_cast; end
+
+    sig { returns(T::Boolean) }
+    def tag_list_came_from_user?; end
+
+    sig { returns(T.nilable([T.untyped, T.untyped])) }
+    def tag_list_change; end
+
+    sig { returns(T.nilable([T.untyped, T.untyped])) }
+    def tag_list_change_to_be_saved; end
+
+    sig { params(from: T.untyped, to: T.untyped).returns(T::Boolean) }
+    def tag_list_changed?(from: T.unsafe(nil), to: T.unsafe(nil)); end
+
+    sig { returns(T.untyped) }
+    def tag_list_in_database; end
+
+    sig { returns(T.nilable([T.untyped, T.untyped])) }
+    def tag_list_previous_change; end
+
+    sig { params(from: T.untyped, to: T.untyped).returns(T::Boolean) }
+    def tag_list_previously_changed?(from: T.unsafe(nil), to: T.unsafe(nil)); end
+
+    sig { returns(T.untyped) }
+    def tag_list_previously_was; end
+
+    sig { returns(T.untyped) }
+    def tag_list_was; end
+
+    sig { void }
+    def tag_list_will_change!; end
 
     sig { returns(T.nilable(::String)) }
     def title; end
@@ -1446,6 +1556,9 @@ class Article
 
     sig { returns(T::Boolean) }
     def will_save_change_to_summary_key?; end
+
+    sig { returns(T::Boolean) }
+    def will_save_change_to_tag_list?; end
 
     sig { returns(T::Boolean) }
     def will_save_change_to_title?; end

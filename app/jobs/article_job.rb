@@ -26,13 +26,9 @@ class ArticleJob < ApplicationJob
 - 출력 예제
 ```json
 {
- "title_ko": "",
- "summary_key": [
-   "",
-   "",
-   ""
- ],
- "summary_detail": { "introduction": "", "body": "", "conclusion": "" }
+  "title_ko": "",
+  "summary_key": ["", "", ""],
+  "summary_detail": { "introduction": "", "body": "", "conclusion": "" }
 }
 ```
 PROMPT
@@ -66,6 +62,7 @@ PROMPT
     end
 
     # JSON 데이터 저장
+    # article.tag_list.add(parsed_json["tags"]) if parsed_json["tags"].is_a?(Array)
     article.update(parsed_json.slice("summary_key", "summary_detail", "title_ko"))
     SitemapJob.perform_later
   end

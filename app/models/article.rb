@@ -11,6 +11,8 @@ class Article < ApplicationRecord
 
   before_create :generate_metadata
 
+  acts_as_taggable_on :tags
+
   after_create do
     next unless url.is_a?(String)
 
