@@ -58,11 +58,11 @@ class Article < ApplicationRecord
     url.start_with?("https://www.youtube.com") || url.start_with?("https://youtu.be/")
   end
 
-  def youtube_id #: string?
+  def youtube_id #: String?
     URI.decode_www_form(URI.parse(url).query).to_h["v"]
   end
 
-  def youtube_transcript #: string?
+  def youtube_transcript #: String?
     return unless is_youtube?
 
     rc = Youtube::Transcript.get(youtube_id)

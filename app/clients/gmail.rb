@@ -79,7 +79,7 @@ class Gmail
     links.uniq
   end
 
-  #: (uri URI::HTTPS) -> string?
+  #: (uri URI::HTTPS) -> String?
   def check_link(uri)
     return if uri.path.nil? || uri.path.size < 2 || Article::IGNORE_HOSTS.any? { |pattern| uri.host&.match?(/#{pattern}/i) }
 

@@ -6,6 +6,6 @@ class ArticleJob < ApplicationJob
 
   private
 
-  # : (url string) -> string
-  def markdown: (url string) -> string
+  # : (url String) -> String?
+  def readability_html: (url String) -> String?
 end
