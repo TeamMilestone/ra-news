@@ -28,6 +28,8 @@ class RssSiteJob < ApplicationJob
       end
       next if attrs.nil? || attrs.empty?
 
+      break if site.last_checked_at > attrs[:published_at]
+
       Article.exists?(origin_url: attrs[:origin_url]) and next
 
       Article.create(attrs.merge(site:, created_at: attrs[:published_at], updated_at: attrs[:published_at]))
