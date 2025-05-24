@@ -12,7 +12,7 @@ class ArticlesController < ApplicationController
   # GET /articles or /articles.json
   def index
     exclude_ids = Article.select(:id).where(deleted_at: nil).limit(9).order(created_at: :desc).map(&:id)
-    @pagy, @articles = pagy(Article.where(deleted_at: nil).where.not(id: exclude_ids).order(created_at: :desc))
+    @pagy, @articles = pagy(Article.where(deleted_at: nil).where.not(id: exclude_ids).order(published_at: :desc))
   end
 
   def show
