@@ -7,7 +7,7 @@ class Article < ApplicationRecord
 
   belongs_to :site, optional: true
 
-  validates :url, :origin_url, presence: true, uniqueness: true
+  validates :url, :origin_url, :slug, presence: true, uniqueness: true
 
   before_create :generate_metadata
 
