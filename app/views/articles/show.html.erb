@@ -47,7 +47,7 @@
                         </p>
                     </div>
 
-                    <div class="mb-4 md:mb-8 p-3 md:p-6 bg-gray-700 rounded-lg">
+                    <div class="mb-4 md:mb-8 p-3 md:p-6 bg-gray-700 rounded-lg" id="article-detail-body">
                         <%= Kramdown::Document.new(@article.summary_detail["body"]).to_html.html_safe %>
                     </div>
 

@@ -100,3 +100,7 @@ body {
   font-style: italic;
   color: #9ca3af; /* gray-400 for better contrast */
 }
+
+#article-detail-body p {
+  margin-bottom: 1.25rem; /* Add bottom margin for spacing */
+}
