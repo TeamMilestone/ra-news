@@ -44,12 +44,16 @@ class Article < ApplicationRecord
       else
         URI.join(url, response.headers["location"]).to_s
       end
-      self.url = "https://www.youtube.com/watch?v=#{youtube_id}" if is_youtube?
     end
 
     parsed_url = URI.parse(url)
     self.host = parsed_url.host
     self.deleted_at = Time.zone.now if parsed_url.path.nil? || parsed_url.path.size < 2 || Article::IGNORE_HOSTS.any? { |pattern| parsed_url.host&.match?(/#{pattern}/i) }
+
+    if host&.match?(/youtube/i)
+      self.is_youtube = true
+      self.url = "https://www.youtube.com/watch?v=#{youtube_id}"
+    end
 
     if is_youtube?
       self.slug = youtube_id
@@ -64,10 +68,6 @@ class Article < ApplicationRecord
       self.title = temp_title if temp_title.is_a?(String)
     end
     self.slug = "#{slug}-#{SecureRandom.hex(4)}" if Article.exists?(slug: self.slug)
-  end
-
-  def is_youtube? #: bool
-    url.start_with?("https://www.youtube.com") || url.start_with?("https://youtu.be/")
   end
 
   def youtube_id #: String?
