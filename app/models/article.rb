@@ -5,12 +5,7 @@
 class Article < ApplicationRecord
   include PgSearch::Model
 
-  multisearchable against: [ :title, :title_ko, :summary_key, :summary_detail ], using: {
-                  tsearch: {
-                    dictionary: "simple",
-                    tsvector_column: "tsvector_content_tsearch"
-                  }
-                }, if: lambda { |record| record.deleted_at.nil? }
+  multisearchable against: [ :title, :title_ko, :summary_key, :summary_detail ], if: lambda { |record| record.deleted_at.nil? }
 
   scope :full_text_search_for, ->(term) do
     joins(:pg_search_document).merge(
