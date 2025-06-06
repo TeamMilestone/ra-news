@@ -5,7 +5,7 @@
 class YoutubeContentTool < RubyLLM::Tool
   description "url을 통해 가져온 Youtube 콘텐츠에서 자막과 링크를 추출합니다."
 
-  param :url, desc: "URL of the Youtube (e.g., https://example.com)"
+  param :url, desc: "URL of the Youtube (e.g., https://www.youtube.com/watch?v=ErsF7_0bZnk)"
 
   #: (url String) -> String?
   def execute(url:)
