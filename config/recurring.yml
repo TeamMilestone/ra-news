@@ -8,3 +8,6 @@ production:
   youtube_site_job:
     class: YoutubeSiteJob
     schedule: "0 8 * * *"
+  hacker_news_job:
+    class: HackerNewsJob
+    schedule: "0 6 * * *"

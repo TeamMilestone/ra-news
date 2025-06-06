@@ -2,12 +2,13 @@ class TagResource < Madmin::Resource
   # Attributes
   attribute :id, form: false
   attribute :name
+  attribute :is_confirmed, form: true
   attribute :created_at, form: false
   attribute :updated_at, form: false
   attribute :taggings_count, form: false
 
   # Associations
-  attribute :taggings
+  # attribute :taggings
 
   # Add scopes to easily filter records
   # scope :published

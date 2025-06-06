@@ -12,6 +12,14 @@ class HackerNews < ApplicationClient
     get("/topstories.json")&.body
   end
 
+  def new_stories
+    get("/newstories.json")&.body
+  end
+
+  def best_stories
+    get("/beststories.json")&.body
+  end
+
   def item(id)
     get("/item/#{id}.json")&.body
   end
