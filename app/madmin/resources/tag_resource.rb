@@ -2,10 +2,10 @@ class TagResource < Madmin::Resource
   # Attributes
   attribute :id, form: false
   attribute :name
-  attribute :is_confirmed, form: true
+  attribute :is_confirmed, form: true, index: true
+  attribute :taggings_count, form: false, index: true
   attribute :created_at, form: false
   attribute :updated_at, form: false
-  attribute :taggings_count, form: false
 
   # Associations
   # attribute :taggings
