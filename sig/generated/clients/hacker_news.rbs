@@ -1,0 +1,9 @@
+# Generated from app/clients/hacker_news.rb with RBS::Inline
+
+class HackerNews < ApplicationClient
+  def initialize: () -> HackerNews
+
+  def top_stories: () -> untyped
+
+  def item: (untyped id) -> untyped
+end

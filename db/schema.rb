@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_03_085514) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_06_053411) do
   create_schema "ra_news"
 
   # These are extensions that must be enabled in order to support this database
@@ -103,6 +103,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_03_085514) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "taggings_count", default: 0
+    t.boolean "is_confirmed", default: false, null: false
     t.index ["name"], name: "index_tags_on_name", unique: true
   end
 

@@ -11,17 +11,8 @@ class ArticlesController < ApplicationController
   # GET /articles/new
   def new: () -> untyped
 
-  # GET /articles/1/edit
-  def edit: () -> untyped
-
   # POST /articles
   def create: () -> untyped
-
-  # PATCH/PUT /articles/1
-  def update: () -> untyped
-
-  # DELETE /articles/1
-  def destroy: () -> untyped
 
   private
 

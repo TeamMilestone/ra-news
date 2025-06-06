@@ -100,13 +100,14 @@ class ApplicationClient
     all_headers = default_headers.merge(headers)
     all_headers.delete("Content-Type") if klass == Net::HTTP::Get
 
-    conn = if form_data.present?
-      Faraday.new(url: "#{uri.scheme}://#{uri.host}", headers: all_headers) do |conn|
-        conn.request :url_encoded
+    conn = Faraday.new(url: "#{uri.scheme}://#{uri.host}", headers: all_headers) do |conn|
+        if form_data.present?
+          conn.request :url_encoded
+        elsif all_headers["Accept"] == "application/json"
+            conn.request :json
+        end
+        conn.response :json, content_type: /\bjson$/
       end
-    else
-      Faraday.new(url: "#{uri.scheme}://#{uri.host}", headers: all_headers)
-    end
 
     response = case klass
     when Net::HTTP::Get.class
