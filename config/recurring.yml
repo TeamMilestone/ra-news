@@ -9,5 +9,5 @@ production:
     class: YoutubeSiteJob
     schedule: "0 8 * * *"
   hacker_news_job:
-    class: HackerNewsJob
+    class: HackerNewsSiteJob
     schedule: "0 6 * * *"
