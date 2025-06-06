@@ -5,6 +5,10 @@
 class Article < ApplicationRecord
   include PgSearch::Model
 
+  include Discard::Model
+
+  self.discard_column = :deleted_at
+
   multisearchable against: [ :title, :title_ko, :summary_key, :summary_detail ], if: lambda { |record| record.deleted_at.nil? }
 
   scope :full_text_search_for, ->(term) do

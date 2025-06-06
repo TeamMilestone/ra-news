@@ -52,7 +52,7 @@ PROMPT
     end
 
     unless response.respond_to?(:content)
-      article.update(deleted_at: Time.zone.now)
+      article.discard
       return
     end
 
@@ -61,7 +61,7 @@ PROMPT
     json_string = response.content.match(/\{.*\}/m).to_s # 첫 번째 JSON 객체만 추출
     parsed_json = JSON.load(json_string) # JSON 파싱
     if parsed_json.blank? || parsed_json.empty?
-      article.update(deleted_at: Time.zone.now)
+      article.discard
       return
     end
 
