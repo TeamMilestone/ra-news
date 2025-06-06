@@ -1,6 +1,10 @@
 # Generated from app/models/article.rb with RBS::Inline
 
 class Article < ApplicationRecord
+  include PgSearch::Model
+
+  include Discard::Model
+
   IGNORE_HOSTS: Array[String]
 
   def generate_metadata: () -> void
