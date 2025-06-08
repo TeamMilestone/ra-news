@@ -70,7 +70,7 @@ PROMPT
 
     # JSON 데이터 저장
     article.tag_list.add(parsed_json["tags"]) if parsed_json["tags"].is_a?(Array)
-    article.deleted_at = Time.zone.now if parsed_json["is_related"] == false && article.site&.client == "HackerNews"
+    article.deleted_at = Time.zone.now if parsed_json["is_related"] == false && [ "HackerNews", "RssClient" ].include?(article.site&.client)
     article.update(parsed_json.slice("summary_key", "summary_detail", "title_ko", "is_related"))
     SitemapJob.perform_later
     PgSearch::Multisearch.rebuild(Article)
