@@ -47,7 +47,7 @@ class RssSiteJob < ApplicationJob
       # 중복 체크
       next if Article.exists?(origin_url: attrs[:origin_url])
 
-      Article.create(attrs.merge(site:)
+      Article.create(attrs.merge(site:))
     end
   end
 
