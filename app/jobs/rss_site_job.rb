@@ -59,7 +59,7 @@ class RssSiteJob < ApplicationJob
         title: item.title&.content,
         url: item.link&.href,
         origin_url: item.link&.href,
-        published_at: parse_time(item.published&.content) || Time.zone.now
+        published_at: parse_time(item.updated&.content) || Time.zone.now
       }
     when RSS::Rss::Channel::Item
       {
