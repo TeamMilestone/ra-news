@@ -76,6 +76,14 @@ class Article < ApplicationRecord
     update(slug: is_youtube? ? youtube_id : URI.parse(url).path.split("/").last.split(".").first)
   end
 
+  def update_published_at #: bool
+    response = fetch_url_content
+    return false unless response
+
+    self.published_at = url_to_published_at || parse_to_published_at(response.body) || Time.zone.now
+    save
+  end
+
   private
 
   def set_youtube_metadata #: void
@@ -92,12 +100,8 @@ class Article < ApplicationRecord
   #: (String body) -> void
   def set_webpage_metadata(body)
     self.slug = URI.parse(url)&.path.split("/").last.split(".").first
+    self.published_at = url_to_published_at || parse_to_published_at(body) || Time.zone.now
     doc = Nokogiri::HTML(body)
-    self.published_at = if doc.at("time")&.[]("datetime").present?
-      Time.zone.parse(doc.at("time")&.[]("datetime"))
-    else
-      url_to_published_at || parse_to_published_at(body) || Time.zone.now
-    end
     temp_title = doc.at("title")&.text
     self.title = temp_title.strip&.gsub(/\s+/, " ") if temp_title.is_a?(String)
   rescue URI::InvalidURIError
@@ -126,17 +130,33 @@ class Article < ApplicationRecord
   end
 
   def url_to_published_at #: DateTime?
-    match_data = URI.parse(url).path.match(%r{(\d{4})[/-](\d{2})[/-](\d{2})})
+    match_data = URI.parse(url).path.match(%r{(\d{4})[/-](\d{1,2})[/-](\d{1,2})})
     return unless match_data
 
     Time.zone.parse("#{match_data[1]}-#{match_data[2]}-#{match_data[3]}")
   end
 
   def parse_to_published_at(body) #: DateTime?
-    match_data = body.strip.match(/([A-Za-z]+)\s+(\d{1,2}),\s+(\d{4})/)
-    return unless match_data
+    doc = Nokogiri::HTML(body)
+    published_at = if doc.at("time").present?
+      time_element = doc.at("time")
+      time_element&.[]("datetime").present? ? Time.zone.parse(time_element&.[]("datetime")) : (time_element.text.present? ? Time.zone.parse(time_element.text) : nil)
+    elsif doc.css(".date").present?
+      # Nokogiri::HTML::Document에서 class가 "date"인 요소를 찾는 방법
+      date_element = doc.css(".date").first
+      date_element.text.present? ? Time.zone.parse(date_element.text) : nil
+    end
+    return published_at if published_at.is_a?(Time)
 
-    Time.zone.parse("#{match_data[3]}-#{match_data[1]}-#{match_data[2]}")
+    if body.strip.match(/([A-Za-z]+)\s+(\d{1,2}),\s+(\d{4})/)
+      match_data = body.strip.match(/([A-Za-z]+)\s+(\d{1,2}),\s+(\d{4})/)
+      Time.zone.parse("#{match_data[3]}-#{match_data[1]}-#{match_data[2]}")
+    elsif body.strip.match(%r{(\d{4})[/-](\d{1,2})[/-](\d{1,2})})
+      match_data = body.strip.match(%r{(\d{4})[/-](\d{1,2})[/-](\d{1,2})})
+      Time.zone.parse("#{match_data[1]}-#{match_data[2]}-#{match_data[3]}")
+    else
+      nil
+    end
   rescue StandardError => e
     puts "Error parsing published_at: #{e.message}"
     nil
