@@ -6,14 +6,14 @@ class GmailArticleJob < ApplicationJob
   #: (id Integer) -> void
   def perform(id = nil)
     if id.nil?
-      Site.where.not(email: nil).map { GmailArticleJob.perform_later(it.id) }
+      Site.gmail.map { GmailArticleJob.perform_later(it.id) }
       return
     end
 
     site = Site.find_by(id: id)
     return if site.nil? || site.email.nil?
 
-    links = Gmail.new.fetch_email_links(from: site.email)
+    links = site.init_client.fetch_email_links(from: site.email)
     return if links.empty?
 
     logger.debug links

@@ -1,9 +1,5 @@
 # Generated from app/models/site.rb with RBS::Inline
 
 class Site < ApplicationRecord
-  def init_client: () -> Object?
-
-  def is_rss?: () -> bool
-
-  def is_youtube?: () -> bool
+  def init_client: () -> Object
 end

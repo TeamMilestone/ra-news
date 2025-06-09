@@ -6,7 +6,7 @@ class YoutubeSiteJob < ApplicationJob
   #: (id Integer) -> void
   def perform(id = nil)
     if id.nil?
-      Site.all.select { |site| site.is_youtube? }.map { YoutubeSiteJob.perform_later(it.id) }
+      Site.youtube.map { YoutubeSiteJob.perform_later(it.id) }
       return
     end
 

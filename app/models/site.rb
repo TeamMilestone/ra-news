@@ -11,19 +11,20 @@ class Site < ApplicationRecord
     self.last_checked_at = Time.zone.now.beginning_of_month if last_checked_at.blank?
   end
 
-  def init_client #: Object?
-    return Youtube::Channel.new(id: channel) if is_youtube?
+  enum :client, [ :rss, :gmail, :youtube, :hacker_news ], default: :rss
 
-    return unless base_uri.is_a?(String)
-
-    client.constantize.new(base_uri: base_uri)
-  end
-
-  def is_rss? #: bool
-    client == "RssClient"
-  end
-
-  def is_youtube? #: bool
-    channel.present? && client == "Youtube::Channel"
+  def init_client #: Object
+    case client
+    when "rss"
+      RssClient.new(base_uri: base_uri)
+    when "gmail"
+      Gmail.new
+    when "hacker_news"
+      HackerNews.new
+    when "youtube"
+      Youtube::Channel.new(id: channel)
+    else
+      raise ArgumentError, "Unsupported client type: #{client}"
+    end
   end
 end

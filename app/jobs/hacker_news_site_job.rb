@@ -5,8 +5,10 @@
 class HackerNewsSiteJob < ApplicationJob
   def perform
     # Fetch top stories from Hacker News
-    site = Site.find_by(client: "HackerNews")
-    client = HackerNews.new
+    site = Site.hacker_news.first
+    return if site.nil?
+
+    client = site.init_client
     top_story_ids = client.new_stories
 
     tags = Tag.where(is_confirmed: true, taggings_count: 2...).map(&:name)

@@ -6,7 +6,7 @@ class RssSiteJob < ApplicationJob
   #: (id Integer) -> void
   def perform(id = nil)
     if id.nil?
-      Site.all.select { |site| site.is_rss? }.map { RssSiteJob.perform_later(it.id) }
+      Site.rss.map { RssSiteJob.perform_later(it.id) }
       return
     end
 
