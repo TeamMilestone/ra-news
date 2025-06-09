@@ -13,6 +13,8 @@ class Article < ApplicationRecord
 
   def update_slug: () -> bool
 
+  def update_published_at: () -> bool
+
   private
 
   def set_youtube_metadata: () -> void

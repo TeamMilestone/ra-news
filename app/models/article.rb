@@ -80,8 +80,7 @@ class Article < ApplicationRecord
     response = fetch_url_content
     return false unless response
 
-    self.published_at = url_to_published_at || parse_to_published_at(response.body) || Time.zone.now
-    save
+    update(published_at: url_to_published_at || parse_to_published_at(response.body) || Time.zone.now)
   end
 
   private
