@@ -27,5 +27,7 @@ class GmailArticleJob < ApplicationJob
         logger.error e
       end
     end
+
+    site.update(last_checked_at: Time.zone.now)
   end
 end

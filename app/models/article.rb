@@ -100,7 +100,9 @@ class Article < ApplicationRecord
   def set_webpage_metadata(body)
     self.slug = URI.parse(url)&.path.split("/").last.split(".").first
     self.published_at = url_to_published_at || parse_to_published_at(body) || Time.zone.now
-    doc = Nokogiri::HTML(body)
+    return if title.present?
+
+    doc = Nokogiri::HTML5(body)
     temp_title = doc.at("title")&.text
     self.title = temp_title.strip&.gsub(/\s+/, " ") if temp_title.is_a?(String)
   rescue URI::InvalidURIError
