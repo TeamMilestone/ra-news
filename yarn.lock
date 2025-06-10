@@ -60,15 +60,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"al-news@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "al-news@workspace:."
-  dependencies:
-    flowbite: "npm:^3.1.2"
-    flowbite-typography: "npm:^1.0.5"
-  languageName: unknown
-  linkType: soft
-
 "deepmerge@npm:^4.2.2":
   version: 4.3.1
   resolution: "deepmerge@npm:4.3.1"
@@ -229,6 +220,15 @@ __metadata:
   checksum: 10/6d7e21a772e8b05bf102636918654dac097bac013f0dc8346b72ac3604fc16829646f94ea862acccd8f82e910b00e2c11c1f0ea276543565d278c7ca35516a7c
   languageName: node
   linkType: hard
+
+"ra-news@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "ra-news@workspace:."
+  dependencies:
+    flowbite: "npm:^3.1.2"
+    flowbite-typography: "npm:^1.0.5"
+  languageName: unknown
+  linkType: soft
 
 "resolve@npm:^1.22.1":
   version: 1.22.10

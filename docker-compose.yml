@@ -1,9 +1,9 @@
 version: "3.3"
 
 services:
-  al-news:
-    image: ghcr.io/stadia/al-news:main
-    container_name: al-news
+  ra-news:
+    image: ghcr.io/stadia/ra-news:main
+    container_name: ra-news
     environment:
       - RAILS_MASTER_KEY=${RAILS_MASTER_KEY}
       - SOLID_QUEUE_IN_PUMA=true
