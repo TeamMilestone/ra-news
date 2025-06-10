@@ -7,9 +7,9 @@
 one:
   name: <%= Faker::Company.name %>
   base_uri: <%= "https://#{Faker::Internet.domain_name}" %>
-  client: 'ApplicationClient'
+  client: 'rss'
 
 two:
   name: <%= Faker::Company.name %>
   base_uri: <%= "https://#{Faker::Internet.domain_name}" %>
-  client: 'ApplicationClient'
+  client: 'rss'
