@@ -100,54 +100,47 @@ class ApplicationClient
     all_headers = default_headers.merge(headers)
     all_headers.delete("Content-Type") if klass == Net::HTTP::Get
 
-    conn = Faraday.new(url: "#{uri.scheme}://#{uri.host}", headers: all_headers) do |conn|
-        if form_data.present?
-          conn.request :url_encoded
-        elsif all_headers["Accept"] == "application/json"
-            conn.request :json
-        end
-        conn.response :json, content_type: /\bjson$/
-      end
+    conn = initialize_faraday_connection(uri, all_headers, form_data) # Refactored connection initialization
 
     response = case klass
     when Net::HTTP::Get.class
-      conn.get(uri.request_uri) do |req|
-        req.params = uri.query if query_params.present?
-      end
+                 conn.get(uri.request_uri) do |req|
+                   req.params = uri.query if query_params.present?
+                 end
     when Net::HTTP::Post.class
-      conn.post(uri.request_uri, build_body(body) || form_data) do |req|
-        req.params = uri.query if query_params.present?
-      end
+                 conn.post(uri.request_uri, build_body(body) || form_data) do |req|
+                   req.params = uri.query if query_params.present?
+                 end
     when Net::HTTP::Patch.class
-      conn.patch(uri.request_uri, build_body(body) || form_data) do |req|
-        req.params = uri.query if query_params.present?
-      end
+                 conn.patch(uri.request_uri, build_body(body) || form_data) do |req|
+                   req.params = uri.query if query_params.present?
+                 end
     when Net::HTTP::Put.class
-      conn.put(uri.request_uri, build_body(body)) do |req|
-        req.params = uri.query if query_params.present?
-      end
+                 conn.put(uri.request_uri, build_body(body)) do |req|
+                   req.params = uri.query if query_params.present?
+                 end
     when Net::HTTP::Delete.class
-      conn.delete(uri.request_uri) do |req|
-        req.params = uri.query if query_params.present?
-      end
+                 conn.delete(uri.request_uri) do |req|
+                   req.params = uri.query if query_params.present?
+                 end
     end
 
     response
   end
 
   def handle_response(response)
-    case response.status
-    when "200", "201", "202", "203", "204"
+    case response.status.to_i # Use to_i for robust comparison
+    when 200, 201, 202, 203, 204
       response
-    when "401"
+    when 401
       raise Unauthorized, response.body
-    when "403"
+    when 403
       raise Forbidden, response.body
-    when "404"
+    when 404
       raise NotFound, response.body
-    when "429"
+    when 429
       raise RateLimit, response.body
-    when "500"
+    when 500
       raise InternalError, response.body
     else
       raise Error, "#{response.status} - #{response.body}"
@@ -160,6 +153,20 @@ class ApplicationClient
       body
     else
       body.to_json
+    end
+  end
+
+  private
+
+  #: (URI uri, Hash headers, untyped form_data) -> Faraday::Connection
+  def initialize_faraday_connection(uri, headers, form_data)
+    Faraday.new(url: "#{uri.scheme}://#{uri.host}", headers: headers) do |conn|
+      if form_data.present?
+        conn.request :url_encoded
+      elsif headers["Accept"] == "application/json"
+        conn.request :json
+      end
+      conn.response :json, content_type: /\bjson$/
     end
   end
 end

@@ -27,6 +27,6 @@ class YoutubeContentTool < RubyLLM::Tool
     tsr = actions&.first&.dig("updateEngagementPanelAction", "content", "transcriptRenderer", "content", "transcriptSearchPanelRenderer", "body", "transcriptSegmentListRenderer", "initialSegments")
     return nil if tsr.nil? || tsr.empty?
 
-    tsr.map { |it| it.dig("transcriptSegmentRenderer", "startTimeText", "simpleText").to_s + " - " + (it.dig("transcriptSegmentRenderer", "snippet", "runs")&.map { |it| it.dig("text") }&.join(" ") || "") }.join("\n")
+    tsr.map { |it| "#{it.dig("transcriptSegmentRenderer", "startTimeText", "simpleText")} - #{it.dig("transcriptSegmentRenderer", "snippet", "runs")&.map { |run| run.dig("text") }&.join(" ")}" }.join("\n") # Use string interpolation for clarity
   end
 end

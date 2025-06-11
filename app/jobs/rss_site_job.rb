@@ -70,16 +70,4 @@ class RssSiteJob < ApplicationJob
       }
     end
   end
-
-  #: (String | Time | nil time_value) -> Time?
-  def parse_time(time_value)
-    case time_value
-    when Time
-      time_value
-    when String
-      Time.zone.parse(time_value)
-    else
-      nil
-    end
-  end
 end

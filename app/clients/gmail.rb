@@ -3,9 +3,12 @@
 # rbs_inline: enabled
 
 class Gmail
+  # Constants for default email and password
+  DEFAULT_GMAIL_ADDRESS = "stadia@gmail.com"
+
   def initialize #: Gmail
-    email ||= ENV["GMAIL_ADDRESS"] || "stadia@gmail.com"
-    password ||= ENV["GMAIL_PASSWORD"]
+    email = ENV["GMAIL_ADDRESS"] || DEFAULT_GMAIL_ADDRESS
+    password = ENV["GMAIL_PASSWORD"]
 
     Mail.defaults do
       retriever_method :imap, address: "imap.gmail.com",
@@ -81,6 +84,8 @@ class Gmail
 
   #: (uri URI::HTTPS) -> String?
   def check_link(uri)
+    # uri.path.size < 2 조건은 너무 광범위하게 유효한 링크를 필터링할 수 있으므로,
+    # 필요하다면 더 구체적인 예외 처리 또는 제거를 고려해야 합니다.
     return if uri.path.nil? || uri.path.size < 2 || Article::IGNORE_HOSTS.any? { |pattern| uri.host&.match?(/#{pattern}/i) }
 
     uri.to_s
