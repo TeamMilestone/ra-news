@@ -4,8 +4,12 @@ one:
   body: MyString
   user: one
   article: one
+  lft: 1
+  rgt: 2
 
 two:
   body: MyString
   user: two
   article: two
+  lft: 3
+  rgt: 4
