@@ -21,6 +21,8 @@ class Article < ApplicationRecord
 
   belongs_to :site, optional: true
 
+  has_many :comments, dependent: :nullify
+
   validates :url, :origin_url, presence: true, uniqueness: true
 
   validates :slug, uniqueness: true, allow_blank: true
@@ -90,6 +92,16 @@ class Article < ApplicationRecord
     return false unless response
 
     update(published_at: url_to_published_at || extract_published_at_from_content(response.body) || Time.zone.now)
+  end
+
+  # URL에서 slug를 사용하도록 설정
+  def to_param
+    slug
+  end
+
+  # slug로 Article을 찾는 메서드
+  def self.find_by_slug(slug)
+    find_by(slug: slug)
   end
 
   private

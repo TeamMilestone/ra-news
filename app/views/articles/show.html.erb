@@ -63,4 +63,19 @@
         </div>
     </div>
   </div>
+
+  <!-- 댓글 섹션 -->
+  <div class="bg-gray-800 rounded-xl shadow-md overflow-hidden border border-gray-700">
+    <div class="p-4 md:p-8">
+      <h3 id="comments_header" class="text-xl font-semibold text-gray-100 mb-6">댓글 (<%= @comments.count %>)</h3>
+
+      <!-- 댓글 목록 -->
+      <div id="comments">
+        <%= render partial: 'comments/comments', locals: { article: @article, comments: @comments } %>
+      </div>
+
+      <!-- 댓글 작성 폼 -->
+      <%= render partial: 'comments/form', locals: { article: @article, comment: @comment } %>
+    </div>
+  </div>
 </div>
