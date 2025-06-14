@@ -35,4 +35,10 @@ class ArticleResource < Madmin::Resource
   # def self.default_sort_column = "created_at"
   #
   # def self.default_sort_direction = "desc"
+
+  class << self
+    def model_find(id)
+      model.find_by_slug(id)
+    end
+  end
 end
