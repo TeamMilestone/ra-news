@@ -39,7 +39,7 @@ class ArticleJob < ApplicationJob
 ```
 PROMPT
 
-    chat = RubyLLM.chat(model: "gemini-2.5-flash-preview-05-20", provider: :gemini)
+    chat = RubyLLM.chat(model: "gemini-2.5-flash-preview-05-20", provider: :gemini).with_temperature(0.7)
     # chat = RubyLLM.chat(model: "deepseek/deepseek-r1-0528-qwen3-8b", provider: :openai, assume_model_exists: true)
     llm_instructions = "You are an expert in the Ruby Programming Language and RubyOnRails framework. You are precise and concise. Use OREO technique, pyramid structure, and transition expressions actively. All output should be in Korean."
     chat.with_instructions(llm_instructions)
