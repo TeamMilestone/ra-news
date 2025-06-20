@@ -7,6 +7,7 @@ class ArticleResource < Madmin::Resource
   attribute :deleted_at, index: true
   attribute :created_at, form: false
   attribute :host, index: true
+  attribute :is_related, index: true
 
   attribute :url, index: false
   attribute :updated_at, form: false
@@ -15,6 +16,7 @@ class ArticleResource < Madmin::Resource
   attribute :published_at
   attribute :origin_url, index: false
   attribute :tag_list, index: false
+  attribute :is_youtube, index: false
 
   # Associations
   attribute :user, index: false, form: false
