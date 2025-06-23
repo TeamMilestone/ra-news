@@ -43,14 +43,23 @@ PROMPT
     # chat = RubyLLM.chat(model: "deepseek/deepseek-r1-0528-qwen3-8b", provider: :openai, assume_model_exists: true)
     llm_instructions = "You are an expert in the Ruby Programming Language and RubyOnRails framework. You are precise and concise. Use OREO technique, pyramid structure, and transition expressions actively. All output should be in Korean."
     chat.with_instructions(llm_instructions)
+    chat.with_tool(ArticleBodyTool.new)
     response =  if article.is_youtube?
       # YouTube URL인 경우
-      chat.with_tool(YoutubeContentTool.new)
-      chat.ask("YoutubeContent 로 제공한 url과 Transcript를 #{prompt} (url: #{article.url})")
+      article.update(body: YoutubeContentTool.new.execute(url: article.url)) if article.body.blank?
+      chat.ask("YoutubeContent 로 제공한 url과 Transcript를 #{prompt} (url: #{article.url}, id: #{article.id})")
     else
       # YouTube URL이 아닌 경우
-      chat.with_tool(HtmlContentTool.new)
-      chat.ask("HtmlContent 로 제공한 url과 본문을 #{prompt} (url: #{article.url})")
+      article.update(body: HtmlContentTool.new.execute(url: article.url)) if article.body.blank?
+      chat.ask("HtmlContent 로 제공한 url과 본문을 #{prompt} (url: #{article.url}, id: #{article.id})")
+    end
+
+    if article.embedding.blank?
+      embedded_body = RubyLLM.embed(
+        article.body,
+        model: "text-embedding-004" # Google's model
+      )
+      article.update(embedding: embedded_body.vectors.to_a)
     end
 
     unless response.respond_to?(:content)

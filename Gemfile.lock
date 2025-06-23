@@ -235,6 +235,8 @@ GEM
     msgpack (1.8.0)
     multipart-post (2.4.1)
     mutex_m (0.3.0)
+    neighbor (0.6.0)
+      activerecord (>= 7.1)
     net-http (0.6.0)
       uri
     net-imap (0.5.9)
@@ -528,6 +530,7 @@ DEPENDENCIES
   kramdown
   madmin (~> 2.0)
   mission_control-jobs
+  neighbor
   ostruct
   pagy (~> 9.3)
   pg (~> 1.1)

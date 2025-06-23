@@ -28,9 +28,9 @@ class HtmlContentTool < RubyLLM::Tool
     redirect_url = response.headers["location"]
     url = if redirect_url.start_with?("http")
                  redirect_url
-               else
+    else
                  URI.join(url, redirect_url).to_s
-               end
+    end
 
     handle_redirection(url, count + 1)
   end
