@@ -52,7 +52,6 @@ group :development, :test do
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem "rubocop", require: false
   gem "rubocop-rails-omakase", require: false
-  gem "tapioca", require: false
   gem "steep", require: false
   gem "dotenv-rails"
   gem "faker"
