@@ -7,6 +7,8 @@ class Article < ApplicationRecord
 
   include Discard::Model
 
+  has_neighbors :embedding
+
   self.discard_column = :deleted_at
 
   multisearchable against: [ :title, :title_ko, :summary_key, :summary_detail ], if: lambda { |record| record.deleted_at.nil? }
