@@ -3,12 +3,14 @@
 # rbs_inline: enabled
 
 class RssSiteJob < ApplicationJob
+  def self.enqueue_all #: void
+    start = -2
+    ActiveJob.perform_all_later(Site.rss.map { |site| start += 2; RssSiteJob.new(site.id).set(wait: start.minutes) })
+  end
+
   #: (id Integer) -> void
   def perform(id = nil)
-    if id.nil?
-      Site.rss.map { RssSiteJob.perform_later(it.id) }
-      return
-    end
+    RssSiteJob.enqueue_all and return if id.nil?
 
     site = Site.find_by(id:)
     return if site.nil?
