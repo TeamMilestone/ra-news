@@ -52,7 +52,7 @@ class Article < ApplicationRecord
   YOUTUBE_NORMALIZED_HOST = "www.youtube.com".freeze
 
   IGNORE_HOSTS = %w[meetup.com maily.so github.com bsky.app bsky.social threadreaderapp.com threads.com threads.net x.com
-    linkedin.com meet.google.com twitch.tv inf.run lu.ma shortruby.com twitter.com facebook.com daily.dev libhunt.com hotwireweekly.com].freeze #: Array[String]
+    linkedin.com meet.google.com twitch.tv inf.run lu.ma shortruby.com twitter.com facebook.com daily.dev libhunt.com hotwireweekly.com reddit.com].freeze #: Array[String]
 
   def generate_metadata #: void
     return unless url.is_a?(String)

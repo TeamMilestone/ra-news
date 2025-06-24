@@ -56,7 +56,7 @@ class Gmail
       # 특수 문자 및 인코딩 문제 해결
       html_content = html_content.gsub(/[\r\n]+/, " ") # 줄바꿈 제거
                                   .gsub(/=\r?\n/, "") # quoted-printable 줄바꿈 제거
-      Rails.logger.debug html_content
+      # Rails.logger.debug html_content
       next unless html_content
 
       # Nokogiri로 파싱
@@ -64,30 +64,10 @@ class Gmail
 
       # 링크 추출
       html_doc.css("a[href]").each {
-        uri = URI.parse(it["href"])
-        case uri.host
-        when "maily.so"
-          # URI 객체가 query를 지원하는지 확인 (예: URI::HTTP, URI::HTTPS)
-          if uri.respond_to?(:query) && uri.query
-            # 쿼리 문자열을 해시(맵)으로 변환
-            query_params = URI.decode_www_form(uri.query).to_h
-            link = check_link(URI.parse(query_params["url"])) if query_params["url"].is_a?(String)
-          end
-        else
-          link = check_link(uri)
-        end
-        links << link if link.is_a?(String)
+        next if it["href"].blank?
+        links << it["href"] if it["href"].is_a?(String)
       }
     end
     links.uniq
-  end
-
-  #: (uri URI::HTTPS) -> String?
-  def check_link(uri)
-    # uri.path.size < 2 조건은 너무 광범위하게 유효한 링크를 필터링할 수 있으므로,
-    # 필요하다면 더 구체적인 예외 처리 또는 제거를 고려해야 합니다.
-    return if uri.path.nil? || uri.path.size < 2 || Article::IGNORE_HOSTS.any? { |pattern| uri.host&.match?(/#{pattern}/i) }
-
-    uri.to_s
   end
 end
