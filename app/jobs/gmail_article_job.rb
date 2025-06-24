@@ -55,6 +55,8 @@ class GmailArticleJob < ApplicationJob
     logger.info "Created article for #{link}"
   rescue ActiveRecord::RecordInvalid => e
     logger.error "Failed to create article for #{link}: #{e.message}"
+  rescue ActiveRecord::RecordNotUnique => e
+    logger.error "Article already exists for #{link}: #{e.message}"
   end
 
   # Extracts the target link from a given URL, handling various redirect and tracking services.
@@ -66,6 +68,8 @@ class GmailArticleJob < ApplicationJob
                extract_url_param(uri)
     when "rubyweekly.com"
                handle_rubyweekly_link(link)
+    when "link.mail.beehiiv.com"
+               extract_redirect_location(link)
     else
                link
     end

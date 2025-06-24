@@ -51,8 +51,9 @@ class Article < ApplicationRecord
   # YouTube URL의 정규화된 호스트를 상수로 정의
   YOUTUBE_NORMALIZED_HOST = "www.youtube.com".freeze
 
-  IGNORE_HOSTS = %w[meetup.com maily.so github.com bsky.app bsky.social threadreaderapp.com threads.com threads.net x.com
-    linkedin.com meet.google.com twitch.tv inf.run lu.ma shortruby.com twitter.com facebook.com daily.dev libhunt.com hotwireweekly.com reddit.com].freeze #: Array[String]
+  IGNORE_HOSTS = %w[meetup.com maily.so github.com bsky.app bsky.social threadreaderapp.com threads.com threads.net x.com beehiiv.com join1440.com visualstudio.com ruby.social elk.zone
+    indieweb.social
+    linkedin.com meet.google.com twitch.tv inf.run lu.ma shortruby.com twitter.com facebook.com daily.dev libhunt.com hotwireweekly.com reddit.com sfdsfsdf].freeze #: Array[String]
 
   def generate_metadata #: void
     return unless url.is_a?(String)
@@ -115,8 +116,8 @@ class Article < ApplicationRecord
     parsed_url = URI.parse(url)
     if parsed_url.respond_to?(:query) && parsed_url.query
       query_params = URI.decode_www_form(parsed_url.query || "").to_h
-      query_params.except!("utm_source", "utm_medium", "utm_campaign")
-      self.url = "#{parsed_url.scheme}://#{parsed_url.host}#{parsed_url.path}?#{query_params.map { |k, v| "#{k}=#{v}" }.join('&')}"
+      query_params.except!("utm_source", "utm_medium", "utm_campaign", "_bhlid")
+      self.url = query_params.empty? ? "#{parsed_url.scheme}://#{parsed_url.host}#{parsed_url.path}" : "#{parsed_url.scheme}://#{parsed_url.host}#{parsed_url.path}?#{query_params.map { |k, v| "#{k}=#{v}" }.join('&')}"
     end
     self.host = parsed_url.host
     self.is_youtube = true if host&.match?(/youtube/i)
