@@ -113,6 +113,11 @@ class Article < ApplicationRecord
 
   def set_initial_url_and_host #: void
     parsed_url = URI.parse(url)
+    if parsed_url.respond_to?(:query) && parsed_url.query
+      query_params = URI.decode_www_form(parsed_url.query || "").to_h
+      query_params.except!('utm_source', 'utm_medium', 'utm_campaign')
+      self.url = "#{parsed_url.scheme}://#{parsed_url.host}#{parsed_url.path}?#{query_params.map { |k, v| "#{k}=#{v}" }.join('&')}"
+    end
     self.host = parsed_url.host
     self.is_youtube = true if host&.match?(/youtube/i)
     # IGNORE_HOSTS 패턴에 맞는 호스트이거나 경로가 너무 짧으면 discard
@@ -144,7 +149,7 @@ class Article < ApplicationRecord
 
     doc = Nokogiri::HTML5(body)
     temp_title = doc.at("title")&.text
-    self.title = temp_title.strip&.gsub(/\s+/, " ") if temp_title.is_a?(String)
+    self.title = temp_title.strip.gsub(/\s+/, " ") if temp_title.is_a?(String)
   rescue URI::InvalidURIError
     logger.error "Invalid URI for webpage metadata: #{url}"
     # slug, published_at, title 등에 대한 기본값 설정 또는 오류 처리
