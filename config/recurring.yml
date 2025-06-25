@@ -1,10 +1,11 @@
 production:
   rss_site_job:
-    class: RssSiteJob
+    class:
+    command: "RssSiteJob.enqueue_all"
     schedule: "0 7 * * *"
   gmail_article_job:
-    class: GmailArticleJob
-    schedule: "0 10 * * 2"
+    command: "GmailArticleJob.enqueue_all"
+    schedule: "0 10 * * 1-5"
   youtube_site_job:
     class: YoutubeSiteJob
     schedule: "0 8 * * *"

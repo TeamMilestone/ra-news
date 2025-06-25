@@ -3,18 +3,17 @@
 # rbs_inline: enabled
 
 class RssSiteJob < ApplicationJob
+  def self.enqueue_all
+    jobs = []
+    Site.rss.find_each.with_index do |site, index|
+      jobs << RssSiteJob.new(site.id).set(wait: (index * 1).minutes)
+    end
+    ActiveJob.perform_all_later(jobs)
+  end
+
   # Performs the job for a given site ID.
   #: (site_id ?Integer) -> void
   def perform(site_id = nil)
-    if site_id.blank?
-      jobs = []
-      Site.rss.find_each.with_index do |site, index|
-        jobs << RssSiteJob.new(site.id).set(wait: (index * 1).minutes)
-      end
-      ActiveJob.perform_all_later(jobs)
-      return
-    end
-
     site = Site.find(site_id)
     feed = fetch_feed(site)
     return unless feed

@@ -3,18 +3,17 @@
 # rbs_inline: enabled
 
 class GmailArticleJob < ApplicationJob
+  def self.enqueue_all
+    jobs = []
+    Site.gmail.find_each.with_index do |site, index|
+      jobs << GmailArticleJob.new(site.id).set(wait: (index * 1).minutes)
+    end
+    ActiveJob.perform_all_later(jobs)
+  end
+
   # Performs the job for a given site ID.
   #: (site_id ?int) -> void
   def perform(site_id = nil)
-    if site_id.blank?
-      jobs = []
-      Site.gmail.find_each.with_index do |site, index|
-        jobs << GmailArticleJob.new(site.id).set(wait: (index * 1).minutes)
-      end
-      ActiveJob.perform_all_later(jobs)
-      return
-    end
-
     site = Site.find(site_id)
     return if site.email.blank?
 
