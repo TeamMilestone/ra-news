@@ -4,11 +4,9 @@
 
 class RssSiteJob < ApplicationJob
   def self.enqueue_all
-    jobs = []
     Site.rss.find_each.with_index do |site, index|
-      jobs << RssSiteJob.new(site.id).set(wait: (index * 1).minutes)
+      RssSiteJob.set(wait: index.minutes).perform_later(site.id)
     end
-    ActiveJob.perform_all_later(jobs)
   end
 
   # Performs the job for a given site ID.
@@ -38,6 +36,7 @@ class RssSiteJob < ApplicationJob
 
     Article.create!(attributes)
     logger.info "Created article for #{attributes[:url]}"
+    sleep 1
   rescue ActiveRecord::RecordInvalid => e
     logger.error "Failed to create article for #{attributes[:url]}: #{e.message}"
   end

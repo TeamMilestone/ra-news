@@ -4,11 +4,9 @@
 
 class GmailArticleJob < ApplicationJob
   def self.enqueue_all
-    jobs = []
     Site.gmail.find_each.with_index do |site, index|
-      jobs << GmailArticleJob.new(site.id).set(wait: (index * 1).minutes)
+      GmailArticleJob.set(wait: index.minutes).perform_later(site.id)
     end
-    ActiveJob.perform_all_later(jobs)
   end
 
   # Performs the job for a given site ID.
@@ -52,6 +50,7 @@ class GmailArticleJob < ApplicationJob
   def create_article(link, site)
     Article.create!(url: link, origin_url: link, site: site)
     logger.info "Created article for #{link}"
+    sleep 1
   rescue ActiveRecord::RecordInvalid => e
     logger.error "Failed to create article for #{link}: #{e.message}"
   rescue ActiveRecord::RecordNotUnique => e
