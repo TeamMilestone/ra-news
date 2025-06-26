@@ -38,7 +38,7 @@ class Article < ApplicationRecord
   end
 
   after_commit do
-    ArticleJob.perform_later(id) if saved_change_to_url? && deleted_at.nil? # Ensure deleted_at is checked here too
+    # ArticleJob.perform_later(id) if saved_change_to_url? && deleted_at.nil? # Ensure deleted_at is checked here too
   end
 
   before_save do
@@ -52,8 +52,8 @@ class Article < ApplicationRecord
   YOUTUBE_NORMALIZED_HOST = "www.youtube.com".freeze
 
   IGNORE_HOSTS = %w[meetup.com maily.so github.com bsky.app bsky.social threadreaderapp.com threads.com threads.net x.com beehiiv.com join1440.com visualstudio.com ruby.social elk.zone
-    indieweb.social rubygems.org javascriptweekly.com postgresweekly.com
-    linkedin.com meet.google.com twitch.tv inf.run lu.ma shortruby.com twitter.com facebook.com daily.dev libhunt.com hotwireweekly.com reddit.com sfdsfsdf].freeze #: Array[String]
+    indieweb.social rubygems.org javascriptweekly.com postgresweekly.com rubyweekly.com
+    linkedin.com meet.google.com twitch.tv inf.run lu.ma shortruby.com twitter.com facebook.com daily.dev libhunt.com hotwireweekly.com reddit.com].freeze #: Array[String]
 
   def generate_metadata #: void
     return unless url.is_a?(String)

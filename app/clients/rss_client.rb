@@ -5,6 +5,10 @@
 class RssClient < ApplicationClient
   #: (path String) -> RSS::Rss?
   def feed(path)
-    RSS::Parser.parse(get(path).body)
-  end
+    response = get(path)
+    if response.status.between?(300, 399) && response.headers["location"]
+      response = get(response.headers["location"])
+    end
+    RSS::Parser.parse(response.body)
+ end
 end

@@ -11,11 +11,11 @@ class Site < ApplicationRecord
     self.last_checked_at = Time.zone.now.beginning_of_year if last_checked_at.blank?
   end
 
-  enum :client, [ :rss, :gmail, :youtube, :hacker_news ], default: :rss
+  enum :client, [ :rss, :gmail, :youtube, :hacker_news, :rss_page ], default: :rss
 
   def init_client #: Object
     case client
-    when "rss"
+    when "rss", "rss_page"
       RssClient.new(base_uri: base_uri)
     when "gmail"
       Gmail.new
