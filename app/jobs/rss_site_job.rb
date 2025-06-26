@@ -14,7 +14,10 @@ class RssSiteJob < ApplicationJob
     site_id = ids.shift
     site = Site.find(site_id)
     feed = fetch_feed(site)
-    return unless feed
+    unless feed
+      RssSiteJob.perform_later(ids) unless ids.empty?
+      return
+    end
 
     create_articles_from_feed(feed, site)
 

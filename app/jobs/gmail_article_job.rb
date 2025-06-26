@@ -16,7 +16,10 @@ class GmailArticleJob < ApplicationJob
     return if site.email.blank?
 
     links = fetch_new_email_links(site)
-    return if links.empty?
+    if links.empty?
+      GmailArticleJob.perform_later(ids) unless ids.empty?
+      return
+    end
 
     create_articles_from_links(links, site)
 
