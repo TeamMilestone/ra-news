@@ -7,7 +7,7 @@ class ArticleJob < ApplicationJob
 
   #: (id int) -> void
   def perform(id)
-    article = Article.find_by(id: id)
+    article = Article.kept.find_by(id: id)
     return unless article.is_a?(Article)
 
     prompt = <<~PROMPT
