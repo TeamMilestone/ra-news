@@ -79,7 +79,14 @@ class Article < ApplicationRecord
 
   def youtube_id #: String?
     # nil 체크를 포함하여 안전하게 접근
-    URI.decode_www_form(URI.parse(url).query).to_h["v"] if url.is_a?(String) && URI.parse(url).query.present?
+    if url.is_a?(String)
+      uri = URI.parse(url)
+      if uri.query.present?
+        URI.decode_www_form(uri.query).to_h["v"]
+      elsif uri.path.start_with?("/live")
+        uri.path.split("/").last
+      end
+    end
   rescue URI::InvalidURIError
     logger.error "Invalid URI for youtube_id: #{url}"
     nil
@@ -141,7 +148,7 @@ class Article < ApplicationRecord
     parsed_url = URI.parse(url)
     if parsed_url.respond_to?(:query) && parsed_url.query
       query_params = URI.decode_www_form(parsed_url.query || "").to_h
-      query_params.except!("utm_source", "utm_medium", "utm_campaign", "_bhlid")
+      query_params.except!("utm_source", "utm_medium", "utm_campaign", "_bhlid", "ref")
       self.url = query_params.empty? ? "#{parsed_url.scheme}://#{parsed_url.host}#{parsed_url.path}" : "#{parsed_url.scheme}://#{parsed_url.host}#{parsed_url.path}?#{query_params.map { |k, v| "#{k}=#{v}" }.join('&')}"
     end
     self.host = parsed_url.host
@@ -155,7 +162,7 @@ class Article < ApplicationRecord
 
   def set_youtube_metadata #: void
     self.slug = youtube_id
-    self.url = "https://#{YOUTUBE_NORMALIZED_HOST}/watch?v=#{youtube_id}"
+    # self.url = "https://#{YOUTUBE_NORMALIZED_HOST}/watch?v=#{youtube_id}"
     video = Yt::Video.new id: youtube_id
     self.published_at = video.published_at if video&.published_at.is_a?(Time)
     self.title = video.title if video&.title.is_a?(String)
