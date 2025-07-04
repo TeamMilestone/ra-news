@@ -90,6 +90,7 @@ PROMPT
     end
     article.update(parsed_json.slice("summary_key", "summary_detail", "title_ko", "is_related"))
     SitemapJob.perform_later
-    PgSearch::Multisearch.rebuild(Article, transactional: false)
+    PgSearch::Multisearch.rebuild(Article, clean_up: false, transactional: false)
+    # PgSearch::Multisearch.rebuild(Article, transactional: false)
   end
 end
