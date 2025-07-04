@@ -1,8 +1,11 @@
 <% content_for :title, "RA || 루비 AI 뉴스" %>
 
-<div id="articlesList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+<div id="articlesList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+    data-controller="scroll-reveal"
+    data-scroll-reveal-threshold-value="0.1"
+    data-scroll-reveal-delay-value="50">
   <% @articles.each do |article| %>
-    <div id="<%= dom_id article %>" class="bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-shadow overflow-hidden border border-gray-700 p-3 md:p-6 flex flex-col">
+    <div id="<%= dom_id article %>" data-scroll-reveal-target="item" class="bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition-shadow overflow-hidden border border-gray-700 p-3 md:p-6 flex flex-col">
       <div class="mb-3">
         <h2 class="text-xl font-semibold text-gray-100 hover:text-green-400"><%= link_to article.title_ko || article.title, article_path(article.slug) %></h2>
         <h3 class="text-l text-gray-100"><%= article.title %></h3>

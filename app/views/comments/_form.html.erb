@@ -1,26 +1,68 @@
 <%= turbo_frame_tag "new_comment" do %>
-  <%= form_with(model: [article, comment], local: false) do |f| %>
-    <% if comment.errors.any? %>
-      <div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-md mt-3">
-        <h2><%= pluralize(comment.errors.count, "error") %> prohibited this comment from being saved:</h2>
+  <div class="bg-gray-700 rounded-xl p-6 border border-gray-600">
+    <h4 class="text-lg font-semibold text-gray-100 mb-4 flex items-center">
+      <svg class="w-5 h-5 mr-2 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
+      </svg>
+      댓글 작성
+    </h4>
 
-        <ul class="list-disc ml-6">
-          <% comment.errors.each do |error| %>
-            <li><%= error.full_message %></li>
-          <% end %>
-        </ul>
+    <%= form_with(model: [article, comment], local: false, class: "space-y-4") do |f| %>
+      <% if comment.errors.any? %>
+        <div class="bg-red-900 bg-opacity-50 border border-red-500 text-red-200 px-4 py-3 rounded-lg">
+          <div class="flex items-center mb-2">
+            <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+            </svg>
+            <h5 class="font-medium">오류가 발생했습니다:</h5>
+          </div>
+          <ul class="list-disc list-inside space-y-1 text-sm">
+            <% comment.errors.each do |error| %>
+              <li><%= error.full_message %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <div class="space-y-2">
+        <%= f.label :body, "댓글 내용", class: "block text-sm font-medium text-gray-300" %>
+        <%= f.text_area :body,
+            rows: 4,
+            class: [
+              "w-full px-4 py-3 rounded-lg border text-gray-200 bg-gray-800 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 resize-none",
+              (comment.errors[:body].none? ? "border-gray-600 hover:border-gray-500" : "border-red-500 focus:ring-red-500")
+            ].join(' '),
+            placeholder: "댓글을 입력하세요...",
+            maxlength: 1000 %>
+        <div class="text-xs text-gray-400 text-right">
+          <span id="comment-char-count">0</span>/1000
+        </div>
+      </div>
+
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div class="text-xs text-gray-400">
+          <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          정중하고 건설적인 댓글을 작성해 주세요.
+        </div>
+
+        <%= f.submit "댓글 작성",
+            class: "inline-flex items-center px-6 py-3 bg-blue-600 hover:bg-blue-700 focus:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-800" %>
       </div>
     <% end %>
-
-    <div class="my-5">
-      <%= f.text_area :body, rows: 2, class: [
-        "w-full border rounded p-2",
-        (comment.errors[:body].none? ? "border-gray-400 focus:outline-blue-600" : "border-red-400 focus:outline-red-600")
-      ].join(' '), placeholder: "댓글을 입력하세요..." %>
-    </div>
-
-    <div class="inline">
-      <%= f.submit "댓글 작성", class: "w-full sm:w-auto rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white inline-block font-medium cursor-pointer" %>
-    </div>
-  <% end %>
+  </div>
 <% end %>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const textarea = document.querySelector('#comment_body');
+    const charCount = document.querySelector('#comment-char-count');
+
+    if (textarea && charCount) {
+      textarea.addEventListener('input', function() {
+        charCount.textContent = this.value.length;
+      });
+    }
+  });
+</script>

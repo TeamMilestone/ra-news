@@ -11,9 +11,27 @@
       gtag('config', 'G-56PSNXG7QG');
     </script>
     <title><%= content_for(:title) || "RA || 루비 AI 뉴스" %></title>
-    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#059669">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="최신 Ruby, Rails, AI 관련 뉴스와 트렌드를 한곳에서 만나보세요">
+    <meta name="keywords" content="Ruby, Rails, AI, 프로그래밍, 개발, 뉴스">
+    <meta name="author" content="RA || 루비 AI 뉴스">
+
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="<%= content_for(:title) || "RA || 루비 AI 뉴스" %>">
+    <meta property="og:description" content="최신 Ruby, Rails, AI 관련 뉴스와 트렌드를 한곳에서 만나보세요">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="RA || 루비 AI 뉴스">
+
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="<%= content_for(:title) || "RA || 루비 AI 뉴스" %>">
+    <meta name="twitter:description" content="최신 Ruby, Rails, AI 관련 뉴스와 트렌드를 한곳에서 만나보세요">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
@@ -31,7 +49,17 @@
     <%= javascript_importmap_tags %>
   </head>
 
-  <body class="bg-gray-900 text-gray-200 min-h-screen flex flex-col">
+  <body class="bg-gray-900 text-gray-200 min-h-screen flex flex-col"
+        data-controller="navbar page-loader"
+        data-action="click@window->navbar#clickOutside keydown@window->navbar#keydown turbo:before-visit@window->page-loader#beforeTurboVisit turbo:load@window->page-loader#afterTurboLoad">
+
+    <!-- Loading Indicator -->
+    <div data-page-loader-target="loader" class="fixed inset-0 bg-gray-900 bg-opacity-75 z-50 hidden items-center justify-center">
+      <div class="flex flex-col items-center space-y-4">
+        <div class="animate-spin rounded-full h-12 w-12 border-4 border-green-500 border-t-transparent"></div>
+        <div class="text-white font-medium">로딩 중...</div>
+      </div>
+    </div>
 
     <nav class="bg-green-700 border-green-800">
       <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">

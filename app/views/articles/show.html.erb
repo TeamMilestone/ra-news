@@ -1,93 +1,199 @@
 <% content_for :title, @article.title_ko %>
 
-<div class="space-y-6 max-w-6xl mx-auto" id="<%= dom_id @article %>">
-  <div id="articleDetail" class="bg-gray-800 rounded-xl shadow-md overflow-hidden border border-gray-700">
-    <div class="p-4 md:p-8">
-        <h1 class="text-2xl font-bold text-gray-100 mb-3"><%= @article.title_ko %></h1>
+<div class="space-y-6 lg:space-y-8 max-w-6xl mx-auto" id="<%= dom_id @article %>">
+  <!-- 메인 아티클 -->
+  <article class="bg-gray-800 rounded-xl shadow-lg overflow-hidden border border-gray-700">
+    <!-- 아티클 헤더 -->
+    <header class="p-4 md:p-6 lg:p-8 border-b border-gray-700">
+      <div class="mb-6">
+        <h1 class="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-100 mb-4 leading-tight">
+          <%= @article.title_ko %>
+        </h1>
 
-        <h2 class="text-xl font-semibold text-white mb-3"><%= @article.title %></h2>
-
-        <div class="flex flex-wrap items-center text-xs text-gray-400 mb-3 md:mb-6">
-            <span class="mr-4 inline-flex items-center">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4 mr-1 text-gray-500">
-                <path d="M10 8a3 3 0 100-6 3 3 0 000 6zM3.465 14.493a1.23 1.23 0 00.41 1.412A9.957 9.957 0 0010 18c2.31 0 4.438-.784 6.131-2.1.43-.333.604-.903.408-1.41a7.002 7.002 0 00-13.074.003z" />
-              </svg>
-              <%= @article.user&.name || 'Unknown' %>
-            </span>
-            <span class="mr-4 inline-flex items-center">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4 mr-1 text-gray-500">
-                <path fill-rule="evenodd" d="M5.75 2a.75.75 0 01.75.75V4h7V2.75a.75.75 0 011.5 0V4h.25A2.75 2.75 0 0118 6.75v8.5A2.75 2.75 0 0115.25 18H4.75A2.75 2.75 0 012 15.25v-8.5A2.75 2.75 0 014.75 4H5V2.75A.75.75 0 015.75 2zm-1 5.5c0-.414.336-.75.75-.75h10.5a.75.75 0 010 1.5H5.5a.75.75 0 01-.75-.75z" clip-rule="evenodd" />
-              </svg>
-              <%= @article.published_at&.strftime("%Y년 %m월 %d일") || 'N/A' %>
-            </span>
-            <%= link_to @article.url, target: "_blank", class: "inline-flex items-center text-base text-blue-400 hover:text-blue-300 hover:underline font-medium" do %>
-              <%= @article.url %>
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-4 h-4 ml-1">
-                <path fill-rule="evenodd" d="M4.25 5.5a.75.75 0 000 1.5h5.5a.75.75 0 000-1.5h-5.5zm0 3a.75.75 0 000 1.5h3.5a.75.75 0 000-1.5h-3.5zm0 3a.75.75 0 000 1.5h5.5a.75.75 0 000-1.5h-5.5zm8-5a.75.75 0 01.75-.75h.5a.75.75 0 01.75.75v.5c0 .414.336.75.75.75h.5a.75.75 0 01.75.75v.5a.75.75 0 01-.75.75h-.5a.75.75 0 01-.75-.75v-.5a.75.75 0 00-.75-.75h-.5a.75.75 0 01-.75-.75v-.5zM5 3.25a.75.75 0 01.75-.75h8.5a.75.75 0 01.75.75v8.5a.75.75 0 01-.75.75h-8.5a.75.75 0 01-.75-.75v-8.5z" clip-rule="evenodd" />
-                <path d="M3 4.75A2.75 2.75 0 015.75 2h8.5A2.75 2.75 0 0117 4.75v8.5A2.75 2.75 0 0114.25 16h-8.5A2.75 2.75 0 013 13.25v-8.5zm2.75-.904a1.25 1.25 0 00-1.25 1.25v8.5c0 .69.56 1.25 1.25 1.25h8.5c.69 0 1.25-.56 1.25-1.25v-8.5c0-.69-.56-1.25-1.25-1.25h-8.5z" />
-              </svg>
-            <% end %>
-        </div>
-
-        <div class="border-t border-b border-gray-700 py-6">
-            <h2 class="text-xl font-semibold text-gray-100 mb-4">3줄 요약</h2>
-            <% if @article.summary_key.is_a?(Array) %>
-                <ul class="list-disc pl-5 space-y-1 my-4">
-                    <% @article.summary_key&.each do |item| %>
-                        <li class="text-gray-300 text-sm leading-relaxed"><%= item %></li>
-                    <% end %>
-                </ul>
-            <% end %>
-        </div>
-
-        <div class="mx-auto">
-            <div class="prose prose-lg max-w-none text-gray-300 leading-relaxed article-content">
-                <% if @article.summary_detail.is_a?(Hash) %>
-                    <div class="mb-4 md:mb-8 p-3 md:p-6 bg-gray-700 rounded-lg">
-                        <p class="text-gray-300 leading-relaxed">
-                            <%= @article.summary_detail["introduction"] %>
-                        </p>
-                    </div>
-
-                    <div class="mb-4 md:mb-8 p-3 md:p-6 bg-gray-700 rounded-lg" id="article-detail-body">
-                        <%= Kramdown::Document.new(@article.summary_detail["body"]).to_html.html_safe %>
-                    </div>
-
-                    <div class="p-3 md:p-6 bg-gray-700 rounded-lg">
-                        <p class="text-gray-300 leading-relaxed">
-                            <%= @article.summary_detail["conclusion"] %>
-                        </p>
-                    </div>
-                <% end %>
-            </div>
-        </div>
-    </div>
-  </div>
-
-  <div id="articleDetail" class="bg-gray-800 rounded-xl shadow-md overflow-hidden border border-gray-700">
-    <div class="p-4 md:p-8">
-      <h2 class="text-xl font-semibold text-gray-100 mb-4">관련 글들</h2>
-      <% @similar_articles.each do |article| %>
-      <div class="bg-gray-700 rounded-lg shadow-md hover:shadow-lg transition-shadow overflow-hidden border border-gray-600 p-4 mb-4">
-        <h3 class="text-lg font-semibold text-gray-100 mb-2"><%= link_to article.title_ko || article.title, article_path(article.slug) %></h3>
-        <p class="text-gray-300 text-sm mb-2"><%= article.summary_key.is_a?(String) ? article.summary_key : article.summary_key&.first %></p>
+        <% if @article.title_ko != @article.title %>
+          <h2 class="text-lg md:text-xl lg:text-2xl font-medium text-gray-300 mb-4">
+            <%= @article.title %>
+          </h2>
+        <% end %>
       </div>
-    <% end %>
+
+      <!-- 메타데이터 -->
+      <div class="flex flex-wrap items-center gap-4 md:gap-6 text-sm text-gray-400">
+        <!-- 작성자 -->
+        <div class="flex items-center">
+          <div class="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center mr-3">
+            <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
+            </svg>
+          </div>
+          <div>
+            <div class="font-medium text-gray-200"><%= @article.user&.name || 'Unknown' %></div>
+            <div class="text-xs text-gray-400">작성자</div>
+          </div>
+        </div>
+
+        <!-- 발행일 -->
+        <div class="flex items-center">
+          <svg class="w-5 h-5 mr-2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+          </svg>
+          <div>
+            <div class="font-medium text-gray-200">
+              <%= @article.published_at&.strftime("%Y년 %m월 %d일") || 'N/A' %>
+            </div>
+            <div class="text-xs text-gray-400">발행일</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 원문 링크 -->
+      <div class="mt-6 p-4 bg-gray-700 rounded-lg">
+        <%= link_to @article.url, target: "_blank", rel: "noopener noreferrer",
+            class: "flex items-center justify-between group hover:bg-gray-600 transition-colors duration-200 rounded-lg p-2" do %>
+          <div class="flex items-center flex-1 min-w-0">
+            <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center mr-3 flex-shrink-0">
+              <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+              </svg>
+            </div>
+            <div class="min-w-0 flex-1">
+              <div class="text-sm font-medium text-blue-300 group-hover:text-blue-200 transition-colors">
+                원문 보기
+              </div>
+              <div class="text-xs text-gray-400 truncate">
+                <%= URI.parse(@article.url).host %>
+              </div>
+            </div>
+          </div>
+          <svg class="w-5 h-5 text-gray-400 group-hover:text-gray-300 transition-colors flex-shrink-0 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+          </svg>
+        <% end %>
+      </div>
+    </header>
+
+    <!-- 아티클 내용 -->
+    <div class="p-4 md:p-6 lg:p-8">
+      <!-- 3줄 요약 -->
+      <section class="mb-8 lg:mb-12">
+        <div class="bg-gradient-to-r from-green-600 to-green-700 rounded-lg p-6">
+          <h2 class="text-xl lg:text-2xl font-bold text-white mb-4 flex items-center">
+            <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            핵심 요약
+          </h2>
+          <% if @article.summary_key.is_a?(Array) %>
+            <ul class="space-y-3">
+              <% @article.summary_key&.each_with_index do |item, index| %>
+                <li class="flex items-start">
+                  <span class="flex-shrink-0 w-6 h-6 bg-white bg-opacity-20 rounded-full flex items-center justify-center text-xs font-bold text-white mr-3 mt-0.5">
+                    <%= index + 1 %>
+                  </span>
+                  <span class="text-green-100 leading-relaxed"><%= item %></span>
+                </li>
+              <% end %>
+            </ul>
+          <% end %>
+        </div>
+      </section>
+
+      <!-- 상세 내용 -->
+      <section class="prose prose-lg max-w-none">
+        <% if @article.summary_detail.is_a?(Hash) %>
+          <!-- 도입부 -->
+          <% if @article.summary_detail["introduction"].present? %>
+            <div class="mb-8 p-6 bg-gray-700 rounded-xl border-l-4 border-blue-500">
+              <h3 class="text-lg font-semibold text-blue-300 mb-3">도입</h3>
+              <div class="text-gray-300 leading-relaxed text-base">
+                <%= @article.summary_detail["introduction"] %>
+              </div>
+            </div>
+          <% end %>
+
+          <!-- 본문 -->
+          <% if @article.summary_detail["body"].present? %>
+            <div class="mb-8 article-content" id="article-detail-body">
+              <div class="prose prose-lg max-w-none text-gray-300">
+                <%= Kramdown::Document.new(@article.summary_detail["body"]).to_html.html_safe %>
+              </div>
+            </div>
+          <% end %>
+
+          <!-- 결론 -->
+          <% if @article.summary_detail["conclusion"].present? %>
+            <div class="p-6 bg-gray-700 rounded-xl border-l-4 border-green-500">
+              <h3 class="text-lg font-semibold text-green-300 mb-3">결론</h3>
+              <div class="text-gray-300 leading-relaxed text-base">
+                <%= @article.summary_detail["conclusion"] %>
+              </div>
+            </div>
+          <% end %>
+        <% end %>
+      </section>
     </div>
-  </div>
+  </article>
+
+  <!-- 관련 글들 -->
+  <% if @similar_articles.present? %>
+    <section class="bg-gray-800 rounded-xl shadow-lg overflow-hidden border border-gray-700">
+      <div class="p-4 md:p-6 lg:p-8">
+        <h2 class="text-xl lg:text-2xl font-bold text-gray-100 mb-6 flex items-center">
+          <svg class="w-6 h-6 mr-2 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+          </svg>
+          관련 글들
+        </h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6">
+          <% @similar_articles.each do |article| %>
+            <div class="group bg-gray-700 rounded-lg border border-gray-600 hover:border-gray-500 transition-all duration-200 overflow-hidden">
+              <%= link_to article_path(article.slug), class: "block p-4 lg:p-6" do %>
+                <h3 class="text-lg font-semibold text-gray-100 group-hover:text-green-400 transition-colors duration-200 mb-3 line-clamp-2">
+                  <%= article.title_ko || article.title %>
+                </h3>
+                <p class="text-gray-300 text-sm leading-relaxed line-clamp-3 mb-4">
+                  <%= article.summary_key.is_a?(String) ? article.summary_key : article.summary_key&.first %>
+                </p>
+                <div class="flex items-center justify-between text-xs text-gray-400">
+                  <span class="flex items-center">
+                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                    </svg>
+                    <%= article.published_at&.strftime("%m/%d") %>
+                  </span>
+                  <span class="group-hover:text-green-400 transition-colors duration-200">읽어보기 →</span>
+                </div>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </section>
+  <% end %>
 
   <!-- 댓글 섹션 -->
-  <div class="bg-gray-800 rounded-xl shadow-md overflow-hidden border border-gray-700">
-    <div class="p-4 md:p-8">
-      <h3 id="comments_header" class="text-xl font-semibold text-gray-100 mb-6">댓글 (<%= @comments.count %>)</h3>
+  <section class="bg-gray-800 rounded-xl shadow-lg overflow-hidden border border-gray-700">
+    <div class="p-4 md:p-6 lg:p-8">
+      <h3 id="comments_header" class="text-xl lg:text-2xl font-bold text-gray-100 mb-6 flex items-center">
+        <svg class="w-6 h-6 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+        </svg>
+        댓글
+        <span class="ml-2 px-2 py-1 bg-blue-600 text-white text-sm rounded-full">
+          <%= @comments.count %>
+        </span>
+      </h3>
 
       <!-- 댓글 목록 -->
-      <div id="comments">
+      <div id="comments" class="space-y-4 mb-8">
         <%= render partial: 'comments/comments', locals: { article: @article, comments: @comments } %>
       </div>
 
       <!-- 댓글 작성 폼 -->
-      <%= render partial: 'comments/form', locals: { article: @article, comment: @comment } %>
+      <div class="border-t border-gray-700 pt-6">
+        <%= render partial: 'comments/form', locals: { article: @article, comment: @comment } %>
+      </div>
     </div>
-  </div>
+  </section>
 </div>
