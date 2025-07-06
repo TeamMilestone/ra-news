@@ -6,7 +6,7 @@
 <% end %>
 
 <%= turbo_stream.update "comment_form" do %>
-  <%= form_with model: [@article, Comment.new], local: true, class: "space-y-4" do |form| %>
+  <%= form_with model: [@article, Comment.new], url: article_comments_path(@article.slug), local: true, class: "space-y-4" do |form| %>
     <div>
       <%= form.text_area :body,
           placeholder: "댓글을 작성해주세요...",

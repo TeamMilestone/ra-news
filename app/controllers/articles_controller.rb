@@ -46,7 +46,7 @@ class ArticlesController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_article
-      @article = Article.kept.find_by(slug: params.expect(:id)) || Article.kept.find_by(id: params.expect(:id))
+      @article = Article.kept.find_by_slug(params.expect(:id)) || Article.kept.find_by(id: params.expect(:id))
       raise ActiveRecord::RecordNotFound if @article.nil?
     end
 
