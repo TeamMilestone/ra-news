@@ -1,11 +1,13 @@
 Rails.application.routes.draw do
+  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
   draw :madmin
 
   resources :passwords, param: :token
   resources :articles, only: %i[index show new create] do
     resources :comments, only: %i[create destroy]
   end
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
+
+  resource :users, only: %i[edit update destroy]
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
   # Can be used by load balancers and uptime monitors to verify that the app is live.
@@ -21,8 +23,6 @@ Rails.application.routes.draw do
   get "login" => "sessions#new", as: :new_session
   post "login" => "sessions#create", as: :session
   get "logout" => "sessions#destroy", as: :logout
-
-  resource :users, only: %i[edit update destroy]
 
   get "signup" => "users#new", as: :new_user
   post "signup" => "users#create", as: :user
