@@ -40,7 +40,7 @@ class ArticleJob < ApplicationJob
 PROMPT
 
     chat = RubyLLM.chat(model: "gemini-2.5-flash-preview-05-20", provider: :gemini).with_temperature(0.7)
-    # chat = RubyLLM.chat(model: "deepseek/deepseek-r1-0528-qwen3-8b", provider: :openai, assume_model_exists: true)
+    # chat = RubyLLM.chat(model: "google/gemma-3n-e4b", provider: :ollama, assume_model_exists: true).with_temperature(0.7)
     llm_instructions = "You are an expert in the Ruby Programming Language and RubyOnRails framework. You are precise and concise. Use OREO technique, pyramid structure, and transition expressions actively. All output should be in Korean."
     chat.with_instructions(llm_instructions)
     chat.with_tool(ArticleBodyTool.new)
@@ -89,7 +89,6 @@ PROMPT
       article.discard # `deleted_at = Time.zone.now` 대신 discard 사용
     end
     article.update(parsed_json.slice("summary_key", "summary_detail", "title_ko", "is_related"))
-    SitemapJob.perform_later
     PgSearch::Multisearch.rebuild(Article, clean_up: false, transactional: false)
     # PgSearch::Multisearch.rebuild(Article, transactional: false)
   end
