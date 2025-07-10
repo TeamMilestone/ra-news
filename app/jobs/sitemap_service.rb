@@ -20,7 +20,7 @@ class SitemapService
       # Add '/articles'
       #
       #   add articles_path, :priority => 0.7, :changefreq => 'daily'
-      Article.kept.find_in_batches(batch_size: 200, order: [ :desc ]) do |group|
+      Article.kept.where.not(slug: nil).find_in_batches(batch_size: 200, order: [ :desc ]) do |group|
         group.each do |article|
           add article_path(article.slug), lastmod: article.updated_at
         end
