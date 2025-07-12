@@ -1,7 +1,8 @@
 # Set the host name for URL creation
-SitemapGenerator::Sitemap.default_host = "https://news.stadiasphere.xyz"
-
-SitemapGenerator::Sitemap.create do
+SitemapGenerator::Sitemap.create(
+  default_host: "https://news.stadiasphere.xyz",
+  sitemaps_path: "sitemaps/"
+) do
   # Put links creation logic here.
   #
   # The root path '/' and sitemap index file are added automatically for you.
