@@ -55,6 +55,8 @@ class ApplicationClient
 
   def build_body: (untyped body) -> untyped
 
+  def logger: () -> untyped
+
   private
 
   # : (URI uri, Hash headers, untyped form_data) -> Faraday::Connection

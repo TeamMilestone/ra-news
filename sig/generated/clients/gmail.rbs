@@ -9,4 +9,8 @@ class Gmail
   def fetch_emails: (?untyped options) -> untyped
 
   def fetch_email_links: (?untyped options) -> untyped
+
+  private
+
+  def logger: () -> untyped
 end

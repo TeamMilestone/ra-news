@@ -5,7 +5,7 @@
 class ArticleJob < ApplicationJob
   queue_as :default
 
-  #: (id int) -> void
+  #: (Integer id) -> void
   def perform(id)
     article = Article.kept.find_by(id: id)
     return unless article.is_a?(Article)

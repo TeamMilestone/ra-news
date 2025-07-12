@@ -10,7 +10,7 @@ class RssSiteJob < ApplicationJob
   end
 
   # Performs the job for a given site ID.
-  #: (ids Array[int] | int) -> void
+  #: (Array[Integer] ids) -> void
   def perform(ids)
     ids = [ ids ] unless ids.is_a?(Array)
     site_id = ids.shift

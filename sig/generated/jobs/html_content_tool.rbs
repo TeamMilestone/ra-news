@@ -1,10 +1,11 @@
 # Generated from app/jobs/html_content_tool.rb with RBS::Inline
 
 class HtmlContentTool < RubyLLM::Tool
-  # : (url String) -> String?
-  def execute: (url String) -> String?
+  # : (url: String) -> String?
+  def execute: (url: String) -> String?
 
   private
 
-  def handle_redirection: (untyped url, ?untyped count) -> untyped
+  # : (String url, ?Integer? count) -> Faraday::Response
+  def handle_redirection: (String url, ?Integer? count) -> Faraday::Response
 end

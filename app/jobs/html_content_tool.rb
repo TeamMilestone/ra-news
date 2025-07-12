@@ -7,7 +7,7 @@ class HtmlContentTool < RubyLLM::Tool
 
   param :url, desc: "URL of the HTML document (e.g., https://example.com)"
 
-  #: (url String) -> String?
+  #: (url: String) -> String?
   def execute(url:)
     html_content = handle_redirection(url).body
     return nil if html_content.blank?
@@ -18,6 +18,7 @@ class HtmlContentTool < RubyLLM::Tool
 
   private
 
+  #: (String url, ?Integer? count) -> Faraday::Response
   def handle_redirection(url, count = 0)
     response = Faraday.get(url)
     return response unless response.status.between?(300, 399) && response.headers["location"]

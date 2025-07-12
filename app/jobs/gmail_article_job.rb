@@ -10,7 +10,7 @@ class GmailArticleJob < ApplicationJob
   end
 
   # Performs the job for a given site ID.
-  #: (ids Array[int] | int) -> void
+  #: (Array[Integer] ids) -> void
   def perform(ids)
     ids = [ ids ] unless ids.is_a?(Array)
     site_id = ids.shift
@@ -32,13 +32,13 @@ class GmailArticleJob < ApplicationJob
   private
 
   # Fetches new email links from the site's email account.
-  #: (site Site) -> Array<String>
+  #: (Site site) -> Array<String>
   def fetch_new_email_links(site)
     site.init_client.fetch_email_links(from: site.email, since: site.last_checked_at - 1.day)
   end
 
   # Iterates over links and creates articles.
-  #: (links Array<String>, site Site) -> void
+  #: (Array<String> links, Site site) -> void
   def create_articles_from_links(links, site)
     links.each do |link|
       processed_link = extract_link(link)
@@ -52,7 +52,7 @@ class GmailArticleJob < ApplicationJob
   end
 
   # Creates an article for a given link.
-  #: (link String, site Site) -> void
+  #: (String link, Site site) -> void
   def create_article(link, site)
     Article.create!(url: link, origin_url: link, site: site)
     logger.info "Created article for #{link}"

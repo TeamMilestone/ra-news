@@ -7,7 +7,7 @@ class YoutubeSiteJob < ApplicationJob
     YoutubeSiteJob.perform_later(Site.youtube.order("id ASC").pluck(:id))
   end
 
-  #: (ids Array[int] | int) -> void
+  #: (Array[Integer] ids) -> void
   def perform(ids)
     ids = [ ids ] unless ids.is_a?(Array)
     site_id = ids.shift

@@ -2,7 +2,7 @@ module LinkHelper
   protected
 
   # Extracts the target link from a given URL, handling various redirect and tracking services.
-  #: (link String) -> String?
+  #: (String link) -> String?
   def extract_link(link)
     uri = URI.parse(link)
     return if uri.host.blank?
@@ -26,13 +26,13 @@ module LinkHelper
   end
 
   # Checks if a URI is invalid for article creation.
-  #: (uri URI) -> bool
+  #: (URI uri) -> bool
   def invalid_uri?(uri)
     (uri.path.blank? || uri.path.size < 2) || Article.should_ignore_url?(uri.to_s)
   end
 
   # Extracts the 'url' parameter from a URI's query string.
-  #: (uri URI) -> String?
+  #: (URI uri) -> String?
   def extract_url_param(uri)
     return unless uri.query
 
@@ -40,7 +40,7 @@ module LinkHelper
   end
 
   # Handles links from rubyweekly.com.
-  #: (link String) -> String?
+  #: (String link) -> String?
   def handle_rubyweekly_link(link)
     return unless link.starts_with?("https://rubyweekly.com/link")
 
@@ -48,13 +48,14 @@ module LinkHelper
   end
 
   # Performs a GET request to find the redirect location.
-  #: (link String) -> String?
+  #: (String link) -> String?
   def extract_redirect_location(link)
     response = Faraday.get(link)
     response.headers["location"] if response.status.in?(300..399)
   end
 
-  def youtube_id(url) #: String?
+  #: (String url) -> String?
+  def youtube_id(url)
     # nil 체크를 포함하여 안전하게 접근
     if url.is_a?(String)
       uri = URI.parse(url)

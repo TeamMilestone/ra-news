@@ -18,11 +18,12 @@ class Article < ApplicationRecord
 
   def update_published_at: () -> bool
 
-  # URL에서 slug를 사용하도록 설정
-  def to_param: () -> untyped
-
   # slug로 Article을 찾는 메서드
   def self.find_by_slug: (untyped slug) -> untyped
+
+  # 도메인과 서브도메인을 정확히 체크하는 클래스 메서드
+  # : (String url) -> bool
+  def self.should_ignore_url?: (String url) -> bool
 
   private
 

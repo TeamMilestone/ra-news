@@ -9,7 +9,7 @@ class YoutubeContentTool < RubyLLM::Tool
 
   param :url, desc: "URL of the Youtube (e.g., https://www.youtube.com/watch?v=ErsF7_0bZnk)"
 
-  #: (url String) -> String?
+  #: (url: String) -> String?
   def execute(url:)
     youtube_id = youtube_id(url)
     return unless youtube_id

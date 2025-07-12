@@ -7,7 +7,7 @@ class ArticleBodyTool < RubyLLM::Tool
 
   param :id, desc: "Article ID to fetch the body content from the database"
 
-  #: (url String) -> String?
+  #: (String url) -> String?
   def execute(id:)
     Article.find_by(id: id)&.body
   end
