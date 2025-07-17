@@ -55,6 +55,8 @@ class RssSitePageJob < ApplicationJob
       next if Article.exists?(url: processed_link) || Article.exists?(origin_url: processed_link)
 
       create_article(origin_url: processed_link, url: processed_link, site: site)
+    rescue StandardError => e
+      logger.error "Error processing link #{link}: #{e.message}"
     end
 
     before_finish(ids)
