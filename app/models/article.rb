@@ -19,6 +19,10 @@ class Article < ApplicationRecord
     )
   end
 
+  scope :related, -> { where(is_related: true) }
+
+  scope :unrelated, -> { where(is_related: false) }
+
   pg_search_scope :title_matching, against: [ :title, :title_ko ], using: { tsearch: { dictionary: "korean" } }
 
   pg_search_scope :body_matching, against: :body, using: { tsearch: { dictionary: "english" } }

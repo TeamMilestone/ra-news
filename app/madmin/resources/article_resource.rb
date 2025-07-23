@@ -24,7 +24,10 @@ class ArticleResource < Madmin::Resource
   attribute :site, index: true, form: false
 
   # Add scopes to easily filter records
-  # scope :published
+  scope :kept
+  scope :discarded
+  scope :related
+  scope :unrelated
 
   # Add actions to the resource's show page
   member_action do |record|
