@@ -1,10 +1,8 @@
 <%= turbo_frame_tag "comments" do %>
   <% if comments.any? %>
-    <div class="space-y-4">
-      <% comments.each do |comment| %>
-        <%= render partial: 'comments/comment', locals: { comment: comment } %>
-      <% end %>
-    </div>
+    <% comments.each do |comment| %>
+      <%= render partial: 'comments/comment', locals: { comment: comment } %>
+    <% end %>
   <% else %>
     <div class="text-center py-8">
       <svg class="w-12 h-12 text-gray-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -180,12 +180,12 @@
       </h3>
 
       <!-- 댓글 목록 -->
-      <div id="comments" class="space-y-4 mb-8">
+      <div class="space-y-4 mb-8">
         <%= render partial: 'comments/comments', locals: { article: @article, comments: @comments } %>
       </div>
 
       <!-- 댓글 작성 폼 -->
-      <div class="border-t border-gray-700 pt-6">
+      <div id="comment_form" class="border-t border-gray-700 pt-6">
         <%= render partial: 'comments/form', locals: { article: @article, comment: @comment } %>
       </div>
     </div>
