@@ -14,7 +14,7 @@ class ArticlesController < ApplicationController
     article = if params[:search].present?
       Article.full_text_search_for(params[:search])
     else
-      Article.where.not(id: Article.where.not(slug: nil).select(:id).kept.limit(9).order(created_at: :desc).map(&:id))
+      Article.where.not(id: Article.kept.select(:id).where.not(slug: nil).where(created_at: 24.hours.ago...).order(created_at: :desc).map(&:id))
     end
     @pagy, @articles = pagy(article.includes(:user).where.not(slug: nil).kept.order(published_at: :desc))
   end
