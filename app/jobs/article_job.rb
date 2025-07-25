@@ -57,7 +57,8 @@ PROMPT
     if article.embedding.blank?
       embedded_body = RubyLLM.embed(
         article.body,
-        model: "text-embedding-004" # Google's model
+        model: "gemini-embedding-001", # Google's model
+        dimensions: 1536 # 1536차원
       )
       article.update(embedding: embedded_body.vectors.to_a)
     end

@@ -7,7 +7,7 @@ class Article < ApplicationRecord
 
   include Discard::Model
 
-  has_neighbors :embedding
+  has_neighbors :embedding, dimensions: 1536
 
   self.discard_column = :deleted_at
 
