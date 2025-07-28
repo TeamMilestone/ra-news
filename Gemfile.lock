@@ -91,6 +91,9 @@ GEM
     brakeman (7.1.0)
       racc
     builder (3.3.0)
+    bullet (8.0.8)
+      activesupport (>= 3.0.0)
+      uniform_notifier (~> 1.11)
     capybara (3.40.0)
       addressable
       matrix
@@ -170,6 +173,12 @@ GEM
       activerecord (>= 6.0, < 9)
       ruby2ruby (~> 2.4)
       ruby_parser (~> 3.10)
+    herb (0.4.2-aarch64-linux-gnu)
+    herb (0.4.2-aarch64-linux-musl)
+    herb (0.4.2-arm64-darwin)
+    herb (0.4.2-x86_64-darwin)
+    herb (0.4.2-x86_64-linux-gnu)
+    herb (0.4.2-x86_64-linux-musl)
     honeybadger (6.0.2)
       logger
       ostruct
@@ -491,6 +500,7 @@ GEM
     unicode-display_width (3.1.4)
       unicode-emoji (~> 4.0, >= 4.0.4)
     unicode-emoji (4.0.4)
+    uniform_notifier (1.17.0)
     uri (1.0.3)
     useragent (0.16.11)
     web-console (4.2.1)
@@ -525,6 +535,7 @@ DEPENDENCIES
   bcrypt (~> 3.1.7)
   bootsnap
   brakeman
+  bullet
   capybara
   debug
   discard
@@ -533,6 +544,7 @@ DEPENDENCIES
   faker
   google-protobuf
   hairtrigger
+  herb
   honeybadger (~> 6.0.0)
   importmap-rails
   jbuilder

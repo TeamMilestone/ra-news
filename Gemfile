@@ -55,12 +55,14 @@ group :development, :test do
   gem "steep", require: false
   gem "dotenv-rails"
   gem "faker"
+  gem "herb"
 end
 
 group :development do
   # Use console on exceptions pages [https://github.com/rails/web-console]
   gem "web-console"
   gem "sorbet"
+  gem "bullet"
 end
 
 group :test do
