@@ -54,12 +54,18 @@ class ArticlesController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_article
-      @article = Article.kept.find_by_slug(params.expect(:id)) || Article.kept.find_by(id: params.expect(:id))
+      id = params[:id]
+      return head :bad_request if id.blank?
+    
+      @article = Article.kept.find_by_slug(id) || Article.kept.find_by(id: id)
       raise ActiveRecord::RecordNotFound if @article.nil?
     end
 
     # Only allow a list of trusted parameters through.
     def article_params
-      params.expect(article: [ :url ])
+      params.require(:article).permit(:url)
+    rescue ActionController::ParameterMissing
+      # Return empty parameters if article params are missing
+      ActionController::Parameters.new({}).permit!
     end
 end
