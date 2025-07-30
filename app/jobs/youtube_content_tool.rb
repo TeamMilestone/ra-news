@@ -3,6 +3,8 @@
 # rbs_inline: enabled
 
 class YoutubeContentTool < RubyLLM::Tool
+  include ToolHelper
+
   include LinkHelper
 
   description "url을 통해 가져온 Youtube 콘텐츠에서 자막과 링크를 추출합니다."
@@ -11,7 +13,9 @@ class YoutubeContentTool < RubyLLM::Tool
 
   #: (url: String) -> String?
   def execute(url:)
+    logger.info "Fetching Youtube content from: #{url}"
     youtube_id = youtube_id(url)
+    logger.info "Youtube ID: #{youtube_id}"
     return unless youtube_id
 
     transcript = nil

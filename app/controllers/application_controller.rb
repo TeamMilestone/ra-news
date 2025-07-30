@@ -9,6 +9,13 @@ class ApplicationController < ActionController::Base
 
   before_action :redirect_old_domain
 
+   before_action do
+    Honeybadger.context({
+      user_id: Current&.user&.id
+    })
+  end
+
+
   private
 
   def redirect_old_domain #: () -> void

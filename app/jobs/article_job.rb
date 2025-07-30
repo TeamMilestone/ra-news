@@ -9,7 +9,10 @@ class ArticleJob < ApplicationJob
   def perform(id)
     article = Article.kept.find_by(id: id)
     logger.info "ArticleJob started for article id: #{id}"
-    return unless article.is_a?(Article)
+    unless article.is_a?(Article)
+      logger.error "Article with id #{id} not found or has been discarded."
+      return
+    end
 
     prompt = <<~PROMPT
 주의 깊게 읽고 요약, 정리 한 내용을 한국어로 제공합니다. 답변은 전문적인 어투로 작성하며, 주어진 내용에서 벗어나지 않도록 합니다.
@@ -56,6 +59,7 @@ PROMPT
       logger.info "HtmlContent url: #{article.url}, id: #{article.id})"
       chat.ask("HtmlContent 로 제공한 url과 본문을 #{prompt} (url: #{article.url}, id: #{article.id})")
     end
+    logger.info "Response received for article id: #{id}"
 
     if article.embedding.blank?
       embedded_body = RubyLLM.embed(
@@ -71,7 +75,7 @@ PROMPT
       return
     end
 
-    logger.info response.content
+    logger.info "article id: #{id} Response content: #{response.content}"
     # JSON 데이터 추출 및 파싱
     parsed_json = begin
                     JSON.parse(response.content.scan(/\{.*\}/m).first || "{}") # 첫 번째 JSON 객체만 추출하거나, 없으면 빈 JSON 객체
