@@ -95,3 +95,5 @@ gem "awesome_nested_set"
 gem "neighbor"
 
 gem "erb-formatter", "~> 0.7.3"
+
+gem "view_component", "~> 4.0"
