@@ -42,8 +42,7 @@
         "recommendations": [
             "sorbet.sorbet-vscode-extension",
             "shopify.ruby-lsp",
-            "shopify.ruby-extensions-pack",
-            "soutaro.rbs-syntax"
+            "shopify.ruby-extensions-pack"
         ]
     }
 }
