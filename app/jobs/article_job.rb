@@ -50,23 +50,8 @@ body(본론)은 markdown 형식으로 작성하되, 헤더와 글머리 기호�
 - 중첩된 HTML 요소 적절히 처리
 
 ## 출력 예제
-```json
-{
-  "title_ko": "Ruby 3.4의 새로운 기능과 성능 개선 사항",
-  "summary_key": [
-    "Ruby 3.4에서 도입된 주요 성능 최적화 기능",
-    "새로운 Fiber 스케줄러와 메모리 관리 개선",
-    "개발자 경험 향상을 위한 디버깅 도구 강화"
-  ],
-  "summary_detail": {
-    "introduction": "Ruby 3.4 버전이 공식 릴리스되어 여러 성능 개선사항과 새로운 기능들이 추가되었습니다.",
-    "body": "## 주요 개선사항\n\n- **성능 최적화**: JIT 컴파일러 개선으로 25% 성능 향상\n- **Fiber 스케줄러**: 새로운 동시성 모델 도입\n- **메모리 관리**: GC 알고리즘 최적화",
-    "conclusion": "이번 업데이트로 Ruby의 성능과 개발자 경험이 크게 개선되어 더욱 매력적인 언어가 되었습니다."
-  },
-  "tags": ["Ruby", "Performance", "JIT"],
-  "is_related": true
-}
-```
+- JSON 형태로 출력하며, 다음과 같은 구조를 따릅니다
+#{ArticleSchema.new.to_json}
 PROMPT
 
     chat = RubyLLM.chat(model: "gemini-2.5-flash", provider: :gemini).with_temperature(0.6)
