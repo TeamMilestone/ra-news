@@ -169,16 +169,16 @@ class ApplicationClient
     Faraday.new(url: "#{uri.scheme}://#{uri.host}", headers: headers) do |conn|
       # Add retry middleware for resilience
       conn.request :retry, max: 3, interval: 0.5, backoff_factor: 2,
-                   exceptions: [Errno::ETIMEDOUT, 'Timeout::Error', Faraday::TimeoutError]
-      
+                   exceptions: [ Errno::ETIMEDOUT, "Timeout::Error", Faraday::TimeoutError ]
+
       if form_data.present?
         conn.request :url_encoded
       elsif headers["Accept"] == "application/json"
         conn.request :json
       end
-      
+
       conn.response :json, content_type: /\bjson$/
-      
+
       # Set reasonable timeouts
       conn.options.timeout = 30
       conn.options.open_timeout = 10

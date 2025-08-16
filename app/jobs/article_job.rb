@@ -75,12 +75,17 @@ PROMPT
 
     # Generate embeddings if not present and body exists
     if article.embedding.blank? && article.body.present?
-      embedded_body = RubyLLM.embed(
-        article.body,
-        model: "gemini-embedding-001", # Google's model
-        dimensions: 1536 # 1536차원
-      )
-      article.update_column(:embedding, embedded_body.vectors.to_a) # Skip callbacks for performance
+      begin
+        embedded_body = RubyLLM.embed(
+          article.body,
+          model: "gemini-embedding-001", # Google's model
+          dimensions: 1536 # 1536차원
+        )
+        article.update_column(:embedding, embedded_body.vectors.to_a) # Skip callbacks for performance
+      rescue StandardError => e
+        logger.error "Failed to generate embeddings for article #{id}: #{e.message}"
+        # Continue processing without embeddings
+      end
     end
 
     unless response.respond_to?(:content)
@@ -91,9 +96,12 @@ PROMPT
     logger.info "article id: #{id} Response content: #{response.content}"
     # JSON 데이터 추출 및 파싱
     parsed_json = begin
-                    JSON.parse(response.content.scan(/\{.*\}/m).first || "{}") # 첫 번째 JSON 객체만 추출하거나, 없으면 빈 JSON 객체
+                    json_content = response.content.scan(/\{.*\}/m).first
+                    raise JSON::ParserError, "No JSON found in response" if json_content.blank?
+
+                    JSON.parse(json_content)
                   rescue JSON::ParserError => e
-                    logger.error "JSON 파싱 오류: #{e.message} - 원본 응답: #{response.content}"
+                    logger.error "JSON 파싱 오류: #{e.message} - 원본 응답: #{response.content.truncate(500)}"
                     article.discard
                     return nil # 파싱 실패 시 nil 반환하여 이후 로직 중단
                   end
@@ -113,11 +121,11 @@ PROMPT
         article.discard # `deleted_at = Time.zone.now` 대신 discard 사용
         return # Exit early if discarded
       end
-      
+
       # Update article attributes in single query
       article.update!(parsed_json.slice("summary_key", "summary_detail", "title_ko", "is_related"))
     end
-    
+
     # Rebuild search index only for kept articles
     PgSearch::Multisearch.rebuild(Article, clean_up: false, transactional: false) unless article.discarded?
 

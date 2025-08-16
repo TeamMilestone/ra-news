@@ -1,4 +1,6 @@
 class CommentsController < ApplicationController
+  include RateLimiting
+
   before_action :set_comment, only: %i[ destroy ]
   before_action :set_article, only: %i[ create ]
 

@@ -34,7 +34,6 @@ class Article < ApplicationRecord
   has_many :comments, dependent: :nullify
 
   validates :url, :origin_url, presence: true, uniqueness: { case_sensitive: false }
-
   validates :slug, uniqueness: true, allow_blank: true
 
   before_create :generate_metadata
@@ -43,7 +42,7 @@ class Article < ApplicationRecord
 
   after_discard :clear_rss_cache
   after_commit :enqueue_article_processing, on: :create
-  after_commit :clear_rss_cache, on: [:create, :update, :destroy]
+  after_commit :clear_rss_cache, on: [ :create, :update, :destroy ]
 
   before_save do
     # published_at이 없으면 현재 시간으로 설정.
@@ -130,7 +129,8 @@ class Article < ApplicationRecord
       host = uri.host&.downcase
       return true if host.blank?
 
-      return true if %w[.epub .pdf].any? do |ext| uri.path.end_with?(ext) end
+      # Check for dangerous file extensions
+      return true if %w[.epub .pdf .exe .zip .rar].any? { |ext| uri.path.end_with?(ext) }
 
       IGNORE_HOSTS.any? do |ignore_host|
         # 정확한 도메인 매칭
