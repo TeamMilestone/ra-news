@@ -63,6 +63,7 @@ group :development do
   gem "web-console"
   gem "sorbet"
   gem "bullet"
+  gem "claude-on-rails"
 end
 
 group :test do

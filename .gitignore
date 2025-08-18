@@ -43,3 +43,8 @@ node_modules
 .yarn
 public/sitemap.xml.gz
 db/schema.rb
+
+# ClaudeOnRails
+.claude-on-rails/sessions/
+.claude-swarm/
+claude-swarm.log
