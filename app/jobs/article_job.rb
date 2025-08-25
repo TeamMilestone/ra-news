@@ -35,7 +35,7 @@ body(본론)은 markdown 형식으로 작성하되, 헤더와 글머리 기호�
 ### 3. 태그 (tags)
 - 최대 3개의 문자열 배열
 - 본문에서 추출한 핵심 키워드 우선
-- ruby, rails, ruby on rails, web development 와 같은 키워드는 무시
+- ruby, rails, ruby on rails, web development 와 같은 일반적인 키워드는 무시
 - 공백은 _ 로 대체
 - 기술 용어는 원어 유지 (예: Rails, Ruby, Gem)
 - 일반 명사보다는 구체적 개념 우선
@@ -50,26 +50,20 @@ body(본론)은 markdown 형식으로 작성하되, 헤더와 글머리 기호�
 - 인라인 포맷(bold, italic, links)과 블록 요소(headings, lists, code blocks) 모두 고려
 - 구조화된 콘텐츠의 컨텍스트 보존
 - 중첩된 HTML 요소 적절히 처리
-
-## 출력 예제
-- JSON 형태로 출력하며, 다음과 같은 구조를 따릅니다
-#{ArticleSchema.new.to_json}
 PROMPT
 
-    chat = RubyLLM.chat(model: "gemini-2.5-flash", provider: :gemini).with_temperature(0.6)
+    chat = RubyLLM.chat(model: "gemini-2.5-flash", provider: :gemini).with_temperature(0.6).with_schema(ArticleSchema)
     # chat = RubyLLM.chat(model: "google/gemma-3n-e4b", provider: :ollama, assume_model_exists: true).with_temperature(0.7)
     llm_instructions = "You are a professional developer of the Ruby programming language. On top of that, you are an excellent technical writer. All output should be in Korean."
-    # chat.with_schema(ArticleSchema)
     chat.with_instructions(llm_instructions)
-    chat.with_tool(ArticleBodyTool.new)
+    article.update(body: ContentService.call(article))
+    chat.add_message(role: :user, content: article.body)
     response =  if article.is_youtube?
       # YouTube URL인 경우
-      article.update(body: YoutubeContentTool.new.execute(url: article.url)) if article.body.blank?
       logger.info "YoutubeContent url: #{article.url}, id: #{article.id})"
       chat.ask("YoutubeContent 로 제공한 url과 Transcript를 #{prompt} (url: #{article.url}, id: #{article.id})")
     else
       # YouTube URL이 아닌 경우
-      article.update(body: HtmlContentTool.new.execute(url: article.url)) if article.body.blank? || article.body.size < 100
       logger.info "HtmlContent url: #{article.url}, id: #{article.id})"
       chat.ask("HtmlContent 로 제공한 url과 본문을 #{prompt} (url: #{article.url}, id: #{article.id})")
     end
@@ -97,17 +91,7 @@ PROMPT
 
     logger.info "article id: #{id} Response content: #{response.content}"
     # JSON 데이터 추출 및 파싱
-    parsed_json = begin
-                    json_content = response.content.scan(/\{.*\}/m).first
-                    raise JSON::ParserError, "No JSON found in response" if json_content.blank?
-
-                    JSON.parse(json_content)
-                  rescue JSON::ParserError => e
-                    logger.error "JSON 파싱 오류: #{e.message} - 원본 응답: #{response.content.truncate(500)}"
-                    article.discard
-                    return nil # 파싱 실패 시 nil 반환하여 이후 로직 중단
-                  end
-    # parsed_json = response.content
+    parsed_json = response.content
     logger.debug parsed_json.inspect
     if parsed_json.blank? || parsed_json.empty?
       article.discard

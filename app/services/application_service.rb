@@ -14,4 +14,8 @@ class ApplicationService
   def call
     raise NotImplementedError, "You must implement the call method"
   end
+
+  def logger
+    Rails.logger
+  end
 end

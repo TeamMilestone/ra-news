@@ -1,3 +1,5 @@
+require "ruby_llm/schema"
+
 class ArticleSchema < RubyLLM::Schema
   string :title_ko, description: "한국어 제목"
 
