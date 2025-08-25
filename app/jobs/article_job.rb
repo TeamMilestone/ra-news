@@ -35,6 +35,8 @@ body(본론)은 markdown 형식으로 작성하되, 헤더와 글머리 기호�
 ### 3. 태그 (tags)
 - 최대 3개의 문자열 배열
 - 본문에서 추출한 핵심 키워드 우선
+- ruby, rails, ruby on rails, web development 와 같은 키워드는 무시
+- 공백은 _ 로 대체
 - 기술 용어는 원어 유지 (예: Rails, Ruby, Gem)
 - 일반 명사보다는 구체적 개념 우선
 
