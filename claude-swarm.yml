@@ -16,7 +16,7 @@ swarm:
       description: "Rails architect coordinating full-stack development for Ruby-News"
       directory: .
       model: sonnet
-      connections: [models, controllers, views, stimulus, services, jobs, tests, devops]
+      connections: [models, controllers, views, stimulus, services, jobs, tests]
       prompt_file: .claude-on-rails/prompts/architect.md
       vibe: true
 
@@ -74,10 +74,3 @@ swarm:
       model: sonnet
       allowed_tools: [Read, Edit, Write, Bash, Grep, Glob, LS]
       prompt_file: .claude-on-rails/prompts/tests.md
-
-    devops:
-      description: "Deployment, Docker, CI/CD, and production configuration specialist"
-      directory: ./config
-      model: sonnet
-      allowed_tools: [Read, Edit, Write, Bash, Grep, Glob, LS]
-      prompt_file: .claude-on-rails/prompts/devops.md

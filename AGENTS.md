@@ -150,51 +150,51 @@ Your project uses: **Rails 8**, **Ruby 3.4**, **PostgreSQL with vector embedding
 ### Specialist Assignments
 
 #### Backend Development
-- **Rails Core Logic** → @rails-backend-expert
+- **Rails Core Logic** → @.claude-on-rails/prompts/architect.md
   - Job processing pipeline (ArticleJob, RssSiteJob, YoutubeSiteJob, GmailArticleJob)
   - AI content processing with RubyLLM and Gemini models
   - Custom authentication system, soft delete patterns
   - Korean localization and timezone handling
 
-- **API Development** → @rails-api-developer
+- **API Development** → @.claude-on-rails/prompts/api.md
   - RESTful endpoints for content aggregation
   - API versioning and rate limiting
   - JSON serialization for Korean content
   - Authentication patterns for API access
 
-- **Database Optimization** → @rails-activerecord-expert
+- **Database Optimization** → @@.claude-on-rails/prompts/models.md
   - PostgreSQL vector embeddings for article similarity
   - Full-text search optimization (Korean/English dictionaries)
   - Complex queries for content recommendations
   - Performance tuning for background job processing
 
 #### Frontend Development
-- **UI Components** → @frontend-developer
+- **UI Components** → @.claude-on-rails/prompts/views.md
   - Hotwire (Turbo/Stimulus) patterns
   - Real-time updates for news feeds
   - Korean UI/UX considerations
   - Responsive design for mobile news consumption
 
-- **Styling & Layout** → @tailwind-frontend-expert
+- **Styling & Layout** → @.claude-on-rails/prompts/views.md/
   - Tailwind CSS 4.2 configuration
   - Korean typography and layout patterns
   - Flowbite component integration
   - Dark mode and accessibility features
 
 #### Architecture & Quality
-- **System Design** → @api-architect
+- **System Design** → @.claude-on-rails/prompts/architect.md
   - Solid Queue, Solid Cache, Solid Cable architecture
   - External service integrations (YouTube, Gmail, HackerNews)
   - Scalable news aggregation patterns
   - Webhook and real-time processing design
 
-- **Code Quality** → @code-reviewer
+- **Code Quality**
   - RuboCop and Steep type checking integration
   - Security analysis with Brakeman
   - Korean content handling validation
   - Background job error handling patterns
 
-- **Performance** → @performance-optimizer
+- **Performance**
   - AI processing pipeline optimization
   - Database query performance for large news datasets
   - Caching strategies for Korean content
