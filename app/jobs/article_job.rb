@@ -50,13 +50,19 @@ body(본론)은 markdown 형식으로 작성하되, 헤더와 글머리 기호�
 - 인라인 포맷(bold, italic, links)과 블록 요소(headings, lists, code blocks) 모두 고려
 - 구조화된 콘텐츠의 컨텍스트 보존
 - 중첩된 HTML 요소 적절히 처리
+
+## 출력 예제
+- JSON 형태로 출력하며, 다음과 같은 구조를 따릅니다
+#{ArticleSchema.new.to_json}
 PROMPT
 
-    chat = RubyLLM.chat(model: "gemini-2.5-flash", provider: :gemini).with_temperature(0.6).with_schema(ArticleSchema)
+    chat = RubyLLM.chat(model: "gemini-2.5-flash", provider: :gemini).with_temperature(0.6)
     # chat = RubyLLM.chat(model: "google/gemma-3n-e4b", provider: :ollama, assume_model_exists: true).with_temperature(0.7)
     llm_instructions = "You are a professional developer of the Ruby programming language. On top of that, you are an excellent technical writer. All output should be in Korean."
+    # chat.with_schema(ArticleSchema)
     chat.with_instructions(llm_instructions)
-    article.update(body: ContentService.call(article))
+    body = ContentService.call(article)
+    article.update(body: body) if body.present?
     chat.add_message(role: :user, content: article.body)
     response =  if article.is_youtube?
       # YouTube URL인 경우
@@ -91,7 +97,17 @@ PROMPT
 
     logger.info "article id: #{id} Response content: #{response.content}"
     # JSON 데이터 추출 및 파싱
-    parsed_json = response.content
+    parsed_json = begin
+                    json_content = response.content.scan(/\{.*\}/m).first
+                    raise JSON::ParserError, "No JSON found in response" if json_content.blank?
+
+                    JSON.parse(json_content)
+                  rescue JSON::ParserError => e
+                    logger.error "JSON 파싱 오류: #{e.message} - 원본 응답: #{response.content.truncate(500)}"
+                    article.discard
+                    return nil # 파싱 실패 시 nil 반환하여 이후 로직 중단
+                  end
+    # parsed_json = response.content
     logger.debug parsed_json.inspect
     if parsed_json.blank? || parsed_json.empty?
       article.discard
