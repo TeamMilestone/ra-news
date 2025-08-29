@@ -11,7 +11,7 @@
       gtag('config', 'G-56PSNXG7QG');
     </script>
 
-    <title><%= content_for(:title) || "RA || 루비 AI 뉴스" %></title>
+    <title><%= content_for(:title) || "Ruby-News || 루비 AI 뉴스" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
@@ -21,18 +21,20 @@
     <!-- SEO Meta Tags -->
     <meta name="description" content="최신 Ruby, Rails, AI 관련 뉴스와 트렌드를 한곳에서 만나보세요">
     <meta name="keywords" content="Ruby, Rails, AI, 프로그래밍, 개발, 뉴스">
-    <meta name="author" content="RA || 루비 AI 뉴스">
+    <meta name="author" content="Ruby-News || 루비 AI 뉴스">
 
     <!-- Open Graph Meta Tags -->
-    <meta property="og:title" content="<%= content_for(:title) || "RA || 루비 AI 뉴스" %>">
+    <meta property="og:title" content="<%= content_for(:title) || "Ruby-News || 루비 AI 뉴스" %>">
     <meta property="og:description" content="최신 Ruby, Rails, AI 관련 뉴스와 트렌드를 한곳에서 만나보세요">
     <meta property="og:type" content="website">
-    <meta property="og:site_name" content="RA || 루비 AI 뉴스">
+    <meta property="og:site_name" content="Ruby-News || 루비 AI 뉴스">
+    <meta property="og:image" content="<%= image_url("og_main.png") %>">
 
     <!-- Twitter Card Meta Tags -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="<%= content_for(:title) || "RA || 루비 AI 뉴스" %>">
+    <meta name="twitter:title" content="<%= content_for(:title) || "Ruby-News || 루비 AI 뉴스" %>">
     <meta name="twitter:description" content="최신 Ruby, Rails, AI 관련 뉴스와 트렌드를 한곳에서 만나보세요">
+    <meta name="twitter:image" content="<%= image_url("og_main.png") %>">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
@@ -104,7 +106,7 @@
     <nav class="bg-green-700 border-green-800">
       <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
         <%= link_to root_path, class: "flex items-center space-x-3 rtl:space-x-reverse" do %>
-          <span class="self-center text-2xl font-semibold whitespace-nowrap text-white">RA || 루비 AI 뉴스</span>
+          <span class="self-center text-2xl font-semibold whitespace-nowrap text-white">Ruby-News || 루비 AI 뉴스</span>
         <% end %>
 
         <!-- Mobile Menu Toggle (Improved Accessibility) -->
@@ -166,7 +168,7 @@
 
     <footer class="bg-green-700 text-gray-200 rounded-lg shadow-sm m-4">
         <div class="w-full mx-auto max-w-screen-xl p-4 md:flex md:items-center md:justify-between">
-          <span class="text-sm text-gray-300 sm:text-center">© 2025 <a href="https://flowbite.com/" class="hover:underline hover:text-white">RA || 루비 AI 뉴스</a>. All Rights Reserved.</span>
+          <span class="text-sm text-gray-300 sm:text-center">© 2025 <a href="https://flowbite.com/" class="hover:underline hover:text-white">Ruby-News || 루비 AI 뉴스</a>. All Rights Reserved.</span>
           <ul class="flex flex-wrap items-center mt-3 text-sm font-medium text-gray-300 sm:mt-0">
           </ul>
         </div>
