@@ -108,14 +108,14 @@ PROMPT
     article.tag_list.add(parsed_json["tags"].map { it.downcase }.uniq) if parsed_json["tags"].is_a?(Array)
     # Use ActiveRecord transaction for data consistency
     Article.transaction do
+      # Update article attributes in single query
+      article.update!(parsed_json.slice("summary_key", "summary_detail", "title_ko", "is_related"))
+
       # 매직 스트링 대신 Site.clients enum 사용
       if parsed_json["is_related"] == false && %w[hacker_news rss gmail rss_page].include?(article.site&.client)
         article.discard # `deleted_at = Time.zone.now` 대신 discard 사용
         return # Exit early if discarded
       end
-
-      # Update article attributes in single query
-      article.update!(parsed_json.slice("summary_key", "summary_detail", "title_ko", "is_related"))
     end
 
     # Rebuild search index only for kept articles
