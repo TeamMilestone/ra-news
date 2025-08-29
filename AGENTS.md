@@ -32,7 +32,6 @@ bin/brakeman              # Security analysis
 ### Database Operations
 ```bash
 bin/rails db:create db:migrate db:seed
-bin/rails db:test:prepare
 ```
 
 ### Background Jobs

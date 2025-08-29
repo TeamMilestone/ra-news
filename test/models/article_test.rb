@@ -9,9 +9,10 @@ class ArticleTest < ActiveSupport::TestCase
     assert_not article.save, "Saved the article without a url"
   end
 
-  test "should not save article without origin_url" do
+  test "should set origin_url from url on creation" do
     article = Article.new(title: "Test Article", url: "https://example.com/test")
-    assert_not article.save, "Saved the article without an origin_url"
+    article.save
+    assert_equal "https://example.com/test", article.origin_url
   end
 
   test "should not save article with duplicate url" do
