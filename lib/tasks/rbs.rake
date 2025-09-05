@@ -1,5 +1,5 @@
 begin
-  require 'rbs_rails/rake_task'
+  require "rbs_rails/rake_task"
 
   RbsRails::RakeTask.new do |task|
     # If you want to avoid generating RBS for some classes, comment in it.
