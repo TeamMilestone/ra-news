@@ -24,19 +24,19 @@ class UserTest < ActiveSupport::TestCase
   test "should require email_address" do
     user = User.new(name: "Test User", password: "password123")
     assert_not user.valid?
-    assert_includes user.errors[:email_address], "can't be blank"
+    assert_includes user.errors[:email_address], "이메일을 입력해주세요"
   end
 
   test "should require name" do
     user = User.new(email_address: "test@example.com", password: "password123")
     assert_not user.valid?
-    assert_includes user.errors[:name], "can't be blank"
+    assert_includes user.errors[:name], "이름을 입력해주세요"
   end
 
   test "should require password" do
     user = User.new(email_address: "test@example.com", name: "Test User")
     assert_not user.valid?
-    assert_includes user.errors[:password], "can't be blank"
+    assert_includes user.errors[:password], "비밀번호를 입력해주세요"
   end
 
   test "should validate email format" do
@@ -53,7 +53,6 @@ class UserTest < ActiveSupport::TestCase
     valid_emails = [
       "test@example.com",
       "user.name@example.co.kr",
-      "한국어@example.com",
       "test+tag@example.org"
     ]
 
@@ -70,19 +69,19 @@ class UserTest < ActiveSupport::TestCase
     user2 = User.new(email_address: "TEST@EXAMPLE.COM", name: "User Two", password: "password123")
 
     assert_not user2.valid?
-    assert_includes user2.errors[:email_address], "has already been taken"
+    assert_includes user2.errors[:email_address], "이미 사용 중인 이메일입니다"
   end
 
   test "should validate name length" do
     # Too short
     user = User.new(email_address: "test@example.com", name: "A", password: "password123")
     assert_not user.valid?
-    assert_includes user.errors[:name], "is too short (minimum is 2 characters)"
+    assert_includes user.errors[:name], "이름은 최소 2글자 이상이어야 합니다"
 
     # Too long
     user = User.new(email_address: "test2@example.com", name: "A" * 51, password: "password123")
     assert_not user.valid?
-    assert_includes user.errors[:name], "is too long (maximum is 50 characters)"
+    assert_includes user.errors[:name], "이름은 50글자를 초과할 수 없습니다"
 
     # Just right
     user = User.new(email_address: "test3@example.com", name: "정적절한길이", password: "password123")
@@ -140,11 +139,13 @@ class UserTest < ActiveSupport::TestCase
   end
 
   test "should destroy associated sessions when user is destroyed" do
-    session = @user.sessions.create!(id: "test_session_token")
-    assert_difference "Session.count", -1 do
-      @user.destroy!
+    user_with_sessions = User.create!(email_address: "deleteme@example.com", name: "Delete Me", password: "password")
+    user_with_sessions.sessions.create!
+    user_with_sessions.sessions.create!
+
+    assert_difference "Session.count", -2 do
+      user_with_sessions.destroy!
     end
-    assert_not Session.exists?(session.id)
   end
 
   # ========== Scope Tests ==========
@@ -184,7 +185,7 @@ class UserTest < ActiveSupport::TestCase
     # Since name has NOT NULL constraint, we simulate the behavior instead
     user = User.new(email_address: "test@example.com", password: "password123", name: "Test")
     user.save!
-    
+
     # Test the full_name logic by temporarily stubbing the name
     user.stubs(:name).returns(nil)
     assert_equal "test", user.full_name

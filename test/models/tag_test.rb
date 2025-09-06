@@ -158,13 +158,13 @@ class TagTest < ActiveSupport::TestCase
   test "should handle nil confirmation status" do
     # Since is_confirmed has NOT NULL constraint, this test documents expected behavior
     # but doesn't actually create a tag with nil is_confirmed
-    
+
     nil_tag = Tag.new(name: "nil-confirmation-test")
     nil_tag.is_confirmed = nil
 
     # Should not be valid due to NOT NULL constraint
     assert_not nil_tag.valid?, "Tag with nil is_confirmed should not be valid"
-    
+
     # Verify it fails to save
     assert_raises(ActiveRecord::RecordInvalid) do
       nil_tag.save!
@@ -201,7 +201,7 @@ class TagTest < ActiveSupport::TestCase
 
       # Count should increase (if counter cache is implemented)
       tag.reload
-      
+
       # Note: This test depends on counter cache configuration
       if tag.taggings_count == initial_count
         assert true, "Counter cache not implemented or not updated yet"
@@ -243,25 +243,28 @@ class TagTest < ActiveSupport::TestCase
 
   test "should find or create tags with find_or_create_with_like_by_name" do
     # Test existing tag
-    existing_tag = Tag.find_or_create_with_like_by_name(@ruby_tag.name)
-    assert_equal @ruby_tag, existing_tag
+    tag_name = "test-tag-#{SecureRandom.hex(4)}"
+    created_tag = Tag.create!(name: tag_name, is_confirmed: true)
+    found_tag = Tag.find_or_create_with_like_by_name(tag_name)
+    assert_equal created_tag, found_tag
 
     # Test new tag creation
     new_tag_name = "brand-new-tag-#{SecureRandom.hex(4)}"
-    created_tag = Tag.find_or_create_with_like_by_name(new_tag_name)
-
-    assert_not_nil created_tag
-    assert_equal new_tag_name, created_tag.name
-    assert created_tag.persisted?
+    newly_created_tag = Tag.find_or_create_with_like_by_name(new_tag_name)
+    assert_not_nil newly_created_tag
+    assert_equal new_tag_name, newly_created_tag.name
+    assert newly_created_tag.persisted?
   end
 
   test "should work with named scope" do
-    # Test ActsAsTaggableOn's named scope
-    ruby_tags = Tag.named([ @ruby_tag.name, @rails_tag.name ])
+    tag1 = Tag.create!(name: "scope-test-1", is_confirmed: true)
+    tag2 = Tag.create!(name: "scope-test-2", is_confirmed: true)
 
-    assert_includes ruby_tags, @ruby_tag
-    assert_includes ruby_tags, @rails_tag
-    assert_equal 2, ruby_tags.count
+    found_tags = Tag.named([ tag1.name, tag2.name ])
+
+    assert_includes found_tags, tag1
+    assert_includes found_tags, tag2
+    assert_equal 2, found_tags.count
   end
 
   # ========== Case Sensitivity Tests ==========
@@ -418,7 +421,7 @@ class TagTest < ActiveSupport::TestCase
 
     # Should not be valid
     assert_not empty_tag.valid?
-    assert_includes empty_tag.errors[:name], "can't be blank"
+    assert_includes empty_tag.errors[:name], "Name에 내용을 입력해 주세요"
   end
 
   test "should handle whitespace in tag names" do

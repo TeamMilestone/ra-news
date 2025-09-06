@@ -27,19 +27,19 @@ class CommentTest < ActiveSupport::TestCase
   test "should require body" do
     comment = Comment.new(user: @user, article: @article)
     assert_not comment.valid?
-    assert_includes comment.errors[:body], "can't be blank"
+    assert_includes comment.errors[:body], "Body에 내용을 입력해 주세요"
   end
 
   test "should require user" do
     comment = Comment.new(body: "Test comment", article: @article)
     assert_not comment.valid?
-    assert_includes comment.errors[:user], "must exist"
+    assert_includes comment.errors[:user], "User은(는) 반드시 있어야 합니다"
   end
 
   test "should require article" do
     comment = Comment.new(body: "Test comment", user: @user)
     assert_not comment.valid?
-    assert_includes comment.errors[:article], "must exist"
+    assert_includes comment.errors[:article], "Article은(는) 반드시 있어야 합니다"
   end
 
   test "should validate body minimum length" do
@@ -49,7 +49,7 @@ class CommentTest < ActiveSupport::TestCase
       article: @article
     )
     assert_not comment.valid?
-    assert_includes comment.errors[:body], "is too short (minimum is 1 character)"
+    assert_includes comment.errors[:body], "Body은(는) 적어도 1자를 넘어야 합니다"
   end
 
   test "should validate body maximum length" do
@@ -60,7 +60,7 @@ class CommentTest < ActiveSupport::TestCase
       article: @article
     )
     assert_not comment.valid?
-    assert_includes comment.errors[:body], "is too long (maximum is #{Comment::MAX_BODY_LENGTH} characters)"
+    assert_includes comment.errors[:body], "Body은(는) #{Comment::MAX_BODY_LENGTH}자를 넘을 수 없습니다"
   end
 
   test "should accept body at maximum length" do
@@ -147,15 +147,18 @@ class CommentTest < ActiveSupport::TestCase
   end
 
   test "should create nested comments properly" do
-    child_comment = @root_comment.children.create!(
+    root = Comment.create!(body: "root", user: @user, article: @article)
+    child_comment = root.children.create!(
       body: "New child comment",
       user: users(:jane),
       article: @article
     )
+    root.reload
+    child_comment.reload
 
-    assert_equal @root_comment, child_comment.parent
-    assert_equal @root_comment.depth + 1, child_comment.depth
-    assert_includes @root_comment.children, child_comment
+    assert_equal root, child_comment.parent
+    assert_equal 1, child_comment.depth
+    assert_includes root.children, child_comment
   end
 
   test "should maintain nested set integrity when adding children" do
@@ -260,7 +263,7 @@ class CommentTest < ActiveSupport::TestCase
     )
 
     assert_not comment.valid?
-    assert_includes comment.errors[:body], "is too long (maximum is #{Comment::MAX_BODY_LENGTH} characters)"
+    assert_includes comment.errors[:body], "Body은(는) #{Comment::MAX_BODY_LENGTH}자를 넘을 수 없습니다"
   end
 
   # ========== Special Characters and Edge Cases ==========
@@ -350,6 +353,9 @@ class CommentTest < ActiveSupport::TestCase
       user: users(:jane),
       article: @article
     )
+
+    root.reload
+    child1.reload
 
     # Verify structure
     assert_equal 2, root.children.count
@@ -496,7 +502,7 @@ class CommentTest < ActiveSupport::TestCase
     begin
       @article.destroy!
       comment.reload
-      
+
       # If comment still exists, check its state
       if comment.persisted?
         assert_nil comment.article_id
@@ -518,21 +524,14 @@ class CommentTest < ActiveSupport::TestCase
       article: @article
     )
 
-    # User deletion behavior depends on model setup
-    # This test documents the expected behavior
-    begin
-      @user.destroy!
-      comment.reload
+    # User deletion behavior depends on model setup.
+    # This test verifies that after a user is destroyed, the associated
+    # comment becomes an orphan, but accessing the user returns nil.
+    @user.destroy!
 
-      # If comment survives, it should handle missing user gracefully
-      if comment.persisted?
-        # Comment exists but user is gone
-        assert_nil comment.user_id
-      end
-    rescue ActiveRecord::RecordNotFound
-      # Comment was deleted along with user - this is also valid behavior
-      assert_not Comment.exists?(comment.id)
-    end
+    comment.reload
+    assert comment.persisted?
+    assert_nil comment.user
   end
 
   # ========== Fixture Validation Tests ==========

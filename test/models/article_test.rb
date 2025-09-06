@@ -568,16 +568,16 @@ class ArticleTest < ActiveSupport::TestCase
   # Helper method to stub external API requests
   def stub_external_requests
     # Stub Faraday HTTP requests
-    Faraday.stubs(:get).returns(
-      stub(
-        body: '{"title": "Test", "description": "Test description"}',
-        status: 200,
-        success?: true
-      )
+    response = stub(
+      body: "<html><head><title>Test</title></head><body>Test description</body></html>",
+      status: 200,
+      success?: true,
+      headers: {}
     )
-    
+    Faraday.stubs(:get).returns(response)
+
     # Stub any other external service calls if needed
-    Article.any_instance.stubs(:fetch_url_content).returns(nil)
+    Article.any_instance.stubs(:fetch_url_content).returns(response)
     Article.any_instance.stubs(:set_youtube_metadata).returns(nil)
   end
 

@@ -399,6 +399,9 @@ class CurrentTest < ActiveSupport::TestCase
   test "should access current user efficiently" do
     Current.session = @session
 
+    # Preload the user to ensure no queries are made inside the block
+    Current.user
+
     # Multiple accesses should not cause additional database queries
     # (assuming session and user are already loaded)
     assert_queries(0) do

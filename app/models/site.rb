@@ -22,7 +22,8 @@ class Site < ApplicationRecord
     when "hacker_news"
       HackerNews.new
     when "youtube"
-      Youtube::Channel.new(id: channel)
+        return nil if channel.blank?
+        Youtube::Channel.new(id: channel)
     else
       raise ArgumentError, "Unsupported client type: #{client}"
     end

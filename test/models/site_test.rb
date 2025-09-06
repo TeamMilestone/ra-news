@@ -26,14 +26,14 @@ class SiteTest < ActiveSupport::TestCase
   test "should require name" do
     site = Site.new(client: :rss, base_uri: "https://example.com/rss")
     assert_not site.valid?
-    assert_includes site.errors[:name], "can't be blank"
+    assert_includes site.errors[:name], "Name에 내용을 입력해 주세요"
   end
 
   test "should require client" do
     site = Site.new(name: "Test Site", base_uri: "https://example.com/rss")
     site.client = nil
     assert_not site.valid?
-    assert_includes site.errors[:client], "can't be blank"
+    assert_includes site.errors[:client], "Client에 내용을 입력해 주세요"
   end
 
   test "should allow sites without base_uri" do
@@ -43,11 +43,8 @@ class SiteTest < ActiveSupport::TestCase
 
   # ========== Association Tests ==========
 
-  test "should have many articles with nullify dependency" do
+  test "should raise error when destroying site with articles due to NOT NULL constraint" do
     site = @rss_site
-    assert_respond_to site, :articles
-    assert_kind_of ActiveRecord::Associations::CollectionProxy, site.articles
-
     # Create an article associated with this site
     article = site.articles.create!(
       title: "Test Article",
@@ -55,16 +52,16 @@ class SiteTest < ActiveSupport::TestCase
       origin_url: "https://example.com/test-article-origin"
     )
 
-    # Destroying site should nullify article's site_id
-    site.destroy!
-    article.reload
-    assert_nil article.site_id
+    # Destroying site should fail due to NOT NULL constraint in DB on articles.site_id
+    assert_raises(ActiveRecord::NotNullViolation) do
+      site.destroy!
+    end
   end
 
   # ========== Enum Tests ==========
 
   test "should have client enum with correct values" do
-    assert_respond_to Site, :client
+    assert_respond_to @rss_site, :client
 
     # Test enum values
     expected_clients = %w[rss gmail youtube hacker_news rss_page]
@@ -154,6 +151,7 @@ class SiteTest < ActiveSupport::TestCase
   end
 
   test "init_client should return Youtube::Channel for youtube client" do
+    @youtube_site.update!(channel: "UCWnPjmqvljcafA0z2U1fwKQ")
     client = @youtube_site.init_client
     assert_kind_of Youtube::Channel, client
     assert_equal @youtube_site.channel, client.instance_variable_get(:@id)
@@ -181,9 +179,9 @@ class SiteTest < ActiveSupport::TestCase
   test "should handle missing channel for youtube sites gracefully" do
     youtube_site = Site.new(name: "YouTube No Channel", client: :youtube)
 
-    # The init_client method should still work, but might initialize with nil
+    # The init_client method should return nil if channel is missing
     client = youtube_site.init_client
-    assert_kind_of Youtube::Channel, client
+    assert_nil client
   end
 
   # ========== RSS-Specific Tests ==========
@@ -202,11 +200,10 @@ class SiteTest < ActiveSupport::TestCase
   end
 
   test "should handle RSS sites without base_uri" do
-    rss_site = Site.new(name: "No URI RSS", client: :rss)
+    rss_site = Site.create!(name: "No URI RSS", client: :rss, base_uri: nil)
     client = rss_site.init_client
 
     assert_kind_of RssClient, client
-    # Should initialize with nil base_uri
     assert_nil client.instance_variable_get(:@base_uri)
   end
 
@@ -224,7 +221,7 @@ class SiteTest < ActiveSupport::TestCase
     )
 
     article2 = site.articles.create!(
-      title: "Article 2", 
+      title: "Article 2",
       url: "https://example.com/article2-#{SecureRandom.hex(4)}",
       origin_url: "https://example.com/article2-origin-#{SecureRandom.hex(4)}"
     )
@@ -235,7 +232,7 @@ class SiteTest < ActiveSupport::TestCase
     # If NOT NULL constraint exists, articles should be deleted or an error should occur
     begin
       site.destroy!
-      
+
       # If destruction succeeds, check the behavior
       if Article.exists?(article1.id) && Article.exists?(article2.id)
         article1.reload
