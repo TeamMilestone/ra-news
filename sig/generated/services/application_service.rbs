@@ -6,4 +6,6 @@ class ApplicationService
   def self.call: (*untyped args, **untyped kwargs) -> untyped
 
   def call: () -> untyped
+
+  def logger: () -> untyped
 end

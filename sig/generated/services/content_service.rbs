@@ -1,0 +1,24 @@
+# Generated from app/services/content_service.rb with RBS::Inline
+
+class ContentService < ApplicationService
+  include LinkHelper
+
+  attr_reader article: Article
+
+  def initialize: (untyped article) -> untyped
+
+  def call: () -> untyped
+
+  # : (url: String) -> String?
+  def execute_html: (url: String) -> String?
+
+  # : (url: String) -> String?
+  def execute_youtube: (url: String) -> String?
+
+  private
+
+  # : (String url, ?Integer? count) -> Faraday::Response
+  def handle_redirection: (String url, ?Integer? count) -> Faraday::Response
+
+  def format_transcript: (untyped actions) -> untyped
+end

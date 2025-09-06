@@ -1,0 +1,9 @@
+# Generated from app/clients/twitter_client.rb with RBS::Inline
+
+class TwitterClient
+  attr_reader client: untyped
+
+  def initialize: () -> untyped
+
+  def post: (untyped text) -> untyped
+end

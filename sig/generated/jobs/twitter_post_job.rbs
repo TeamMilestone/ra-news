@@ -1,12 +1,18 @@
 # Generated from app/jobs/twitter_post_job.rb with RBS::Inline
 
 class TwitterPostJob < ApplicationJob
-  # Twitter constants
-  TWITTER_CHARACTER_LIMIT: ::Integer
+  class TwitterConfig < Struct[untyped]
+    attr_accessor character_limit(): untyped
 
-  TWITTER_SHORTENED_URL_LENGTH: ::Integer
+    attr_accessor shortened_url_length(): untyped
 
-  FORMATTING_BUFFER: ::Integer
+    attr_accessor formatting_buffer(): untyped
+
+    def self.new: (?untyped character_limit, ?untyped shortened_url_length, ?untyped formatting_buffer) -> instance
+                | (?character_limit: untyped, ?shortened_url_length: untyped, ?formatting_buffer: untyped) -> instance
+  end
+
+  TWITTER_CONFIG: untyped
 
   # : (Integer id) -> void
   def perform: (Integer id) -> void
@@ -21,4 +27,9 @@ class TwitterPostJob < ApplicationJob
 
   # : (Article article) -> String
   def build_tweet_text: (Article article) -> String
+
+  # : (String content) -> String
+  def truncate_for_twitter: (String content) -> String
+
+  def twitter_client: () -> untyped
 end

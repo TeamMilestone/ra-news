@@ -1,0 +1,5 @@
+# Generated from app/jobs/article_batch_job.rb with RBS::Inline
+
+class ArticleBatchJob < ApplicationJob
+  def perform: () -> void
+end

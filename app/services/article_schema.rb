@@ -1,3 +1,7 @@
+# frozen_string_literal: true
+
+# rbs_inline: enabled
+
 require "ruby_llm/schema"
 
 class ArticleSchema < RubyLLM::Schema

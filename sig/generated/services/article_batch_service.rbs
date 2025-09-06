@@ -1,0 +1,10 @@
+# Generated from app/services/article_batch_service.rb with RBS::Inline
+
+class ArticleBatchService < ApplicationService
+  attr_reader created_at: Time
+
+  # : (?Time created_at) -> ArticleBatchService
+  def initialize: (?Time created_at) -> ArticleBatchService
+
+  def call: () -> void
+end
