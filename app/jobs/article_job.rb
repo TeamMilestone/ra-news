@@ -120,8 +120,5 @@ PROMPT
 
     # Rebuild search index only for kept articles
     PgSearch::Multisearch.rebuild(Article, clean_up: false, transactional: false) unless article.discarded?
-
-    # Trigger Twitter posting after successful article processing
-    TwitterPostJob.perform_later(article.id)
   end
 end

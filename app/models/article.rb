@@ -43,7 +43,6 @@ class Article < ApplicationRecord
   acts_as_taggable_on :tags
 
   after_discard :clear_rss_cache
-  after_commit :enqueue_article_processing, on: :create
   after_commit :clear_rss_cache, on: [ :create, :update, :destroy ]
 
   before_save do
@@ -276,10 +275,6 @@ class Article < ApplicationRecord
   end
 
   private
-
-  def enqueue_article_processing
-    ArticleJob.perform_later(id) if kept?
-  end
 
   def clear_rss_cache
     Rails.cache.delete("rss_articles")
