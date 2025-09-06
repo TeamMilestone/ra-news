@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   # scan_ruby:
@@ -95,7 +95,7 @@ jobs:
       - name: Run tests
         env:
           RAILS_ENV: test
-          DATABASE_URL: postgres://postgres:postgres@localhost:5432/ra-news_test
+          TEST_DATABASE_URL: postgres://postgres:postgres@localhost:5432/ra-news_test
           # REDIS_URL: redis://localhost:6379/0
         run: yarn install && bin/rails db:create db:migrate && bin/rails db:test:prepare && bin/rails test test:system
 
