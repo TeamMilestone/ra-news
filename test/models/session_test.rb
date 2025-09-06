@@ -14,7 +14,7 @@ class SessionTest < ActiveSupport::TestCase
 
   # ========== Validation Tests ==========
 
-  test "should be valid with valid attributes" do
+  test "유효한 속성을 가진 경우 유효해야 한다" do
     session = Session.new(
       user: @user,
       ip_address: "192.168.1.1",
@@ -23,13 +23,13 @@ class SessionTest < ActiveSupport::TestCase
     assert session.valid?
   end
 
-  test "should require user" do
+  test "user는 필수 항목이어야 한다" do
     session = Session.new(ip_address: "127.0.0.1", user_agent: "Test")
     assert_not session.valid?
     assert_includes session.errors[:user], "User은(는) 반드시 있어야 합니다"
   end
 
-  test "should allow different users to have different sessions" do
+  test "다른 사용자가 다른 세션을 가질 수 있도록 허용해야 한다" do
     session1 = Session.create!(user: @user, ip_address: "127.0.0.1", user_agent: "Browser 1")
     session2 = Session.create!(user: users(:jane), ip_address: "127.0.0.2", user_agent: "Browser 2")
 
@@ -40,13 +40,13 @@ class SessionTest < ActiveSupport::TestCase
 
   # ========== Association Tests ==========
 
-  test "should belong to user" do
+  test "user에 속해야 한다" do
     assert_respond_to @session, :user
     assert_kind_of User, @session.user
     assert_equal @user, @session.user
   end
 
-  test "should be destroyed when user is destroyed" do
+  test "사용자가 삭제될 때 함께 삭제되어야 한다" do
     user = users(:minimal_user)
     initial_session_count = user.sessions.count
     session = Session.create!(user: user, ip_address: "127.0.0.1", user_agent: "Test")
@@ -59,12 +59,12 @@ class SessionTest < ActiveSupport::TestCase
     assert_not Session.exists?(session.id)
   end
 
-  test "should allow multiple sessions per user" do
+  test "사용자당 여러 세션을 허용해야 한다" do
     user = @user
     initial_session_count = user.sessions.count
 
     session1 = Session.create!(user: user, ip_address: "127.0.0.1", user_agent: "Browser 1")
-    session2 = Session.create!(user: user, ip_address: "127.0.0.2", user_agent: "Browser 2") 
+    session2 = Session.create!(user: user, ip_address: "127.0.0.2", user_agent: "Browser 2")
     session3 = Session.create!(user: user, ip_address: "127.0.0.3", user_agent: "Browser 3")
 
     user.reload
@@ -76,30 +76,30 @@ class SessionTest < ActiveSupport::TestCase
 
   # ========== Session Attributes Tests ==========
 
-  test "should have auto-generated ID" do
+  test "자동 생성된 ID를 가져야 한다" do
     session = Session.create!(user: @user, ip_address: "127.0.0.1", user_agent: "Test")
     assert_not_nil session.id
     assert session.id > 0
   end
 
-  test "should store IP address and user agent" do
+  test "IP 주소와 사용자 에이전트를 저장해야 한다" do
     ip = "192.168.1.100"
     agent = "Mozilla/5.0 (Test Browser)"
-    
+
     session = Session.create!(
       user: @user,
       ip_address: ip,
       user_agent: agent
     )
-    
+
     assert_equal ip, session.ip_address
     assert_equal agent, session.user_agent
   end
 
-  test "should allow nil IP address and user agent" do
+  test "nil IP 주소와 사용자 에이전트를 허용해야 한다" do
     session = Session.new(user: @user)
     assert session.valid?
-    
+
     session.save!
     assert_nil session.ip_address
     assert_nil session.user_agent
@@ -107,7 +107,7 @@ class SessionTest < ActiveSupport::TestCase
 
   # ========== Authentication Integration Tests ==========
 
-  test "should work with admin users" do
+  test "관리자 사용자와 함께 작동해야 한다" do
     admin = @admin
     admin_session = Session.create!(
       user: admin,
@@ -120,11 +120,11 @@ class SessionTest < ActiveSupport::TestCase
     assert_equal admin, admin_session.user
   end
 
-  test "should work with Korean users" do
+  test "한국인 사용자와 함께 작동해야 한다" do
     korean_user = users(:korean_user)
     korean_session = Session.create!(
       user: korean_user,
-      ip_address: "127.0.0.1", 
+      ip_address: "127.0.0.1",
       user_agent: "Korean Browser"
     )
 
@@ -133,7 +133,7 @@ class SessionTest < ActiveSupport::TestCase
     assert_equal "김철수", korean_session.user.name
   end
 
-  test "should handle session creation for users with Korean names" do
+  test "한국어 이름을 가진 사용자의 세션 생성을 처리해야 한다" do
     korean_user = users(:user_with_spaces)
     session = Session.create!(
       user: korean_user,
@@ -147,7 +147,7 @@ class SessionTest < ActiveSupport::TestCase
 
   # ========== Data Integrity Tests ==========
 
-  test "should maintain referential integrity" do
+  test "참조 무결성을 유지해야 한다" do
     user = @user
     session = Session.create!(user: user, ip_address: "127.0.0.1", user_agent: "Test")
 
@@ -159,7 +159,7 @@ class SessionTest < ActiveSupport::TestCase
     assert_includes user.sessions, session
   end
 
-  test "should handle user changes" do
+  test "사용자 변경을 처리해야 한다" do
     session = @session
     original_user = session.user
     new_user = users(:jane)
@@ -184,7 +184,7 @@ class SessionTest < ActiveSupport::TestCase
 
   # ========== Session Lifecycle Tests ==========
 
-  test "should create sessions with proper timestamps" do
+  test "적절한 타임스탬프로 세션을 생성해야 한다" do
     Time.zone = "Asia/Seoul"
 
     travel_to Time.zone.parse("2024-06-15 14:30:00") do
@@ -204,7 +204,7 @@ class SessionTest < ActiveSupport::TestCase
     end
   end
 
-  test "should update updated_at on changes" do
+  test "변경 시 updated_at을 업데이트해야 한다" do
     session = @session
     original_updated_at = session.updated_at
 
@@ -218,7 +218,7 @@ class SessionTest < ActiveSupport::TestCase
 
   # ========== Performance Tests ==========
 
-  test "should efficiently find sessions by id" do
+  test "id로 세션을 효율적으로 찾아야 한다" do
     session_id = @session.id
 
     assert_queries(1) do
@@ -227,7 +227,7 @@ class SessionTest < ActiveSupport::TestCase
     end
   end
 
-  test "should efficiently load user association" do
+  test "user 연관 관계를 효율적으로 로드해야 한다" do
     session = @session
 
     # Loading user should not trigger additional query if already loaded
@@ -239,7 +239,7 @@ class SessionTest < ActiveSupport::TestCase
     end
   end
 
-  test "should efficiently find sessions by user" do
+  test "사용자로 세션을 효율적으로 찾아야 한다" do
     user = @user
 
     assert_queries(1) do
@@ -250,23 +250,23 @@ class SessionTest < ActiveSupport::TestCase
 
   # ========== Security Considerations Tests ==========
 
-  test "should handle session creation gracefully" do
+  test "세션 생성을 정상적으로 처리해야 한다" do
     # Multiple sessions can be created without issues since IDs are auto-generated
     session1 = Session.create!(user: @user, ip_address: "127.0.0.1", user_agent: "Test1")
     session2 = Session.create!(user: users(:jane), ip_address: "127.0.0.1", user_agent: "Test2")
-    
+
     assert session1.valid?
     assert session2.valid?
     assert_not_equal session1.id, session2.id
   end
 
-  test "should handle very long user agent strings" do
+  test "매우 긴 사용자 에이전트 문자열을 처리해야 한다" do
     # Test with very long user agent (within reasonable limits)
     long_agent = "Mozilla/5.0 " + ("a" * 500)
 
     session = Session.new(
-      user: @user, 
-      ip_address: "127.0.0.1", 
+      user: @user,
+      ip_address: "127.0.0.1",
       user_agent: long_agent
     )
 
@@ -282,7 +282,7 @@ class SessionTest < ActiveSupport::TestCase
 
   # ========== Edge Cases and Error Handling ==========
 
-  test "should handle concurrent session creation" do
+  test "동시 세션 생성을 처리해야 한다" do
     user = @user
 
     # Simulate concurrent session creation
@@ -306,7 +306,7 @@ class SessionTest < ActiveSupport::TestCase
     end
   end
 
-  test "should handle database constraints properly" do
+  test "데이터베이스 제약 조건을 올바르게 처리해야 한다" do
     # Test that database-level constraints are properly handled
 
     # Try to create session with non-existent user_id
@@ -320,7 +320,7 @@ class SessionTest < ActiveSupport::TestCase
 
   # ========== Current Integration Tests ==========
 
-  test "should work with Current.session" do
+  test "Current.session과 함께 작동해야 한다" do
     # Test integration with Current attributes system
     session = @session
 
@@ -337,18 +337,18 @@ class SessionTest < ActiveSupport::TestCase
 
   # ========== Fixture Validation Tests ==========
 
-  test "all fixture sessions should be valid" do
+  test "모든 fixture 세션은 유효해야 한다" do
     Session.all.each do |session|
       assert session.valid?, "Session #{session.id} should be valid: #{session.errors.full_messages.join(', ')}"
     end
   end
 
-  test "fixture sessions should have unique ids" do
+  test "fixture 세션은 고유한 id를 가져야 한다" do
     session_ids = Session.pluck(:id)
     assert_equal session_ids.uniq.length, session_ids.length, "All session IDs should be unique"
   end
 
-  test "fixture sessions should belong to valid users" do
+  test "fixture 세션은 유효한 사용자에 속해야 한다" do
     Session.all.each do |session|
       assert_not_nil session.user, "Session #{session.id} should have a user"
       assert session.user.valid?, "Session #{session.id} should belong to a valid user"
@@ -357,7 +357,7 @@ class SessionTest < ActiveSupport::TestCase
 
   # ========== Integration with Korean Timezone ==========
 
-  test "should work correctly with Korean timezone" do
+  test "한국 시간대와 올바르게 작동해야 한다" do
     Time.zone = "Asia/Seoul"
 
     # Create session in Korean timezone
@@ -378,7 +378,7 @@ class SessionTest < ActiveSupport::TestCase
 
   # ========== Cleanup and Maintenance Tests ==========
 
-  test "should support session cleanup operations" do
+  test "세션 정리 작업을 지원해야 한다" do
     # Test that sessions can be cleaned up efficiently
     old_sessions = []
 

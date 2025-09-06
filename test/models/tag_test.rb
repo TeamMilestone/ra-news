@@ -16,11 +16,11 @@ class TagTest < ActiveSupport::TestCase
 
   # ========== Inheritance Tests ==========
 
-  test "should inherit from ActsAsTaggableOn::Tag" do
+  test "ActsAsTaggableOn::Tag를 상속해야 한다" do
     assert Tag.ancestors.include?(ActsAsTaggableOn::Tag)
   end
 
-  test "should have ActsAsTaggableOn functionality" do
+  test "ActsAsTaggableOn 기능이 있어야 한다" do
     # Test that basic taggable functionality is available
     assert_respond_to Tag, :find_or_create_with_like_by_name
     assert_respond_to Tag, :named
@@ -30,7 +30,7 @@ class TagTest < ActiveSupport::TestCase
 
   # ========== Scope Tests ==========
 
-  test "confirmed scope should return confirmed tags" do
+  test "confirmed 스코프는 확정된 태그를 반환해야 한다" do
     confirmed_tags = Tag.confirmed
 
     assert_includes confirmed_tags, @ruby_tag
@@ -40,7 +40,7 @@ class TagTest < ActiveSupport::TestCase
     assert_not_includes confirmed_tags, @korean_tag
   end
 
-  test "unconfirmed scope should return unconfirmed tags" do
+  test "unconfirmed 스코프는 미확정 태그를 반환해야 한다" do
     unconfirmed_tags = Tag.unconfirmed
 
     assert_includes unconfirmed_tags, @new_feature_tag
@@ -50,7 +50,7 @@ class TagTest < ActiveSupport::TestCase
     assert_not_includes unconfirmed_tags, @performance_tag
   end
 
-  test "confirmed and unconfirmed scopes should be mutually exclusive" do
+  test "confirmed와 unconfirmed 스코프는 상호 배타적이어야 한다" do
     confirmed = Tag.confirmed.pluck(:id)
     unconfirmed = Tag.unconfirmed.pluck(:id)
 
@@ -66,7 +66,7 @@ class TagTest < ActiveSupport::TestCase
 
   # ========== Tag Name Tests ==========
 
-  test "should handle various tag name formats" do
+  test "다양한 태그 이름 형식을 처리해야 한다" do
     valid_names = [
       "ruby",
       "rails",
@@ -93,7 +93,7 @@ class TagTest < ActiveSupport::TestCase
     end
   end
 
-  test "should handle Korean tag names" do
+  test "한글 태그 이름을 처리해야 한다" do
     korean_names = [
       "루비",
       "레일스",
@@ -116,7 +116,7 @@ class TagTest < ActiveSupport::TestCase
     end
   end
 
-  test "should handle mixed Korean and English tag names" do
+  test "한글과 영문이 혼합된 태그 이름을 처리해야 한다" do
     mixed_names = [
       "ruby-한국어",
       "Rails-레일스",
@@ -137,7 +137,7 @@ class TagTest < ActiveSupport::TestCase
 
   # ========== Confirmation Status Tests ==========
 
-  test "should create confirmed tags" do
+  test "확정된 태그를 생성해야 한다" do
     confirmed_tag = Tag.new(name: "confirmed-test", is_confirmed: true)
     confirmed_tag.save!
 
@@ -146,7 +146,7 @@ class TagTest < ActiveSupport::TestCase
     assert_not_includes Tag.unconfirmed, confirmed_tag
   end
 
-  test "should create unconfirmed tags" do
+  test "미확정 태그를 생성해야 한다" do
     unconfirmed_tag = Tag.new(name: "unconfirmed-test", is_confirmed: false)
     unconfirmed_tag.save!
 
@@ -155,7 +155,7 @@ class TagTest < ActiveSupport::TestCase
     assert_not_includes Tag.confirmed, unconfirmed_tag
   end
 
-  test "should handle nil confirmation status" do
+  test "nil 확정 상태를 처리해야 한다" do
     # Since is_confirmed has NOT NULL constraint, this test documents expected behavior
     # but doesn't actually create a tag with nil is_confirmed
 
@@ -171,7 +171,7 @@ class TagTest < ActiveSupport::TestCase
     end
   end
 
-  test "should allow changing confirmation status" do
+  test "확정 상태를 변경할 수 있어야 한다" do
     tag = Tag.create!(name: "changeable-tag", is_confirmed: false)
 
     # Should start as unconfirmed
@@ -188,7 +188,7 @@ class TagTest < ActiveSupport::TestCase
 
   # ========== Taggings Count Tests ==========
 
-  test "should track taggings count" do
+  test "taggings 개수를 추적해야 한다" do
     # Test that taggings_count reflects actual usage
     tag = @ruby_tag
 
@@ -213,7 +213,7 @@ class TagTest < ActiveSupport::TestCase
     end
   end
 
-  test "should handle zero taggings count" do
+  test "taggings 개수가 0인 경우를 처리해야 한다" do
     minimal_tag = tags(:minimal_tag)
 
     if minimal_tag.respond_to?(:taggings_count)
@@ -223,7 +223,7 @@ class TagTest < ActiveSupport::TestCase
 
   # ========== Integration with ActsAsTaggableOn Tests ==========
 
-  test "should work with acts_as_taggable_on functionality" do
+  test "acts_as_taggable_on 기능과 함께 작동해야 한다" do
     # Test integration with Article tagging
     article = @article
 
@@ -241,22 +241,22 @@ class TagTest < ActiveSupport::TestCase
     assert_not_nil new_tag
   end
 
-  test "should find or create tags with find_or_create_with_like_by_name" do
+  test "find_or_create_with_like_by_name으로 태그를 찾거나 생성해야 한다" do
     # Test existing tag
-    tag_name = "test-tag-#{SecureRandom.hex(4)}"
+    tag_name = "test-tag-" + SecureRandom.hex(4)
     created_tag = Tag.create!(name: tag_name, is_confirmed: true)
     found_tag = Tag.find_or_create_with_like_by_name(tag_name)
     assert_equal created_tag, found_tag
 
     # Test new tag creation
-    new_tag_name = "brand-new-tag-#{SecureRandom.hex(4)}"
+    new_tag_name = "brand-new-tag-" + SecureRandom.hex(4)
     newly_created_tag = Tag.find_or_create_with_like_by_name(new_tag_name)
     assert_not_nil newly_created_tag
     assert_equal new_tag_name, newly_created_tag.name
     assert newly_created_tag.persisted?
   end
 
-  test "should work with named scope" do
+  test "named 스코프와 함께 작동해야 한다" do
     tag1 = Tag.create!(name: "scope-test-1", is_confirmed: true)
     tag2 = Tag.create!(name: "scope-test-2", is_confirmed: true)
 
@@ -269,7 +269,7 @@ class TagTest < ActiveSupport::TestCase
 
   # ========== Case Sensitivity Tests ==========
 
-  test "should handle case sensitivity appropriately" do
+  test "대소문자 구분을 적절하게 처리해야 한다" do
     # Test behavior with different cases
     lower_case = "ruby"
     upper_case = "RUBY"
@@ -293,7 +293,7 @@ class TagTest < ActiveSupport::TestCase
 
   # ========== Special Characters Tests ==========
 
-  test "should handle special characters in tag names" do
+  test "태그 이름에 있는 특수 문자를 처리해야 한다" do
     special_chars = [
       "c++",
       "c#",
@@ -321,19 +321,19 @@ class TagTest < ActiveSupport::TestCase
 
   # ========== Performance Tests ==========
 
-  test "should efficiently query confirmed tags" do
+  test "확정된 태그를 효율적으로 쿼리해야 한다" do
     assert_queries(1) do
       Tag.confirmed.limit(10).to_a
     end
   end
 
-  test "should efficiently query unconfirmed tags" do
+  test "미확정 태그를 효율적으로 쿼리해야 한다" do
     assert_queries(1) do
       Tag.unconfirmed.limit(10).to_a
     end
   end
 
-  test "should efficiently find tags by name" do
+  test "이름으로 태그를 효율적으로 찾아야 한다" do
     tag_name = @ruby_tag.name
 
     assert_queries(1) do
@@ -344,7 +344,7 @@ class TagTest < ActiveSupport::TestCase
 
   # ========== Data Integrity Tests ==========
 
-  test "should maintain referential integrity with taggings" do
+  test "taggings와의 참조 무결성을 유지해야 한다" do
     tag = Tag.create!(name: "integrity-test", is_confirmed: false)
 
     # Add tag to an article
@@ -367,7 +367,7 @@ class TagTest < ActiveSupport::TestCase
 
   # ========== Korean Content Integration Tests ==========
 
-  test "should work with Korean article content" do
+  test "한글 기사 내용과 함께 작동해야 한다" do
     korean_article = articles(:korean_content_article)
     korean_tags = [ "루비", "레일스", "한국어", "프로그래밍" ]
 
@@ -383,7 +383,7 @@ class TagTest < ActiveSupport::TestCase
     end
   end
 
-  test "should support mixed language tagging" do
+  test "혼합 언어 태깅을 지원해야 한다" do
     article = @article
     mixed_tags = [ "ruby", "루비", "rails", "레일스", "performance", "성능" ]
 
@@ -400,7 +400,7 @@ class TagTest < ActiveSupport::TestCase
 
   # ========== Edge Cases and Error Handling ==========
 
-  test "should handle very long tag names" do
+  test "매우 긴 태그 이름을 처리해야 한다" do
     # Test with very long tag name
     long_name = "a" * 100 # Adjust based on your tag name length limits
 
@@ -416,7 +416,7 @@ class TagTest < ActiveSupport::TestCase
     end
   end
 
-  test "should handle empty tag names gracefully" do
+  test "빈 태그 이름을 정상적으로 처리해야 한다" do
     empty_tag = Tag.new(name: "", is_confirmed: false)
 
     # Should not be valid
@@ -424,7 +424,7 @@ class TagTest < ActiveSupport::TestCase
     assert_includes empty_tag.errors[:name], "Name에 내용을 입력해 주세요"
   end
 
-  test "should handle whitespace in tag names" do
+  test "태그 이름에 있는 공백을 처리해야 한다" do
     whitespace_names = [
       " leading-space",
       "trailing-space ",
@@ -452,13 +452,13 @@ class TagTest < ActiveSupport::TestCase
 
   # ========== Fixture Validation Tests ==========
 
-  test "all fixture tags should be valid" do
+  test "모든 fixture 태그는 유효해야 한다" do
     Tag.all.each do |tag|
       assert tag.valid?, "Tag #{tag.name} should be valid: #{tag.errors.full_messages.join(', ')}"
     end
   end
 
-  test "fixture tags should have appropriate confirmation status" do
+  test "fixture 태그는 적절한 확정 상태를 가져야 한다" do
     # Confirmed tags
     confirmed_fixture_tags = [ @ruby_tag, @rails_tag, @performance_tag, @special_tag ]
     confirmed_fixture_tags.each do |tag|
@@ -472,7 +472,7 @@ class TagTest < ActiveSupport::TestCase
     end
   end
 
-  test "fixture tags should have reasonable names" do
+  test "fixture 태그는 합리적인 이름을 가져야 한다" do
     Tag.all.each do |tag|
       assert_not_nil tag.name
       assert_not tag.name.empty?
@@ -482,7 +482,7 @@ class TagTest < ActiveSupport::TestCase
 
   # ========== Integration with Korean Timezone ==========
 
-  test "should work with Korean timezone" do
+  test "한국 시간대와 함께 작동해야 한다" do
     Time.zone = "Asia/Seoul"
 
     tag = Tag.create!(
@@ -497,7 +497,7 @@ class TagTest < ActiveSupport::TestCase
 
   # ========== Batch Operations Tests ==========
 
-  test "should handle batch confirmation efficiently" do
+  test "일괄 확정을 효율적으로 처리해야 한다" do
     # Create some unconfirmed tags
     unconfirmed_tag_names = [ "batch-1", "batch-2", "batch-3" ]
     unconfirmed_tags = unconfirmed_tag_names.map do |name|
@@ -515,10 +515,10 @@ class TagTest < ActiveSupport::TestCase
     end
   end
 
-  test "should support efficient tag cleanup" do
+  test "효율적인 태그 정리 작업을 지원해야 한다" do
     # Create tags with no taggings
     unused_tags = 3.times.map do |i|
-      Tag.create!(name: "unused-#{i}", is_confirmed: false, taggings_count: 0)
+      Tag.create!(name: "unused-" + i.to_s, is_confirmed: false, taggings_count: 0)
     end
 
     # Should be able to clean up unused tags efficiently
@@ -537,7 +537,7 @@ class TagTest < ActiveSupport::TestCase
   def assert_queries(expected_count)
     queries = []
     ActiveSupport::Notifications.subscribe("sql.active_record") do |name, start, finish, id, payload|
-      queries << payload[:sql] unless payload[:sql] =~ /^(BEGIN|COMMIT|ROLLBACK|SAVEPOINT|RELEASE)/
+      queries << payload[:sql] unless payload[:sql] =~ /^(BEGIN|COMMIT|ROLLBACK|SAVEPOINT|RELEASE)/i
     end
 
     yield

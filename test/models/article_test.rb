@@ -16,7 +16,7 @@ class ArticleTest < ActiveSupport::TestCase
 
   # ========== Validation Tests ==========
 
-  test "should be valid with valid attributes" do
+  test "유효한 속성을 가진 경우 유효해야 한다" do
     article = Article.new(
       title: "Test Article",
       url: "https://example.com/test-unique-url",
@@ -26,13 +26,13 @@ class ArticleTest < ActiveSupport::TestCase
     assert article.valid?
   end
 
-  test "should require url" do
+  test "url은 필수 항목이어야 한다" do
     article = Article.new(title: "Test Article", origin_url: "https://example.com/test")
     assert_not article.save
     assert_includes article.errors[:url], "Url에 내용을 입력해 주세요"
   end
 
-  test "should set origin_url from url when blank" do
+  test "origin_url이 비어있을 때 url로부터 설정되어야 한다" do
     article = Article.new(
       title: "Test Article",
       url: "https://example.com/test"
@@ -44,7 +44,7 @@ class ArticleTest < ActiveSupport::TestCase
     assert_equal "https://example.com/test", article.origin_url
   end
 
-  test "should validate url uniqueness case insensitive" do
+  test "url의 유일성을 대소문자 구분 없이 검증해야 한다" do
     existing_article = @article
     article = Article.new(
       title: "Another Article",
@@ -55,7 +55,7 @@ class ArticleTest < ActiveSupport::TestCase
     assert_includes article.errors[:url], "Url은(는) 이미 존재합니다"
   end
 
-  test "should validate origin_url uniqueness case insensitive" do
+  test "origin_url의 유일성을 대소문자 구분 없이 검증해야 한다" do
     existing_article = @article
     article = Article.new(
       title: "Another Article",
@@ -66,7 +66,7 @@ class ArticleTest < ActiveSupport::TestCase
     assert_includes article.errors[:origin_url], "Origin url은(는) 이미 존재합니다"
   end
 
-  test "should validate slug uniqueness when present" do
+  test "slug가 존재할 경우 유일성을 검증해야 한다" do
     existing_article = @article
     article = Article.new(
       title: "Different Article",
@@ -78,7 +78,7 @@ class ArticleTest < ActiveSupport::TestCase
     assert_includes article.errors[:slug], "Slug은(는) 이미 존재합니다"
   end
 
-  test "should allow blank slug" do
+  test "빈 slug를 허용해야 한다" do
     article = Article.new(
       title: "Test Article",
       url: "https://example.com/blank-slug-test",
@@ -90,7 +90,7 @@ class ArticleTest < ActiveSupport::TestCase
 
   # ========== Association Tests ==========
 
-  test "should belong to user optionally" do
+  test "user에 선택적으로 속해야 한다" do
     assert_respond_to @article, :user
     assert_kind_of User, @article.user
 
@@ -104,7 +104,7 @@ class ArticleTest < ActiveSupport::TestCase
     assert article.valid?
   end
 
-  test "should belong to site optionally" do
+  test "site에 선택적으로 속해야 한다" do
     assert_respond_to @article, :site
     assert_kind_of Site, @article.site
 
@@ -118,7 +118,7 @@ class ArticleTest < ActiveSupport::TestCase
     assert article.valid?
   end
 
-  test "should have many comments association" do
+  test "comments와 has_many 관계를 가져야 한다" do
     article = @article
     initial_count = article.comments.count
     comment = article.comments.create!(body: "Test comment", user: @user)
@@ -130,54 +130,54 @@ class ArticleTest < ActiveSupport::TestCase
 
   # ========== Scope Tests ==========
 
-  test "full_text_search_for scope should exist and be callable" do
+  test "full_text_search_for 스코프가 존재하고 호출 가능해야 한다" do
     assert_respond_to Article, :full_text_search_for
     # Note: Full functionality requires PostgreSQL setup
   end
 
-  test "related scope should return related articles" do
+  test "related 스코프는 관련된 기사를 반환해야 한다" do
     related_articles = Article.related
     assert_includes related_articles, @article
     assert_includes related_articles, @korean_article
     assert_not_includes related_articles, @site_article
   end
 
-  test "unrelated scope should return unrelated articles" do
+  test "unrelated 스코프는 관련 없는 기사를 반환해야 한다" do
     unrelated_articles = Article.unrelated
     assert_includes unrelated_articles, @site_article
     assert_not_includes unrelated_articles, @article
     assert_not_includes unrelated_articles, @korean_article
   end
 
-  test "title_matching scope should exist and be callable" do
+  test "title_matching 스코프가 존재하고 호출 가능해야 한다" do
     assert_respond_to Article, :title_matching
     # Note: Full functionality requires PostgreSQL with Korean dictionary
   end
 
-  test "body_matching scope should exist and be callable" do
+  test "body_matching 스코프가 존재하고 호출 가능해야 한다" do
     assert_respond_to Article, :body_matching
     # Note: Full functionality requires PostgreSQL with English dictionary
   end
 
   # ========== Soft Delete Tests ==========
 
-  test "should include Discard::Model" do
+  test "Discard::Model을 포함해야 한다" do
     assert Article.ancestors.include?(Discard::Model)
   end
 
-  test "kept scope should exclude discarded articles" do
+  test "kept 스코프는 삭제된 기사를 제외해야 한다" do
     kept_articles = Article.kept
     assert_includes kept_articles, @article
     assert_not_includes kept_articles, @deleted_article
   end
 
-  test "discarded scope should include discarded articles" do
+  test "discarded 스코프는 삭제된 기사를 포함해야 한다" do
     discarded_articles = Article.discarded
     assert_includes discarded_articles, @deleted_article
     assert_not_includes discarded_articles, @article
   end
 
-  test "should discard article instead of destroying" do
+  test "기사를 파괴하는 대신 폐기해야 한다" do
     article = @article
     article.discard!
 
@@ -188,13 +188,13 @@ class ArticleTest < ActiveSupport::TestCase
 
   # ========== Callback Tests ==========
 
-  test "should set origin_url from url before validation on create" do
+  test "생성 시 유효성 검사 전에 url로부터 origin_url을 설정해야 한다" do
     article = Article.new(title: "Test", url: "https://example.com/callback-test")
     article.valid?
     assert_equal "https://example.com/callback-test", article.origin_url
   end
 
-  test "should set published_at to current time if blank before save" do
+  test "저장 전 published_at이 비어있으면 현재 시간으로 설정해야 한다" do
     article = Article.new(
       title: "Test",
       url: "https://example.com/published-test",
@@ -209,7 +209,7 @@ class ArticleTest < ActiveSupport::TestCase
     end
   end
 
-  test "should not override existing published_at before save" do
+  test "저장 전 기존 published_at을 덮어쓰지 않아야 한다" do
     existing_time = 1.week.ago
     article = Article.new(
       title: "Test",
@@ -228,7 +228,7 @@ class ArticleTest < ActiveSupport::TestCase
       "published_at should not be overridden when already set"
   end
 
-  test "should generate metadata before create" do
+  test "생성 전에 메타데이터를 생성해야 한다" do
     # 외부 API 호출을 간단히 stub
     stub_external_requests
 
@@ -245,7 +245,7 @@ class ArticleTest < ActiveSupport::TestCase
 
   # ========== Instance Method Tests ==========
 
-  test "youtube_id should extract video id from YouTube URL" do
+  test "youtube_id는 YouTube URL에서 비디오 ID를 추출해야 한다" do
     youtube_urls = {
       "https://www.youtube.com/watch?v=dQw4w9WgXcQ" => "dQw4w9WgXcQ",
       "https://youtube.com/watch?v=abc123&t=30s" => "abc123",
@@ -264,12 +264,12 @@ class ArticleTest < ActiveSupport::TestCase
     end
   end
 
-  test "youtube_id should handle invalid URLs gracefully" do
+  test "youtube_id는 유효하지 않은 URL을 정상적으로 처리해야 한다" do
     article = Article.new(url: "invalid-url")
     assert_nil article.youtube_id
   end
 
-  test "update_slug should work for non-YouTube URLs" do
+  test "update_slug는 YouTube가 아닌 URL에 대해 작동해야 한다" do
     article = Article.create!(
       title: "Test",
       url: "https://example.com/path/article-slug.html",
@@ -281,7 +281,7 @@ class ArticleTest < ActiveSupport::TestCase
     assert_equal "article-slug", article.slug
   end
 
-  test "update_slug should work for YouTube URLs" do
+  test "update_slug는 YouTube URL에 대해 작동해야 한다" do
     article = Article.create!(
       title: "YouTube Test",
       url: "https://www.youtube.com/watch?v=test123",
@@ -293,40 +293,40 @@ class ArticleTest < ActiveSupport::TestCase
     assert_equal "test123", article.slug
   end
 
-  test "user_name should return user name when user present" do
+  test "user_name은 user가 존재할 때 사용자 이름을 반환해야 한다" do
     assert_equal "존 도", @article.user_name
   end
 
-  test "user_name should return site info when site present but no user" do
+  test "user_name은 user는 없고 site만 있을 때 사이트 정보를 반환해야 한다" do
     site_article = @site_article
     expected = "#{site_article.site.name} (#{site_article.site.base_uri})"
     assert_equal expected, site_article.user_name
   end
 
-  test "user_name should return site name when site present but no base_uri" do
+  test "user_name은 site는 있지만 base_uri가 없을 때 사이트 이름을 반환해야 한다" do
     site_article = @site_article
     site_article.site.base_uri = nil
     assert_equal site_article.site.name, site_article.user_name
   end
 
-  test "user_name should return unknown when no user or site" do
+  test "user_name은 user나 site가 없을 때 '알 수 없음'을 반환해야 한다" do
     article = Article.new(title: "Test", url: "https://example.com", origin_url: "https://example.com")
     assert_equal "알 수 없음", article.user_name
   end
 
   # ========== Class Method Tests ==========
 
-  test "find_by_slug should find article by slug" do
+  test "find_by_slug는 slug로 기사를 찾아야 한다" do
     article = Article.find_by_slug(@article.slug)
     assert_equal @article, article
   end
 
-  test "find_by_slug should return nil for non-existent slug" do
+  test "find_by_slug는 존재하지 않는 slug에 대해 nil을 반환해야 한다" do
     article = Article.find_by_slug("non-existent-slug")
     assert_nil article
   end
 
-  test "should_ignore_url? should return true for ignored hosts" do
+  test "should_ignore_url?은 무시해야 할 호스트에 대해 true를 반환해야 한다" do
     ignored_urls = [
       "https://github.com/user/repo",
       "https://twitter.com/user/status/123",
@@ -340,7 +340,7 @@ class ArticleTest < ActiveSupport::TestCase
     end
   end
 
-  test "should_ignore_url? should return false for allowed hosts" do
+  test "should_ignore_url?은 허용된 호스트에 대해 false를 반환해야 한다" do
     allowed_urls = [
       "https://weblog.rubyonrails.org/2024/1/1/rails-8",
       "https://example.com/article",
@@ -353,7 +353,7 @@ class ArticleTest < ActiveSupport::TestCase
     end
   end
 
-  test "should_ignore_url? should return true for dangerous file extensions" do
+  test "should_ignore_url?은 위험한 파일 확장자에 대해 true를 반환해야 한다" do
     dangerous_urls = [
       "https://example.com/file.pdf",
       "https://example.com/archive.zip",
@@ -367,7 +367,7 @@ class ArticleTest < ActiveSupport::TestCase
     end
   end
 
-  test "should_ignore_url? should handle invalid URLs" do
+  test "should_ignore_url?은 유효하지 않은 URL을 처리해야 한다" do
     assert Article.should_ignore_url?("invalid-url")
     assert Article.should_ignore_url?(nil)
     assert Article.should_ignore_url?("")
@@ -375,7 +375,7 @@ class ArticleTest < ActiveSupport::TestCase
 
   # ========== Store Accessor Tests ==========
 
-  test "should access summary_detail components via store accessor" do
+  test "store 접근자를 통해 summary_detail 구성 요소에 접근해야 한다" do
     article = @korean_article
 
     # Test reading
@@ -398,7 +398,7 @@ class ArticleTest < ActiveSupport::TestCase
 
   # ========== Vector Embeddings Tests ==========
 
-  test "should have neighbors functionality for embeddings" do
+  test "임베딩에 대한 neighbors 기능이 있어야 한다" do
     # Test that the has_neighbors method is set up
     assert_respond_to @article, :embedding
     assert_respond_to @article, :nearest_neighbors
@@ -406,7 +406,7 @@ class ArticleTest < ActiveSupport::TestCase
 
   # ========== Tagging Tests ==========
 
-  test "should act as taggable" do
+  test "taggable로 작동해야 한다" do
     article = @article
     assert_respond_to article, :tag_list
     assert_respond_to article, :tag_list=
@@ -422,7 +422,7 @@ class ArticleTest < ActiveSupport::TestCase
 
   # ========== Korean Content Tests ==========
 
-  test "should handle Korean characters in title and content" do
+  test "제목과 내용에 있는 한글 문자를 처리해야 한다" do
     korean_article = Article.create!(
       title: "한국어 제목 테스트",
       title_ko: "한국어 제목의 다른 버전",
@@ -441,12 +441,12 @@ class ArticleTest < ActiveSupport::TestCase
 
   # ========== YouTube Integration Tests ==========
 
-  test "should identify YouTube articles correctly" do
+  test "YouTube 기사를 정확하게 식별해야 한다" do
     assert @youtube_article.is_youtube?
     assert_not @article.is_youtube?
   end
 
-  test "should handle YouTube URL normalization" do
+  test "YouTube URL 정규화를 처리해야 한다" do
     youtube_article = Article.new(
       title: "YouTube Test",
       url: "https://youtube.com/watch?v=test123&utm_source=share",
@@ -463,7 +463,7 @@ class ArticleTest < ActiveSupport::TestCase
 
   # ========== URL Processing Tests ==========
 
-  test "should extract published_at from URL patterns" do
+  test "URL 패턴에서 published_at을 추출해야 한다" do
     urls_with_dates = {
       "https://example.com/2024/01/15/article-title" => Date.parse("2024-01-15"),
       "https://blog.com/2023-12-25-holiday-post" => Date.parse("2023-12-25"),
@@ -482,20 +482,20 @@ class ArticleTest < ActiveSupport::TestCase
     end
   end
 
-  test "should handle URL parsing errors gracefully" do
+  test "URL 파싱 오류를 정상적으로 처리해야 한다" do
     article = Article.new(url: "invalid-url")
     assert_nil article.send(:url_to_published_at)
   end
 
   # ========== Cache Management Tests ==========
 
-  test "should clear RSS cache after discard" do
+  test "폐기 후 RSS 캐시를 지워야 한다" do
     # Mock Rails.cache to expect the cache deletion
     Rails.cache.expects(:delete).with("rss_articles").at_least_once
     @article.discard!
   end
 
-  test "should clear RSS cache after create" do
+  test "생성 후 RSS 캐시를 지워야 한다" do
     Rails.cache.expects(:delete).with("rss_articles").once
 
     Article.create!(
@@ -507,7 +507,7 @@ class ArticleTest < ActiveSupport::TestCase
 
   # ========== Error Handling Tests ==========
 
-  test "should handle Faraday errors gracefully in fetch_url_content" do
+  test "fetch_url_content에서 Faraday 오류를 정상적으로 처리해야 한다" do
     article = Article.new(url: "https://example.com/error-test")
 
     # Mock Faraday to raise an error
@@ -517,7 +517,7 @@ class ArticleTest < ActiveSupport::TestCase
     assert_nil result
   end
 
-  test "should handle YouTube API errors gracefully" do
+  test "YouTube API 오류를 정상적으로 처리해야 한다" do
     # This test ensures that YouTube API errors don't crash the application
     article = Article.new(
       url: "https://www.youtube.com/watch?v=invalid_video_id",
@@ -532,14 +532,14 @@ class ArticleTest < ActiveSupport::TestCase
 
   # ========== Performance Tests ==========
 
-  test "should efficiently query kept articles" do
+  test "kept된 기사를 효율적으로 쿼리해야 한다" do
     # Test that kept scope is efficient
     assert_queries(1) do
       Article.kept.limit(10).to_a
     end
   end
 
-  test "should efficiently query related articles" do
+  test "관련된 기사를 효율적으로 쿼리해야 한다" do
     # Test that related scope is efficient
     assert_queries(1) do
       Article.related.limit(5).to_a
@@ -548,7 +548,7 @@ class ArticleTest < ActiveSupport::TestCase
 
   # ========== Integration Tests ==========
 
-  test "should work with Korean timezone" do
+  test "한국 시간대에서 작동해야 한다" do
     Time.zone = "Asia/Seoul"
 
     article = Article.create!(

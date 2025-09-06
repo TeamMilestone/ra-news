@@ -15,7 +15,7 @@ class CommentTest < ActiveSupport::TestCase
 
   # ========== Validation Tests ==========
 
-  test "should be valid with valid attributes" do
+  test "유효한 속성을 가진 경우 유효해야 한다" do
     comment = Comment.new(
       body: "This is a valid test comment.",
       user: @user,
@@ -24,25 +24,25 @@ class CommentTest < ActiveSupport::TestCase
     assert comment.valid?
   end
 
-  test "should require body" do
+  test "body는 필수 항목이어야 한다" do
     comment = Comment.new(user: @user, article: @article)
     assert_not comment.valid?
     assert_includes comment.errors[:body], "Body에 내용을 입력해 주세요"
   end
 
-  test "should require user" do
+  test "user는 필수 항목이어야 한다" do
     comment = Comment.new(body: "Test comment", article: @article)
     assert_not comment.valid?
     assert_includes comment.errors[:user], "User은(는) 반드시 있어야 합니다"
   end
 
-  test "should require article" do
+  test "article은 필수 항목이어야 한다" do
     comment = Comment.new(body: "Test comment", user: @user)
     assert_not comment.valid?
     assert_includes comment.errors[:article], "Article은(는) 반드시 있어야 합니다"
   end
 
-  test "should validate body minimum length" do
+  test "body의 최소 길이를 검증해야 한다" do
     comment = Comment.new(
       body: "",
       user: @user,
@@ -52,7 +52,7 @@ class CommentTest < ActiveSupport::TestCase
     assert_includes comment.errors[:body], "Body은(는) 적어도 1자를 넘어야 합니다"
   end
 
-  test "should validate body maximum length" do
+  test "body의 최대 길이를 검증해야 한다" do
     long_body = "A" * (Comment::MAX_BODY_LENGTH + 1)
     comment = Comment.new(
       body: long_body,
@@ -63,7 +63,7 @@ class CommentTest < ActiveSupport::TestCase
     assert_includes comment.errors[:body], "Body은(는) #{Comment::MAX_BODY_LENGTH}자를 넘을 수 없습니다"
   end
 
-  test "should accept body at maximum length" do
+  test "최대 길이의 body를 허용해야 한다" do
     max_body = "A" * Comment::MAX_BODY_LENGTH
     comment = Comment.new(
       body: max_body,
@@ -73,7 +73,7 @@ class CommentTest < ActiveSupport::TestCase
     assert comment.valid?
   end
 
-  test "should accept body at minimum length" do
+  test "최소 길이의 body를 허용해야 한다" do
     comment = Comment.new(
       body: "A",
       user: @user,
@@ -84,13 +84,13 @@ class CommentTest < ActiveSupport::TestCase
 
   # ========== Association Tests ==========
 
-  test "should belong to user" do
+  test "user에 속해야 한다" do
     assert_respond_to @root_comment, :user
     assert_kind_of User, @root_comment.user
     assert_equal users(:john), @root_comment.user
   end
 
-  test "should belong to article" do
+  test "article에 속해야 한다" do
     assert_respond_to @root_comment, :article
     assert_kind_of Article, @root_comment.article
     assert_equal articles(:ruby_article), @root_comment.article
@@ -98,7 +98,7 @@ class CommentTest < ActiveSupport::TestCase
 
   # ========== Nested Set Tests ==========
 
-  test "should act as nested set" do
+  test "nested set으로 작동해야 한다" do
     # Test that awesome_nested_set methods are available
     assert_respond_to Comment, :roots
     assert_respond_to Comment, :leaves
@@ -109,7 +109,7 @@ class CommentTest < ActiveSupport::TestCase
     assert_respond_to @root_comment, :siblings
   end
 
-  test "should have correct nested set structure" do
+  test "올바른 nested set 구조를 가져야 한다" do
     # Root comment should have no parent
     assert_nil @root_comment.parent
     assert_equal 0, @root_comment.depth
@@ -120,7 +120,7 @@ class CommentTest < ActiveSupport::TestCase
     assert_equal 1, @nested_comment.depth
   end
 
-  test "should maintain left and right values" do
+  test "lft와 rgt 값을 유지해야 한다" do
     # Root comment with nested comment should have proper lft/rgt values
     assert_equal 1, @root_comment.lft
     assert_equal 4, @root_comment.rgt
@@ -132,7 +132,7 @@ class CommentTest < ActiveSupport::TestCase
     assert @nested_comment.rgt < @root_comment.rgt
   end
 
-  test "should create root comments properly" do
+  test "루트 댓글을 올바르게 생성해야 한다" do
     root_comment = Comment.create!(
       body: "New root comment",
       user: @user,
@@ -146,7 +146,7 @@ class CommentTest < ActiveSupport::TestCase
     assert root_comment.rgt > root_comment.lft
   end
 
-  test "should create nested comments properly" do
+  test "중첩된 댓글을 올바르게 생성해야 한다" do
     root = Comment.create!(body: "root", user: @user, article: @article)
     child_comment = root.children.create!(
       body: "New child comment",
@@ -161,7 +161,7 @@ class CommentTest < ActiveSupport::TestCase
     assert_includes root.children, child_comment
   end
 
-  test "should maintain nested set integrity when adding children" do
+  test "자식 댓글 추가 시 nested set 무결성을 유지해야 한다" do
     initial_rgt = @root_comment.rgt
 
     child_comment = @root_comment.children.create!(
@@ -182,12 +182,12 @@ class CommentTest < ActiveSupport::TestCase
 
   # ========== Instance Method Tests ==========
 
-  test "content method should return body" do
+  test "content 메서드는 body를 반환해야 한다" do
     assert_equal @root_comment.body, @root_comment.content
     assert_equal @korean_comment.body, @korean_comment.content
   end
 
-  test "content method should handle nil body gracefully" do
+  test "content 메서드는 body가 nil일 때 정상적으로 처리해야 한다" do
     comment = Comment.new
     comment.body = nil
     assert_nil comment.content
@@ -195,7 +195,7 @@ class CommentTest < ActiveSupport::TestCase
 
   # ========== Korean Content Tests ==========
 
-  test "should handle Korean characters in body" do
+  test "body에 있는 한글 문자를 처리해야 한다" do
     korean_bodies = [
       "안녕하세요! 좋은 글이네요.",
       "Ruby 3.4에 대한 정보가 정말 유익했습니다.",
@@ -218,7 +218,7 @@ class CommentTest < ActiveSupport::TestCase
     end
   end
 
-  test "should handle mixed Korean and English content" do
+  test "한글과 영문이 혼합된 내용을 처리해야 한다" do
     mixed_bodies = [
       "Ruby 3.4가 정말 훌륭하네요!",
       "Rails 8.0에 대한 정보 thank you!",
@@ -240,7 +240,7 @@ class CommentTest < ActiveSupport::TestCase
     end
   end
 
-  test "should handle Korean characters within length limits" do
+  test "길이 제한 내의 한글 문자를 처리해야 한다" do
     # Korean characters count as 1 character each in Ruby string length
     korean_text = "한" * Comment::MAX_BODY_LENGTH
     comment = Comment.new(
@@ -253,7 +253,7 @@ class CommentTest < ActiveSupport::TestCase
     assert_equal Comment::MAX_BODY_LENGTH, comment.body.length
   end
 
-  test "should reject Korean text exceeding length limits" do
+  test "길이 제한을 초과하는 한글 텍스트를 거부해야 한다" do
     # One character over the limit
     korean_text = "한" * (Comment::MAX_BODY_LENGTH + 1)
     comment = Comment.new(
@@ -268,7 +268,7 @@ class CommentTest < ActiveSupport::TestCase
 
   # ========== Special Characters and Edge Cases ==========
 
-  test "should handle special characters in body" do
+  test "body에 있는 특수 문자를 처리해야 한다" do
     special_bodies = [
       "Great article! 👍🔥✨",
       "What about <script>alert('xss')</script>?",
@@ -291,7 +291,7 @@ class CommentTest < ActiveSupport::TestCase
     end
   end
 
-  test "should handle newlines and whitespace in body" do
+  test "body에 있는 개행 및 공백을 처리해야 한다" do
     multiline_body = "First line\nSecond line\n\nFourth line with extra spacing"
     comment = Comment.new(
       body: multiline_body,
@@ -304,7 +304,7 @@ class CommentTest < ActiveSupport::TestCase
     assert_equal multiline_body, comment.body
   end
 
-  test "should handle very long single words" do
+  test "매우 긴 단일 단어를 처리해야 한다" do
     # Test with a very long word (like a URL or hash)
     long_word = "https://verylongdomainname.com/very/long/path/with/many/segments/" + "a" * 800
     if long_word.length <= Comment::MAX_BODY_LENGTH
@@ -320,7 +320,7 @@ class CommentTest < ActiveSupport::TestCase
 
   # ========== Thread Structure Tests ==========
 
-  test "should create complex thread structure" do
+  test "복잡한 스레드 구조를 생성해야 한다" do
     # Root comment
     root = Comment.create!(
       body: "Root comment",
@@ -384,7 +384,7 @@ class CommentTest < ActiveSupport::TestCase
     assert_includes descendants, grandchild2
   end
 
-  test "should find siblings correctly" do
+  test "형제 댓글을 올바르게 찾아야 한다" do
     # Create siblings
     sibling1 = @root_comment.children.create!(
       body: "Sibling 1",
@@ -407,14 +407,14 @@ class CommentTest < ActiveSupport::TestCase
 
   # ========== Query Performance Tests ==========
 
-  test "should efficiently load comment threads" do
+  test "댓글 스레드를 효율적으로 로드해야 한다" do
     # Test that nested set queries are efficient
     assert_queries(1) do
       Comment.roots.limit(5).to_a
     end
   end
 
-  test "should efficiently load descendants" do
+  test "하위 댓글들을 효율적으로 로드해야 한다" do
     # Nested set should allow efficient descendant queries
     assert_queries(1) do
       @root_comment.descendants.to_a
@@ -423,7 +423,7 @@ class CommentTest < ActiveSupport::TestCase
 
   # ========== Data Integrity Tests ==========
 
-  test "should maintain integrity when deleting comments" do
+  test "댓글 삭제 시 무결성을 유지해야 한다" do
     # Create a comment with children
     parent = Comment.create!(
       body: "Parent to be deleted",
@@ -448,7 +448,7 @@ class CommentTest < ActiveSupport::TestCase
     assert remaining_comments <= initial_comment_count
   end
 
-  test "should handle concurrent comment creation" do
+  test "동시 댓글 생성을 처리해야 한다" do
     # Test that nested set handles concurrent operations gracefully
     comments = []
 
@@ -477,7 +477,7 @@ class CommentTest < ActiveSupport::TestCase
 
   # ========== Integration Tests ==========
 
-  test "should work with Korean timezone" do
+  test "한국 시간대에서 작동해야 한다" do
     Time.zone = "Asia/Seoul"
 
     comment = Comment.create!(
@@ -491,7 +491,7 @@ class CommentTest < ActiveSupport::TestCase
     assert_kind_of ActiveSupport::TimeWithZone, comment.updated_at
   end
 
-  test "should handle article deletion gracefully" do
+  test "기사 삭제를 정상적으로 처리해야 한다" do
     comment = Comment.create!(
       body: "Comment on article to be deleted",
       user: @user,
@@ -517,7 +517,7 @@ class CommentTest < ActiveSupport::TestCase
     end
   end
 
-  test "should handle user deletion appropriately" do
+  test "사용자 삭제를 적절하게 처리해야 한다" do
     comment = Comment.create!(
       body: "Comment by user to be deleted",
       user: @user,
@@ -536,13 +536,13 @@ class CommentTest < ActiveSupport::TestCase
 
   # ========== Fixture Validation Tests ==========
 
-  test "all fixture comments should be valid" do
+  test "모든 fixture 댓글은 유효해야 한다" do
     Comment.all.each do |comment|
       assert comment.valid?, "Comment #{comment.id} should be valid: #{comment.errors.full_messages.join(', ')}"
     end
   end
 
-  test "fixture comments should have proper nested set structure" do
+  test "fixture 댓글은 올바른 nested set 구조를 가져야 한다" do
     # Verify that fixture nested set values are consistent
     Comment.all.each do |comment|
       assert_not_nil comment.lft, "Comment #{comment.id} should have lft value"

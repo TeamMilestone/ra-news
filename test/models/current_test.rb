@@ -20,11 +20,11 @@ class CurrentTest < ActiveSupport::TestCase
 
   # ========== Inheritance Tests ==========
 
-  test "should inherit from ActiveSupport::CurrentAttributes" do
+  test "ActiveSupport::CurrentAttributes를 상속해야 한다" do
     assert Current.ancestors.include?(ActiveSupport::CurrentAttributes)
   end
 
-  test "should have ActiveSupport::CurrentAttributes functionality" do
+  test "ActiveSupport::CurrentAttributes 기능이 있어야 한다" do
     # Test that basic CurrentAttributes functionality is available
     assert_respond_to Current, :reset
     assert_respond_to Current, :set
@@ -35,17 +35,17 @@ class CurrentTest < ActiveSupport::TestCase
 
   # ========== Session Attribute Tests ==========
 
-  test "should store and retrieve session" do
+  test "세션을 저장하고 검색할 수 있어야 한다" do
     Current.session = @session
     assert_equal @session, Current.session
   end
 
-  test "should handle nil session" do
+  test "nil 세션을 처리해야 한다" do
     Current.session = nil
     assert_nil Current.session
   end
 
-  test "should reset session" do
+  test "세션을 재설정해야 한다" do
     Current.session = @session
     assert_equal @session, Current.session
 
@@ -53,7 +53,7 @@ class CurrentTest < ActiveSupport::TestCase
     assert_nil Current.session
   end
 
-  test "should handle session changes" do
+  test "세션 변경을 처리해야 한다" do
     # Set initial session
     Current.session = @session
     assert_equal @session, Current.session
@@ -66,18 +66,18 @@ class CurrentTest < ActiveSupport::TestCase
 
   # ========== User Delegation Tests ==========
 
-  test "should delegate user to session when session present" do
+  test "세션이 있을 때 user를 세션에 위임해야 한다" do
     Current.session = @session
     assert_equal @user, Current.user
     assert_equal @session.user, Current.user
   end
 
-  test "should return nil user when session is nil" do
+  test "세션이 nil일 때 nil user를 반환해야 한다" do
     Current.session = nil
     assert_nil Current.user
   end
 
-  test "should return nil user when session user is nil" do
+  test "세션 사용자가 nil일 때 nil user를 반환해야 한다" do
     # Create a session without a user (edge case)
     session_without_user = Session.new(id: "orphan_session")
     session_without_user.user = nil
@@ -86,7 +86,7 @@ class CurrentTest < ActiveSupport::TestCase
     assert_nil Current.user
   end
 
-  test "should handle user changes through session changes" do
+  test "세션 변경을 통해 사용자 변경을 처리해야 한다" do
     # Start with first user
     Current.session = @session
     assert_equal @user, Current.user
@@ -104,7 +104,7 @@ class CurrentTest < ActiveSupport::TestCase
 
   # ========== Allow_nil Delegation Tests ==========
 
-  test "should handle delegation with allow_nil option" do
+  test "allow_nil 옵션으로 위임을 처리해야 한다" do
     # When session is nil, user should also be nil without raising error
     Current.session = nil
 
@@ -114,7 +114,7 @@ class CurrentTest < ActiveSupport::TestCase
     end
   end
 
-  test "should not raise error when session lacks user method" do
+  test "세션에 user 메서드가 없을 때 오류를 발생시키지 않아야 한다" do
     # Create an object that doesn't respond to :user
     fake_session = Object.new
     Current.session = fake_session
@@ -128,7 +128,7 @@ class CurrentTest < ActiveSupport::TestCase
 
   # ========== Thread Safety Tests ==========
 
-  test "should isolate Current state between threads" do
+  test "스레드 간에 Current 상태를 격리해야 한다" do
     # Set current values in main thread
     Current.session = @session
     Current.set(session: @session) do
@@ -157,7 +157,7 @@ class CurrentTest < ActiveSupport::TestCase
     end
   end
 
-  test "should handle concurrent access safely" do
+  test "동시 접근을 안전하게 처리해야 한다" do
     results = {}
 
     # Run multiple threads with different sessions
@@ -191,7 +191,7 @@ class CurrentTest < ActiveSupport::TestCase
 
   # ========== Set Block Context Tests ==========
 
-  test "should work with set block context" do
+  test "set 블록 컨텍스트와 함께 작동해야 한다" do
     # Ensure initial state is clean
     Current.reset
     assert_nil Current.session
@@ -206,7 +206,7 @@ class CurrentTest < ActiveSupport::TestCase
     assert_nil Current.user
   end
 
-  test "should handle nested set blocks" do
+  test "중첩된 set 블록을 처리해야 한다" do
     Current.set(session: @session) do
       assert_equal @session, Current.session
       assert_equal @user, Current.user
@@ -222,7 +222,7 @@ class CurrentTest < ActiveSupport::TestCase
     end
   end
 
-  test "should restore state even if exception occurs in block" do
+  test "블록에서 예외가 발생하더라도 상태를 복원해야 한다" do
     Current.session = @session
     initial_session = Current.session
 
@@ -240,7 +240,7 @@ class CurrentTest < ActiveSupport::TestCase
 
   # ========== Integration Tests ==========
 
-  test "should integrate with authentication system" do
+  test "인증 시스템과 통합되어야 한다" do
     # Test typical authentication flow
     Current.reset
 
@@ -257,7 +257,7 @@ class CurrentTest < ActiveSupport::TestCase
     assert_equal @user.admin?, Current.user.admin?
   end
 
-  test "should work with admin users" do
+  test "관리자 사용자와 함께 작동해야 한다" do
     Current.session = @admin_session
 
     assert_equal @admin, Current.user
@@ -265,7 +265,7 @@ class CurrentTest < ActiveSupport::TestCase
     assert_equal "stadia@gmail.com", Current.user.email_address
   end
 
-  test "should work with Korean users" do
+  test "한국인 사용자와 함께 작동해야 한다" do
     Current.session = @korean_session
 
     assert_equal @korean_user, Current.user
@@ -276,7 +276,7 @@ class CurrentTest < ActiveSupport::TestCase
 
   # ========== Controller Integration Simulation Tests ==========
 
-  test "should simulate controller request lifecycle" do
+  test "컨트롤러 요청 생명주기를 시뮬레이션해야 한다" do
     # Simulate request start - no current user
     Current.reset
     assert_nil Current.user
@@ -294,7 +294,7 @@ class CurrentTest < ActiveSupport::TestCase
     assert_nil Current.user
   end
 
-  test "should handle multiple request simulation" do
+  test "여러 요청 시뮬레이션을 처리해야 한다" do
     # Simulate multiple requests with different users
     requests = [
       [ @session, @user ],
@@ -323,7 +323,7 @@ class CurrentTest < ActiveSupport::TestCase
 
   # ========== Error Handling Tests ==========
 
-  test "should handle invalid session objects gracefully" do
+  test "유효하지 않은 세션 객체를 정상적으로 처리해야 한다" do
     # Test with various invalid session-like objects
     invalid_sessions = [
       "not_a_session",
@@ -346,7 +346,7 @@ class CurrentTest < ActiveSupport::TestCase
     end
   end
 
-  test "should handle session with missing user gracefully" do
+  test "사용자가 없는 세션을 정상적으로 처리해야 한다" do
     # Create a session that exists but has no associated user
     session = Session.new(id: "test_session_no_user")
     # Deliberately don't set user
@@ -361,7 +361,7 @@ class CurrentTest < ActiveSupport::TestCase
 
   # ========== State Management Tests ==========
 
-  test "should maintain independent state across resets" do
+  test "재설정 간에 독립적인 상태를 유지해야 한다" do
     # Set initial state
     Current.session = @session
     initial_user = Current.user
@@ -379,7 +379,7 @@ class CurrentTest < ActiveSupport::TestCase
     assert_not_equal initial_user, new_user
   end
 
-  test "should handle rapid state changes" do
+  test "빠른 상태 변경을 처리해야 한다" do
     sessions_and_users = [
       [ @session, @user ],
       [ @admin_session, @admin ],
@@ -396,7 +396,7 @@ class CurrentTest < ActiveSupport::TestCase
 
   # ========== Performance Tests ==========
 
-  test "should access current user efficiently" do
+  test "현재 사용자를 효율적으로 접근해야 한다" do
     Current.session = @session
 
     # Preload the user to ensure no queries are made inside the block
@@ -414,7 +414,7 @@ class CurrentTest < ActiveSupport::TestCase
 
   # ========== Memory Management Tests ==========
 
-  test "should not leak memory through Current attributes" do
+  test "Current 속성을 통해 메모리가 누수되지 않아야 한다" do
     # Test that objects don't accumulate in Current
     initial_session = @session
 
@@ -434,7 +434,7 @@ class CurrentTest < ActiveSupport::TestCase
 
   # ========== Integration with Korean Timezone ==========
 
-  test "should work correctly with Korean timezone" do
+  test "한국 시간대와 올바르게 작동해야 한다" do
     Time.zone = "Asia/Seoul"
 
     Current.session = @korean_session
@@ -449,7 +449,7 @@ class CurrentTest < ActiveSupport::TestCase
 
   # ========== Debugging and Inspection Tests ==========
 
-  test "should provide useful inspection" do
+  test "유용한 검사를 제공해야 한다" do
     Current.reset
     Current.session = @session
 
@@ -461,7 +461,7 @@ class CurrentTest < ActiveSupport::TestCase
     assert_not_nil Current.user
   end
 
-  test "should handle inspect with nil values" do
+  test "nil 값으로 검사를 처리해야 한다" do
     Current.reset
 
     # Should handle inspection even when values are nil
