@@ -29,11 +29,6 @@ bundle exec steep check   # Type checking with Steep
 bin/brakeman              # Security analysis
 ```
 
-### Database Operations
-```bash
-bin/rails db:create db:migrate db:seed
-```
-
 ### Background Jobs
 ```bash
 bin/jobs                  # Start Solid Queue worker

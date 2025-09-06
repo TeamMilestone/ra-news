@@ -26,7 +26,7 @@ Pagy::DEFAULT[:size]        = 10                     # default
 
 # Size extra: Enable the Array type for the `:size` variable (e.g. `size: [1,4,4,1]`)
 # See https://ddnexus.github.io/pagy/docs/extras/size
-# require 'pagy/extras/size'   # must be required before the other extras
+require "pagy/extras/size"   # must be required before the other extras
 
 
 # Backend Extras

@@ -62,7 +62,7 @@
   <% if @pagy.pages > 1 %>
     <div class="flex justify-center mt-auto">
       <div class="bg-gray-800 rounded-xl p-3 border border-gray-700">
-        <%== pagy_nav(@pagy) %>
+        <%== pagy_nav(@pagy, size: [1, 2, 2, 1]) %>
       </div>
     </div>
   <% end %>

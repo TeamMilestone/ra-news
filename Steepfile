@@ -12,11 +12,7 @@ target :app do
   signature "sig"
 
   # Directories to type check
-  check "app/models"
-  check "app/controllers"
-  check "app/jobs"
-  check "app/services"
-  check "app/clients"
+  check "app"
   check "lib"
 
   # Ignore generated or less critical files
