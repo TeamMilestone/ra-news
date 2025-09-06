@@ -1,15 +1,66 @@
-# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+# frozen_string_literal: true
 
-# This model initially had no columns defined. If you add columns to the
-# model remove the "{}" from the fixture names and add the columns immediately
-# below each fixture, per the syntax in the comments below
-#
+# RSS Sites
+ruby_weekly:
+  name: Ruby Weekly
+  client: rss
+  base_uri: https://rubyweekly.com/rss
+  last_checked_at: <%= 1.week.ago %>
+
+rails_blog:
+  name: Rails Blog
+  client: rss
+  base_uri: https://weblog.rubyonrails.org/feed.xml
+  last_checked_at: <%= 2.days.ago %>
+
+# RSS Page Sites
+hacker_news_ruby:
+  name: Hacker News Ruby
+  client: rss_page
+  base_uri: https://hn.algolia.com/api/v1/search?query=ruby&tags=story
+  last_checked_at: <%= 3.days.ago %>
+
+# YouTube Channel
+ruby_conf:
+  name: RubyConf
+  client: youtube
+  base_uri: https://youtube.com/c/rubyconf
+  channel: UCWnPjmqvljcafA0z2U1fwKQ
+  last_checked_at: <%= 1.day.ago %>
+
+# Gmail Site
+newsletter:
+  name: Ruby Newsletter
+  client: gmail
+  last_checked_at: <%= 12.hours.ago %>
+
+# Hacker News
+hn_site:
+  name: Hacker News
+  client: hacker_news
+  base_uri: https://news.ycombinator.com
+  last_checked_at: <%= 4.hours.ago %>
+
+# Site without last_checked_at (for testing before_create callback)
+new_site:
+  name: New Ruby Site
+  client: rss
+  base_uri: https://newrubysite.com/rss
+
+# Site for testing validations
+minimal_site:
+  name: Minimal Site
+  client: rss
+
+# Legacy fixture names
 one:
-  name: <%= Faker::Company.name %>
-  base_uri: <%= "https://#{Faker::Internet.domain_name}" %>
-  client: 'rss'
+  name: Site One
+  client: rss
+  base_uri: https://siteone.com/feed.xml
+  last_checked_at: <%= 1.week.ago %>
 
 two:
-  name: <%= Faker::Company.name %>
-  base_uri: <%= "https://#{Faker::Internet.domain_name}" %>
-  client: 'rss'
+  name: Site Two
+  client: youtube
+  channel: test_channel_id
+  last_checked_at: <%= 3.days.ago %>

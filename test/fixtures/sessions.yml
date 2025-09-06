@@ -1,11 +1,35 @@
-# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+# frozen_string_literal: true
 
+# Active session for John
+john_session:
+  id: 123
+  user: john
+
+# Active session for Jane
+jane_session:
+  id: 456
+  user: jane
+
+# Admin session
+admin_session:
+  id: 789
+  user: admin
+
+# Korean user session
+korean_session:
+  id: 012
+  user: korean_user
+
+# Session for testing
+test_session:
+  id: 345
+  user: minimal_user
+
+# Legacy fixture names for backwards compatibility
 one:
+  id: 678
   user: one
-  ip_address: 192.168.1.1
-  user_agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64)
 
 two:
+  id: 901
   user: two
-  ip_address: 10.0.0.1
-  user_agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)

@@ -1,17 +1,142 @@
-# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+# frozen_string_literal: true
 
-<% url = Faker::Internet.url %>
+# Regular articles
+ruby_article:
+  title: "Ruby 3.4 새로운 기능들"
+  title_ko: "Ruby 3.4의 놀라운 새 기능들"
+  url: https://rubyweekly.com/ruby-3-4-features
+  origin_url: https://rubyweekly.com/ruby-3-4-features
+  host: rubyweekly.com
+  slug: ruby-3-4-features
+  published_at: <%= 2.days.ago %>
+  body: "Ruby 3.4 brings exciting new features including improved performance and better syntax."
+  summary_key: "Ruby 3.4의 주요 개선사항"
+  summary_detail:
+    {
+      "body": "성능 향상과 새로운 문법이 Ruby 3.4의 핵심입니다.",
+      "introduction": "Ruby 3.4가 출시되었습니다.",
+      "conclusion": "개발자들에게 많은 도움이 될 것입니다.",
+    }
+  embedding: <%= [0.1] * 1536 %>
+  is_youtube: false
+  is_related: true
+  user: john
+  site: ruby_weekly
+
+# YouTube article
+youtube_ruby_talk:
+  title: "RubyConf 2024 키노트 발표"
+  url: https://www.youtube.com/watch?v=dQw4w9WgXcQ
+  origin_url: https://www.youtube.com/watch?v=dQw4w9WgXcQ
+  host: www.youtube.com
+  slug: dQw4w9WgXcQ
+  published_at: <%= 1.week.ago %>
+  is_youtube: true
+  is_related: true
+  user: jane
+  site: ruby_conf
+
+# Article with Korean content
+korean_content_article:
+  title: "레일스 8.0 출시 소식"
+  title_ko: "레일스 8.0의 새로운 변화들"
+  url: https://weblog.rubyonrails.org/2024/rails-8-0-release
+  origin_url: https://weblog.rubyonrails.org/2024/rails-8-0-release
+  host: weblog.rubyonrails.org
+  slug: rails-8-0-release
+  published_at: <%= 3.days.ago %>
+  body: "레일스 8.0이 출시되었습니다. 새로운 기능들과 개선사항을 확인해보세요."
+  summary_key: "레일스 8.0 주요 변경사항"
+  is_youtube: false
+  is_related: true
+  user: korean_user
+  site: rails_blog
+
+# Article without user (site-based)
+site_only_article:
+  title: "Hacker News에서 본 Ruby 소식"
+  url: https://news.ycombinator.com/item?id=123456
+  origin_url: https://news.ycombinator.com/item?id=123456
+  host: news.ycombinator.com
+  slug: hn-ruby-news-123456
+  published_at: <%= 5.days.ago %>
+  is_youtube: false
+  is_related: false
+  site: hn_site
+
+# Discarded article (soft deleted)
+deleted_article:
+  title: "삭제된 기사"
+  url: https://example.com/deleted-article
+  origin_url: https://example.com/deleted-article
+  host: example.com
+  slug: deleted-article
+  published_at: <%= 1.month.ago %>
+  deleted_at: <%= 1.week.ago %>
+  is_youtube: false
+  is_related: false
+  user: john
+
+# Article with embeddings for similarity testing
+similar_article:
+  title: "Ruby Performance Optimization"
+  url: https://example.com/ruby-performance
+  origin_url: https://example.com/ruby-performance
+  host: example.com
+  slug: ruby-performance
+  published_at: <%= 4.days.ago %>
+  body: "Tips and tricks for optimizing Ruby applications."
+  embedding: <%= [0.1] * 1536 %>
+  is_youtube: false
+  is_related: true
+  user: jane
+
+# Article for testing URL normalization
+unnormalized_url_article:
+  title: "Article with UTM parameters"
+  url: https://example.com/article?utm_source=newsletter&utm_medium=email&ref=test
+  origin_url: https://example.com/article?utm_source=newsletter&utm_medium=email&ref=test&extra=param
+  host: example.com
+  slug: utm-article
+  published_at: <%= 6.days.ago %>
+  is_youtube: false
+  is_related: false
+  user: john
+
+# Article for testing ignored hosts
+ignored_host_article:
+  title: "GitHub Repository"
+  url: https://github.com/user/repo
+  origin_url: https://github.com/user/repo
+  host: github.com
+  slug: github-repo
+  published_at: <%= 1.week.ago %>
+  deleted_at: <%= 1.week.ago %>
+  is_youtube: false
+  is_related: false
+  user: jane
+
+# Legacy fixture names for backwards compatibility
 one:
-  title: <%= Faker::Book.title %>
-  url: <%= url %>
-  origin_url: <%= url %>
+  title: "Test Article One"
+  url: https://example.com/article-one
+  origin_url: https://example.com/article-one
+  host: example.com
+  slug: article-one
+  published_at: <%= 1.week.ago %>
+  is_youtube: false
+  is_related: true
   user: one
   site: one
 
-<% url = Faker::Internet.url %>
 two:
-  title: <%= Faker::Book.title %>
-  url: <%= url %>
-  origin_url: <%= url %>
+  title: "Test Article Two"
+  url: https://example.com/article-two
+  origin_url: https://example.com/article-two
+  host: example.com
+  slug: article-two
+  published_at: <%= 2.weeks.ago %>
+  is_youtube: false
+  is_related: false
   user: two
   site: two

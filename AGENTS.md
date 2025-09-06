@@ -2,6 +2,8 @@
 
 This file provides guidance to AI Agents when working with code in this repository.
 
+- 모든 응답은 한국어로 작성해 주세요.
+
 ## Technology Stack
 
 **Ruby-News** is a Korean Ruby-focused news aggregation platform built with Rails 8. Key technologies:

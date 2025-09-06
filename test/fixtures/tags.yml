@@ -1,0 +1,40 @@
+# frozen_string_literal: true
+
+# Confirmed tags
+ruby_tag:
+  name: ruby
+  is_confirmed: true
+  taggings_count: 5
+
+rails_tag:
+  name: rails
+  is_confirmed: true
+  taggings_count: 3
+
+performance_tag:
+  name: performance
+  is_confirmed: true
+  taggings_count: 2
+
+# Unconfirmed tags
+new_feature_tag:
+  name: new-features
+  is_confirmed: false
+  taggings_count: 1
+
+korean_tag:
+  name: 한국어
+  is_confirmed: false
+  taggings_count: 1
+
+# Tags with special characters
+special_tag:
+  name: ruby-3.4
+  is_confirmed: true
+  taggings_count: 1
+
+# Empty tag for testing
+minimal_tag:
+  name: minimal
+  is_confirmed: false
+  taggings_count: 0
