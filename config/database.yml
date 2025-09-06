@@ -22,9 +22,9 @@ default: &default
   reaping_frequency: 10
   schema_search_path: "ra_news,public"
 
-
 development:
   <<: *default
+  url: "postgres://localhost:5432/ra-news_development"
   database: ra-news_development
 
   # The specified database role being used to connect to PostgreSQL.
@@ -59,6 +59,7 @@ development:
 # Do not set this db to the same as development or production.
 test:
   <<: *default
+  url: "postgres://localhost:5432/ra-news_test"
   database: ra-news_test
 
 # As with config/credentials.yml, you never want to store sensitive information,

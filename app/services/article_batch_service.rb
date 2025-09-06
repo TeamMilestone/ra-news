@@ -12,7 +12,7 @@ class ArticleBatchService < ApplicationService
 
   def call #: void
     Article.kept.where(title_ko: nil, created_at: created_at...).find_each do |article|
-      ArticleLmmService.call(article)
+      ::ArticleLmmService.call(article)
       sleep 1
     end
   end
