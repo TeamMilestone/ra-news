@@ -1,6 +1,6 @@
-# Generated from app/jobs/twitter_post_job.rb with RBS::Inline
+# Generated from app/services/twitter_service.rb with RBS::Inline
 
-class TwitterPostJob < ApplicationJob
+class TwitterService < ApplicationService
   class TwitterConfig < Struct[untyped]
     attr_accessor character_limit(): untyped
 
@@ -14,8 +14,9 @@ class TwitterPostJob < ApplicationJob
 
   TWITTER_CONFIG: untyped
 
-  # : (Integer id) -> void
-  def perform: (Integer id) -> void
+  def initialize: (untyped article) -> untyped
+
+  def call: () -> untyped
 
   private
 

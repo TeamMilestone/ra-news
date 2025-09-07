@@ -2,10 +2,10 @@
 
 # rbs_inline: enabled
 
-class TwitterPostJob < ApplicationJob
-  include Rails.application.routes.url_helpers
+class TwitterService < ApplicationService
+  arrt_reader :article #: Article
 
-  queue_as :default
+  include Rails.application.routes.url_helpers
 
   TwitterConfig = Struct.new(:character_limit, :shortened_url_length, :formatting_buffer) do
     def max_content_length
@@ -15,29 +15,22 @@ class TwitterPostJob < ApplicationJob
 
   TWITTER_CONFIG = TwitterConfig.new(280, 23, 4)
 
-  #: (Integer id) -> void
-  def perform(id)
-    return unless Rails.env.production?
+  def initialize(article)
+    @article = article
+  end
 
-    article = Article.kept.find_by(id: id)
-    logger.info "TwitterPostJob started for article id: #{id}"
-
-    unless article
-      logger.error "Article with id #{id} not found or has been discarded."
-      return
-    end
-
+  def call
     # Skip posting if article is not Ruby-related or lacks required content
     unless should_post_article?(article)
-      logger.info "Skipping Twitter post for article id: #{id} - not suitable for posting"
+      logger.info "Skipping Twitter post for article id: #{article.id} - not suitable for posting"
       return
     end
 
     begin
       post_to_twitter(article)
-      logger.info "Successfully posted article id: #{id} to Twitter"
+      logger.info "Successfully posted article id: #{article.id} to Twitter"
     rescue StandardError => e
-      logger.error "Failed to post article id: #{id} to Twitter: #{e.message}"
+      logger.error "Failed to post article id: #{article.id} to Twitter: #{e.message}"
       Honeybadger.notify(e, context: { article_id: id, article_url: article.url })
     end
   end

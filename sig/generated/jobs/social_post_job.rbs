@@ -1,0 +1,6 @@
+# Generated from app/jobs/social_post_job.rb with RBS::Inline
+
+class SocialPostJob < ApplicationJob
+  # : (Integer id) -> void
+  def perform: (Integer id) -> void
+end

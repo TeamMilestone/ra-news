@@ -2,19 +2,21 @@
 
 # rbs_inline: enabled
 
-class ArticleJob < ApplicationJob
+class SocialPostJob < ApplicationJob
   queue_as :default
 
   #: (Integer id) -> void
   def perform(id)
-    article = Article.kept.find_by(id: id)
-    logger.info "ArticleJob started for article id: #{id}"
+    return unless Rails.env.production?
 
-    unless article.is_a?(Article)
+    article = Article.kept.find_by(id: id)
+    logger.info "TwitterPostJob started for article id: #{id}"
+
+    unless article
       logger.error "Article with id #{id} not found or has been discarded."
-      return nil
+      retturn nil
     end
 
-    ArticleLlmService.call(article)
+    TwitterService.call(article)
   end
 end
