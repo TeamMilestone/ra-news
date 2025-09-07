@@ -53,6 +53,7 @@ class ArticlesController < ApplicationController
 
     respond_to do |format|
       if @article.save
+        ArticleJob.perform_later(@article.id)
         format.html { redirect_to article_path(@article), notice: "Article was successfully created." }
       else
         format.html { render :new, status: :unprocessable_entity }
