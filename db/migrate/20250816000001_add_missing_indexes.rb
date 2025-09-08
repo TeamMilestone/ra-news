@@ -13,6 +13,5 @@ class AddMissingIndexes < ActiveRecord::Migration[8.0]
 
     # Performance indexes for sites
     add_index :sites, :last_checked_at
-    add_index :sites, [ :client, :last_checked_at ]
   end
 end
