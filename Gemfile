@@ -72,6 +72,8 @@ group :test do
   gem "capybara"
   gem "selenium-webdriver"
   gem "mocha"
+  # Use sqlite3 as the database for Active Record
+  gem "sqlite3", ">= 2.1"
 end
 
 gem "sorbet-runtime"
