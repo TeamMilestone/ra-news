@@ -1,12 +1,12 @@
 # Generated from app/services/article_llm_service.rb with RBS::Inline
 
-class ArticleLlmService < ApplicationService
+class ArticleLLMService < ApplicationService
   attr_reader article: Article
 
   PROMPT: ::String
 
-  # : (Article article) -> ArticleLlmService
-  def initialize: (Article article) -> ArticleLlmService
+  # : (Article article) -> ArticleLLMService
+  def initialize: (Article article) -> ArticleLLMService
 
   def call: () -> void
 end

@@ -2,7 +2,7 @@
 
 # rbs_inline: enabled
 
-class ArticleLlmService < ApplicationService
+class ArticleLLMService < ApplicationService
   attr_reader :article #: Article
 
   PROMPT = <<~PROMPT
@@ -43,7 +43,7 @@ body(본론)은 markdown 형식으로 작성하되, 헤더와 글머리 기호�
 - 중첩된 HTML 요소 적절히 처리
 PROMPT
 
-  #: (Article article) -> ArticleLlmService
+  #: (Article article) -> ArticleLLMService
   def initialize(article)
     @article = article
   end
