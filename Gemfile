@@ -100,3 +100,5 @@ gem "awesome_nested_set"
 gem "neighbor"
 gem "view_component", "~> 4.0"
 gem "x"
+
+gem "oauth2", "~> 2.0"
