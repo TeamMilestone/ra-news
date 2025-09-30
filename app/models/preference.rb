@@ -7,6 +7,12 @@ class Preference < ApplicationRecord
     Rails.cache.delete(name)
   end
 
+  def value=(val)
+    super(val.is_a?(String) ? JSON.parse(val) : val)
+  rescue JSON::ParserError
+    super({})
+  end
+
   #: (String name) -> Hash[String, untyped] || Array[untyped]
   def self.get_value(name)
     Rails.cache.fetch(name) {
