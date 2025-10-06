@@ -16,6 +16,9 @@
       <%= nav_link_to item.label, item.url, starts_with: item.url, class: "ml-4 py-2 px-3 rounded hover:bg-gray-100" %>
     <% end %>
   <% end %>
+
+  <!-- Social 메뉴 추가 -->
+  <%= nav_link_to "소셜", madmin_social_index_path, class: "py-2 px-3 rounded hover:bg-gray-100" %>
 </nav>
 
 <footer class="mt-8 text-xs text-gray-400">
