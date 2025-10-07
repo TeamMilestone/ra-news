@@ -5,15 +5,7 @@
 class SocialController < ApplicationController
   # provider OAuth2 인증 시작
   def provider_authorize #: () -> void
-    oauth_config = Preference.get_value("#{provider}_oauth")
-
-    client = OAuth2::Client.new(
-      oauth_config["client_id"],
-      oauth_config["client_secret"],
-      site: oauth_config["site"] || "https://api.x.com",
-      authorize_url: authorize_url,
-      token_url: token_url
-    )
+    client = Preference.oauth_client(provider)
 
     redirect_uri = social_provider_callback_url(provider: provider)
 
@@ -47,15 +39,7 @@ class SocialController < ApplicationController
       nil
     end
 
-    oauth_config = Preference.get_value("#{provider}_oauth")
-
-    client = OAuth2::Client.new(
-      oauth_config["client_id"],
-      oauth_config["client_secret"],
-      site: oauth_config["site"] || "https://api.x.com",
-      authorize_url: authorize_url,
-      token_url: token_url
-    )
+    client = Preference.oauth_client(provider)
 
     begin
         token = client.auth_code.get_token(
@@ -89,27 +73,5 @@ class SocialController < ApplicationController
 
   def provider
     params[:provider].presence || "xcom"
-  end
-
-  def authorize_url
-    case provider
-    when "xcom"
-      "https://x.com/i/oauth2/authorize"
-    when "google"
-      "https://accounts.google.com/o/oauth2/v2/auth"
-    else
-      "https://#{provider}.com/oauth2/authorize"
-    end
-  end
-
-  def token_url
-    case provider
-    when "xcom"
-      "https://api.x.com/2/oauth2/token"
-    when "google"
-      "https://oauth2.googleapis.com/token"
-    else
-      "https://#{provider}.com/oauth2/token"
-    end
   end
 end
