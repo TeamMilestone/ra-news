@@ -35,7 +35,8 @@ class Preference < ApplicationRecord
     when "ignore_hosts" # Example name
                   [ :hosts ]
     # Add other cases for other preference names
-    when "xcom_oauth"
+    when /_oauth$/
+      # Common keys for OAuth preferences
       [ :site, :client_id, :client_secret, :access_token, :refresh_token, :expires_at, :token_created_at ]
     else
                   []
