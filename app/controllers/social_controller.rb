@@ -42,22 +42,22 @@ class SocialController < ApplicationController
     client = OauthClientService.call(provider)
 
     begin
-        token = client.auth_code.get_token(
-          params[:code],
-          redirect_uri: social_provider_callback_url(provider: provider),
-          code_verifier: session["#{provider}_code_verifier"]
-        )
+      token = client.auth_code.get_token(
+        params[:code],
+        redirect_uri: social_provider_callback_url(provider: provider),
+        code_verifier: session["#{provider}_code_verifier"]
+      )
 
-        # Access token을 기존 oauth preference에 저장
-        oauth_preference = Preference.find_by(name: "#{provider}_oauth")
-        current_config = oauth_preference.value || {}
+      # Access token을 기존 oauth preference에 저장
+      oauth_preference = Preference.get_object("#{provider}_oauth")
+      current_config = oauth_preference.value || {}
 
-        oauth_preference.value = current_config.merge(
-          access_token: token.token,
-          refresh_token: token.refresh_token,
-          expires_at: token.expires_at,
-          token_created_at: Time.current.to_i
-        )
+      oauth_preference.value = current_config.merge(
+        access_token: token.token,
+        refresh_token: token.refresh_token,
+        expires_at: token.expires_at,
+        token_created_at: Time.current.to_i
+      )
       oauth_preference.save!
 
       session.delete("#{provider}_code_verifier")

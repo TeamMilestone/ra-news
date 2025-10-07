@@ -5,10 +5,6 @@
 class Preference < ApplicationRecord
   after_initialize :define_dynamic_accessors, if: -> { persisted? && name.present? }
 
-  after_save do
-    Rails.cache.delete(name)
-  end
-
   def value=(val)
     super(val.is_a?(String) ? JSON.parse(val) : val)
   rescue JSON::ParserError
@@ -17,9 +13,11 @@ class Preference < ApplicationRecord
 
   #: (String name) -> Hash[String, untyped] || Array[untyped]
   def self.get_value(name)
-    Rails.cache.fetch(name) {
-      Preference.find_by(name:)&.value
-    }
+    get_object(name)&.value
+  end
+
+  def self.get_object(name)
+    Preference.find_by(name:)
   end
 
   def self.ignore_hosts #: Array[String]

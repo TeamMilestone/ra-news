@@ -22,7 +22,10 @@ class OauthClientService < ApplicationService
       site: oauth_config["site"] || default_site,
       authorize_url: authorize_url,
       token_url: token_url
-    )
+    ) do |faraday|
+      faraday.request(:json)
+      faraday.response(:json)
+    end
   end
 
   # OAuth 기본 사이트 URL
