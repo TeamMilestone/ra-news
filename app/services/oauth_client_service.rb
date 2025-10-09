@@ -13,19 +13,39 @@ class OauthClientService < ApplicationService
 
   # OAuth 클라이언트 생성
   def call #: OAuth2::Client
-    oauth_config = Preference.get_value("#{provider}_oauth")
+    oauth_config = Preference.get_object("#{provider}_oauth")
     raise ArgumentError, "OAuth 설정이 비어있습니다: #{provider}_oauth" if oauth_config.blank?
 
-    OAuth2::Client.new(
-      oauth_config["client_id"],
-      oauth_config["client_secret"],
-      site: oauth_config["site"] || default_site,
+    client = OAuth2::Client.new(
+      oauth_config.client_id,
+      oauth_config.client_secret,
+      site: oauth_config.site|| default_site,
       authorize_url: authorize_url,
       token_url: token_url
-    ) do |faraday|
-      faraday.request(:json)
-      faraday.response(:json)
+    )
+
+    check_token(client, oauth_config)
+  end
+
+  private
+
+  def check_token(client, config)
+    token = OAuth2::AccessToken.from_hash(client,
+      {
+        access_token: config.access_token,
+        refresh_token: config.refresh_token,
+        expires_at: config.expires_at
+      }
+    )
+
+    if token.expired?
+      token = token.refresh!
+      config.update(access_token: token.token,
+        refresh_token: token.refresh_token,
+        expires_at: token.expires_at
+      )
     end
+    token
   end
 
   # OAuth 기본 사이트 URL
@@ -33,7 +53,7 @@ class OauthClientService < ApplicationService
   def default_site
     case provider
     when "xcom"
-      "https://api.x.com"
+      "https://api.x.com/2/"
     when "google"
       "https://accounts.google.com"
     else

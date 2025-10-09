@@ -20,7 +20,7 @@ class SocialController < ApplicationController
 
     authorize_url = client.auth_code.authorize_url(
       redirect_uri: redirect_uri,
-      scope: "tweet.write offline.access",
+      scope: "tweet.read tweet.write users.read offline.access",
       code_challenge: code_challenge,
       code_challenge_method: "S256",
       state: SecureRandom.hex(16)
