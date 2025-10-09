@@ -2,7 +2,7 @@
 
 # rbs_inline: enabled
 
-class TwitterService < ApplicationService
+class MastodonService < ApplicationService
   include Rails.application.routes.url_helpers
 
   attr_reader :article #: Article
@@ -47,7 +47,7 @@ class TwitterService < ApplicationService
   #: (Article article) -> void
   def post_to_twitter(article)
     tweet_text = build_tweet_text(article)
-    response = twitter_client.post(tweet_text)
+    response = mastodon_client.post(tweet_text)
     logger.info "Successfully posted to Twitter for article id: #{article.id} - Status: #{response}"
   end
 
@@ -60,7 +60,7 @@ class TwitterService < ApplicationService
     # 태그와 링크를 먼저 생성해서 길이 계산 (taggings_count가 가장 높은 태그 하나만)
     top_tag = article.tags.select { |it| it.is_confirmed? }.max_by(&:taggings_count)
     tags = top_tag ? "##{top_tag.name.gsub(/\s+/, '_').downcase}" : ""
-    article_link = article_url(article.slug)
+    article_link = article_url(article.slug, host: "https://ruby-news.kr")
 
     # 태그와 링크를 위한 공간 확보 (공백 문자들 포함)
     reserved_space = tags.length + article_link.length + 3 # " " + "\n" + 여분
@@ -75,7 +75,7 @@ class TwitterService < ApplicationService
     content.truncate(TWITTER_CONFIG.max_content_length, omission: "...")
   end
 
-  def twitter_client #: X::Client
-    TwitterClient.new
+  def mastodon_client #: X::Client
+    MastodonClient.new
   end
 end

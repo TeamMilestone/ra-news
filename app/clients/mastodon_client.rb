@@ -2,16 +2,16 @@
 
 # rbs_inline: enabled
 
-class TwitterClient
+class MastodonClient
   attr_reader :client
 
   def initialize
-    oauth_config = Preference.get_object("xcom_oauth")
-    raise ArgumentError, "OAuth 설정이 비어있습니다: xcom_oauth" if oauth_config.blank?
+    oauth_config = Preference.get_object("mastodon_oauth")
+    raise ArgumentError, "OAuth 설정이 비어있습니다: mastodon_oauth" if oauth_config.blank?
 
-    oauth_client = OauthClientService.call("xcom")
+    oauth_client = OauthClientService.call("mastodon")
     token = check_token(oauth_client, oauth_config)
-    @client = Faraday.new(url: "https://api.x.com/2/") do |faraday|
+    @client = Faraday.new(url: "https://mastodon.social/") do |faraday|
       faraday.headers["Authorization"] = "Bearer #{token.token}"
       faraday.response :logger, nil, { bodies: true, log_level: :info }
       faraday.request :json
@@ -20,7 +20,7 @@ class TwitterClient
   end
 
   def post(text)
-    response = client.post("tweets", { text: text }.to_json)
+    response = client.post("api/v1/statuses", { status: text }.to_json)
     response
   end
 
@@ -36,14 +36,6 @@ class TwitterClient
         expires_at: config.expires_at
       }
     )
-
-    if token.expired?
-      token = token.refresh!
-      config.update(access_token: token.token,
-        refresh_token: token.refresh_token,
-        expires_at: token.expires_at
-      )
-    end
 
     token
   end

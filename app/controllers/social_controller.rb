@@ -7,24 +7,12 @@ class SocialController < ApplicationController
   def provider_authorize #: () -> void
     client = OauthClientService.call(provider)
 
-    redirect_uri = social_provider_callback_url(provider: provider)
-
     # PKCE 사용 (X.com OAuth2.0 요구사항)
     code_verifier = SecureRandom.urlsafe_base64(32)
-    code_challenge = Base64.urlsafe_encode64(
-      Digest::SHA256.digest(code_verifier),
-      padding: false
-    )
 
     session["#{provider}_code_verifier"] = code_verifier
 
-    authorize_url = client.auth_code.authorize_url(
-      redirect_uri: redirect_uri,
-      scope: "tweet.read tweet.write users.read offline.access",
-      code_challenge: code_challenge,
-      code_challenge_method: "S256",
-      state: SecureRandom.hex(16)
-    )
+    authorize_url = authorize_url(client, code_verifier)
 
     session["#{provider}_state"] = authorize_url.match(/state=([^&]+)/)[1]
 
@@ -73,5 +61,27 @@ class SocialController < ApplicationController
 
   def provider
     params[:provider].presence || "xcom"
+  end
+
+  def authorize_url(client, code_verifier)
+    scope = case provider
+    when "xcom"
+      "tweet.read tweet.write users.read offline.access"
+    when "mastodon"
+      "read:statuses write:statuses"
+    end
+
+    code_challenge = Base64.urlsafe_encode64(
+      Digest::SHA256.digest(code_verifier),
+      padding: false
+    )
+
+    client.auth_code.authorize_url(
+      redirect_uri: social_provider_callback_url(provider: provider),
+      scope: scope,
+      code_challenge: code_challenge,
+      code_challenge_method: "S256",
+      state: SecureRandom.hex(16)
+    )
   end
 end
