@@ -1,6 +1,6 @@
-# Generated from app/clients/twitter_client.rb with RBS::Inline
+# Generated from app/clients/mastodon_client.rb with RBS::Inline
 
-class TwitterClient
+class MastodonClient
   attr_reader client: untyped
 
   def initialize: () -> untyped

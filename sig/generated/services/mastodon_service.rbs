@@ -1,0 +1,30 @@
+# Generated from app/services/mastodon_service.rb with RBS::Inline
+
+class MastodonService < SocialMediaService
+  class MastodonConfig < Struct[untyped]
+    attr_accessor character_limit(): untyped
+
+    attr_accessor url_length_counted(): untyped
+
+    attr_accessor formatting_buffer(): untyped
+
+    def self.new: (?untyped character_limit, ?untyped url_length_counted, ?untyped formatting_buffer) -> instance
+                | (?character_limit: untyped, ?url_length_counted: untyped, ?formatting_buffer: untyped) -> instance
+  end
+
+  # Mastodon의 기본 문자 제한은 500자 (인스턴스마다 다를 수 있음)
+  # URL은 실제 길이가 카운트됨 (Twitter와 다름)
+  MASTODON_CONFIG: MastodonConfig
+
+  private
+
+  def platform_name: () -> String
+
+  # : (Article article) -> void
+  def post_to_platform: (Article article) -> void
+
+  # : (Article article) -> String
+  def build_post_text: (Article article) -> String
+
+  def platform_client: () -> MastodonClient
+end

@@ -1,8 +1,6 @@
 # Generated from app/services/twitter_service.rb with RBS::Inline
 
-class TwitterService < ApplicationService
-  attr_reader article: Article
-
+class TwitterService < SocialMediaService
   class TwitterConfig < Struct[untyped]
     attr_accessor character_limit(): untyped
 
@@ -16,24 +14,15 @@ class TwitterService < ApplicationService
 
   TWITTER_CONFIG: TwitterConfig
 
-  # : (Article article) -> TwitterService
-  def initialize: (Article article) -> TwitterService
-
-  def call: () -> void
-
   private
 
-  # : (Article article) -> bool
-  def should_post_article?: (Article article) -> bool
+  def platform_name: () -> String
 
   # : (Article article) -> void
-  def post_to_twitter: (Article article) -> void
+  def post_to_platform: (Article article) -> void
 
   # : (Article article) -> String
-  def build_tweet_text: (Article article) -> String
+  def build_post_text: (Article article) -> String
 
-  # : (String content) -> String
-  def truncate_for_twitter: (String content) -> String
-
-  def twitter_client: () -> X::Client
+  def platform_client: () -> X::Client
 end

@@ -1,0 +1,15 @@
+# Generated from app/controllers/social_controller.rb with RBS::Inline
+
+class SocialController < ApplicationController
+  # provider OAuth2 인증 시작
+  def provider_authorize: () -> untyped
+
+  # provider OAuth2 콜백 처리
+  def provider_callback: () -> untyped
+
+  private
+
+  def provider: () -> untyped
+
+  def authorize_url: (untyped client, untyped code_verifier) -> untyped
+end

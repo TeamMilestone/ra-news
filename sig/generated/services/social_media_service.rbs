@@ -1,0 +1,33 @@
+# Generated from app/services/social_media_service.rb with RBS::Inline
+
+class SocialMediaService < ApplicationService
+  attr_reader article: Article
+
+  # : (Article article) -> void
+  def initialize: (Article article) -> void
+
+  def call: () -> void
+
+  private
+
+  # : (Article article) -> bool
+  def should_post_article?: (Article article) -> bool
+
+  # : (Article article) -> String
+  def base_content: (Article article) -> String
+
+  # : () -> String
+  def article_link: () -> String
+
+  # 서브클래스에서 구현해야 하는 추상 메서드들
+  # : (Article article) -> void
+  def post_to_platform: (Article article) -> void
+
+  # : (Article article) -> String
+  def build_post_text: (Article article) -> String
+
+  # : () -> String
+  def platform_name: () -> String
+
+  def platform_client: () -> untyped
+end
