@@ -6,6 +6,19 @@
 class OauthClientService < ApplicationService
   attr_reader :provider #: String
 
+  OAUTH_CONFIG = {
+    xcom: {
+      default_site: "https://api.x.com/2/",
+      authorize_url: "https://x.com/i/oauth2/authorize",
+      token_url: "https://api.x.com/2/oauth2/token"
+    },
+    mastodon: {
+      default_site: "https://mastodon.social",
+      authorize_url: "https://mastodon.social/oauth/authorize",
+      token_url: "https://mastodon.social/oauth/token"
+    }
+  }.freeze #: Hash<String, Hash<String, String>>
+
   #: (String provider) -> OauthClientService
   def initialize(provider)
     @provider = provider
@@ -16,61 +29,15 @@ class OauthClientService < ApplicationService
     oauth_config = Preference.get_object("#{provider}_oauth")
     raise ArgumentError, "OAuth 설정이 비어있습니다: #{provider}_oauth" if oauth_config.blank?
 
+    OAUTH_CONFIG[provider.to_sym][:default_site]
     client = OAuth2::Client.new(
       oauth_config.client_id,
       oauth_config.client_secret,
-      site: oauth_config.site || default_site,
-      authorize_url: authorize_url,
-      token_url: token_url
+      site: oauth_config.site || OAUTH_CONFIG[provider.to_sym][:default_site],
+      authorize_url: OAUTH_CONFIG[provider.to_sym][:authorize_url],
+      token_url: OAUTH_CONFIG[provider.to_sym][:token_url]
     )
 
     client
-  end
-
-  private
-
-  # OAuth 기본 사이트 URL
-  #: (String provider) -> String
-  def default_site
-    case provider
-    when "xcom"
-      "https://api.x.com/2/"
-    when "mastodon"
-      "https://mastodon.social"
-    when "google"
-      "https://accounts.google.com"
-    else
-      "https://#{provider}.com"
-    end
-  end
-
-  # OAuth 인증 URL
-  #: (String provider) -> String
-  def authorize_url
-    case provider
-    when "xcom"
-      "https://x.com/i/oauth2/authorize"
-    when "mastodon"
-      "https://mastodon.social/oauth/authorize"
-    when "google"
-      "https://accounts.google.com/o/oauth2/v2/auth"
-    else
-      "https://#{provider}.com/oauth2/authorize"
-    end
-  end
-
-  # OAuth 토큰 URL
-  #: (String provider) -> String
-  def token_url
-    case provider
-    when "xcom"
-      "https://api.x.com/2/oauth2/token"
-    when "mastodon"
-      "https://mastodon.social/oauth/token"
-    when "google"
-      "https://oauth2.googleapis.com/token"
-    else
-      "https://#{provider}.com/oauth2/token"
-    end
   end
 end
