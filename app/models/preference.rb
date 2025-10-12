@@ -27,7 +27,7 @@ class Preference < ApplicationRecord
   end
 
   def self.ignore_hosts #: Array[String]
-    get_value("ignore_hosts")
+    get_value("ignore_hosts") || []
   end
 
   private
