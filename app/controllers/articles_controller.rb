@@ -49,14 +49,20 @@ class ArticlesController < ApplicationController
 
   # POST /articles
   def create
-    @article = Article.new(article_params.merge(origin_url: article_params[:url], user: Current.user))
+    url = article_params[:url]&.strip
+    @article = Article.new(url:, origin_url: url, user: Current.user)
 
     respond_to do |format|
       if @article.save
         ArticleJob.perform_later(@article.id)
         format.html { redirect_to article_path(@article), notice: "Article was successfully created." }
       else
-        format.html { render :new, status: :unprocessable_entity }
+        if @article.errors.details[:origin_url].any? { |e| e[:error] == :taken } && @article.errors.details[:url].any? { |e| e[:error] == :taken }
+          existing_article = Article.where(url: @article.url).or(Article.where(origin_url: @article.origin_url)).first
+          format.html { redirect_to article_path(existing_article), notice: "Article already exists." }
+        else
+          format.html { render :new, status: :unprocessable_entity }
+        end
       end
     end
   end
