@@ -7,7 +7,7 @@ class ArticlesController < ApplicationController
 
   before_action :set_article, only: %i[ show edit ]
 
-  include Pagy::Backend
+  include Pagy::Method
 
   # GET /articles or /articles.json
   def index

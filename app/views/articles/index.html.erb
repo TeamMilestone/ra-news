@@ -60,12 +60,10 @@
   <% end %>
   <!-- 페이지네이션 -->
   <% if @pagy.pages > 1 %>
-    <div class="pagy-wrapper mt-auto">
-      <div class="pagy-container">
+    <div class="pagy mt-auto">
         <div class="bg-gray-800 rounded-xl p-2 md:p-3 border border-gray-700">
-          <%== pagy_nav(@pagy, size: [1, 2, 2, 1]) %>
+          <%== @pagy.series_nav %>
         </div>
-      </div>
     </div>
   <% end %>
 </div>
