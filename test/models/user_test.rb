@@ -159,9 +159,9 @@ class UserTest < ActiveSupport::TestCase
     assert_not_includes admins, @korean_user
   end
 
-  test "admins 스코프는 stadia@gmail.com만 포함해야 한다" do
+  test "admins 스코프는 admin@example.com만 포함해야 한다" do
     admin_emails = User.admins.pluck(:email_address)
-    assert_equal [ "stadia@gmail.com" ], admin_emails
+    assert_equal [ "admin@example.com" ], admin_emails
   end
 
   # ========== Instance Method Tests ========== 

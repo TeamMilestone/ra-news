@@ -21,7 +21,7 @@ jane:
 
 # Admin user
 admin:
-  email_address: stadia@gmail.com
+  email_address: admin@example.com
   name: 관리자
   password_digest: <%= admin_password_digest %>
   roles:
