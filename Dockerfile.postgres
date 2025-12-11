@@ -1,8 +1,7 @@
-# x86 Mac 환경용 PostgreSQL 16 + pgvector + pg_bigm + fuzzystrmatch + textsearch_ko
+# PostgreSQL 16 + pgvector + pg_bigm + fuzzystrmatch + textsearch_ko
 
 # 베이스 이미지: pgvector 16
-ARG TARGETPLATFORM=linux/amd64
-FROM --platform=${TARGETPLATFORM} pgvector/pgvector:pg16
+FROM pgvector/pgvector:pg16
 
 # 필수 패키지 설치, 확장 빌드 및 정리
 RUN BUILD_DEPS="git build-essential wget curl libicu-dev libxml2-dev postgresql-server-dev-16 postgresql-contrib-16 mecab libmecab-dev" \
