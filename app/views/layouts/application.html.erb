@@ -123,9 +123,7 @@
         <input type="checkbox" id="mobile-menu-toggle" class="mobile-menu-toggle peer">
         <label for="mobile-menu-toggle" class="inline-flex items-center p-2 w-11 h-11 justify-center text-sm text-gray-100 rounded-lg md:hidden hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 cursor-pointer">
           <span class="sr-only">Open main menu</span>
-          <svg class="w-5 h-5 transition-transform duration-200 peer-checked:rotate-45" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
-            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h15M1 7h15M1 13h15"/>
-          </svg>
+          <%= heroicon "bars-3", variant: :outline, options: { class: "w-5 h-5 transition-transform duration-200 peer-checked:rotate-45" } %>
         </label>
 
         <!-- Navigation Menu -->
@@ -201,9 +199,7 @@
             </li>
             <li>
               <a href="<%= rss_path %>" target="_blank" rel="noopener noreferrer" class="hover:underline hover:text-white flex items-center gap-1">
-                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M6.503 20.752c0 1.794-1.456 3.248-3.251 3.248-1.796 0-3.252-1.454-3.252-3.248 0-1.794 1.456-3.248 3.252-3.248 1.795.001 3.251 1.454 3.251 3.248zm-6.503-12.572v4.811c6.05.062 10.96 4.966 11.022 11.009h4.817c-.062-8.71-7.118-15.758-15.839-15.82zm0-3.368C10.58 4.858 19.152 13.406 19.183 24h4.817C23.984 9.049 14.964 0 0 0v4.812z"/>
-                </svg>
+                <%= heroicon "rss", variant: :solid, options: { class: "w-5 h-5" } %>
                 RSS 피드
               </a>
             </li>
