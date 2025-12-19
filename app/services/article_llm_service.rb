@@ -130,8 +130,5 @@ PROMPT
         return # Exit early if discarded
       end
     end
-
-    # Rebuild search index only for kept articles
-    PgSearch::Multisearch.rebuild(Article, clean_up: false, transactional: false) unless article.discarded?
   end
 end
