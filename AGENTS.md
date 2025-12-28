@@ -10,7 +10,7 @@ This file provides guidance to AI Agents when working with code in this reposito
 **Ruby-News** is a Korean Ruby-focused news aggregation platform built with Rails 8. Key technologies:
 
 - **Rails 8** with Solid Queue, Solid Cache, Solid Cable for 백그라운드 작업과 실시간 업데이트
-- **Ruby 3.4** with RBS inline type annotations; Steep를 통해 서비스/모델 시그니처를 검증합니다.
+- **Ruby 4.0** with RBS inline type annotations; Steep를 통해 서비스/모델 시그니처를 검증합니다.
 - **PostgreSQL** with vector embeddings, Korean/English full-text search, `pgvector` 확장을 필수로 사용합니다.
 - **AI Integration**: RubyLLM with Gemini models for content processing, 배포 환경에서는 API 키를 `config/credentials.yml.enc`에 보관합니다.
 - **Frontend**: Hotwire (Turbo/Stimulus), Tailwind CSS 4.2; 공통 CSS 토큰은 `app/assets/stylesheets/tokens.css`에 정의합니다.

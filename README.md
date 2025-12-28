@@ -39,7 +39,7 @@ RSS, 이메일 뉴스레터, YouTube, Hacker News 등 다양한 소스를 수집
 
 ### 백엔드
 
-- **Ruby 3.4**
+- **Ruby 4.0**
 - **Rails 8** (Solid Queue / Solid Cache / Solid Cable)
 - **PostgreSQL**
   - 한국어/영어 tsvector 기반 전문 검색
@@ -138,7 +138,7 @@ RSS, 이메일 뉴스레터, YouTube, Hacker News 등 다양한 소스를 수집
 
 ### 1. 요구 사항
 
-- Ruby 3.4
+- Ruby 4.0
 - PostgreSQL (pgvector 확장 활성화)
 - Node.js (Tailwind 빌드용)
 - Redis (옵션: 캐시/백그라운드 처리 구성에 따라)
