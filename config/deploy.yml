@@ -2,7 +2,7 @@
 service: al_news
 
 # Name of the container image.
-image: ghcr.io/stadia/ra-news:latest
+image: stadia/ra-news
 
 # Deploy to these servers.
 servers:
