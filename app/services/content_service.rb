@@ -58,7 +58,7 @@ class ContentService < ApplicationService
     if transcript.blank?
       begin
         fetched_transcript = YoutubeRb::Transcript::YouTubeTranscriptApi.new.fetch(youtube_id)
-        transcript = YoutubeRb::Transcript::Formatters::TextFormatter.new.format_transcript(fetched_transcript) if fetched_transcript.present?
+        transcript = YoutubeRb::Formatters::TextFormatter.new.format_transcript(fetched_transcript) if fetched_transcript.present?
       rescue StandardError => e
         logger.error "Error fetching Youtube transcript: #{e.message}"
       end
