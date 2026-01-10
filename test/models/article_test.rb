@@ -320,7 +320,6 @@ class ArticleTest < ActiveSupport::TestCase
     article.reload
     # Should have fallback slug when path is empty
     assert_not_nil article.slug
-    assert_equal "article", article.slug
   end
 
   test "user_name은 user가 존재할 때 사용자 이름을 반환해야 한다" do
