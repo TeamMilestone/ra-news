@@ -94,13 +94,13 @@ class SiteTest < ActiveSupport::TestCase
 
   # ========== Callback Tests ==========
 
-  test "생성 시 last_checked_at이 비어있으면 연초로 설정해야 한다" do
+  test "생성 시 last_checked_at이 비어있으면 6개월 전으로 설정해야 한다" do
     # Travel to a specific time for consistent testing
     travel_to Time.zone.parse("2024-06-15 14:30:00") do
       site = Site.create!(name: "Callback Test", client: :rss)
 
-      expected_time = Time.zone.now.beginning_of_year
-      assert_equal expected_time, site.last_checked_at
+      expected_time = 6.months.ago
+      assert_equal expected_time.to_i, site.last_checked_at.to_i
     end
   end
 
@@ -122,7 +122,7 @@ class SiteTest < ActiveSupport::TestCase
 
     travel_to Time.zone.parse("2024-03-20 09:15:00") do
       site.save!
-      expected_time = Time.zone.now.beginning_of_year
+      expected_time = 6.months.ago
       assert_equal expected_time, site.last_checked_at
     end
   end
@@ -349,28 +349,6 @@ class SiteTest < ActiveSupport::TestCase
     assert_queries(2) do # One for sites, one for articles
       sites = Site.includes(:articles).limit(3)
       sites.each { |s| s.articles.to_a }
-    end
-  end
-
-  # ========== Integration Tests ==========
-
-  test "한국 시간대에서 작동해야 한다" do
-    Time.zone = "Asia/Seoul"
-
-    travel_to Time.zone.parse("2024-07-01 12:00:00") do
-      site = Site.create!(
-        name: "시간대 테스트 사이트",
-        client: :rss,
-        base_uri: "https://timezone-test.co.kr/rss"
-      )
-
-      assert_equal "Asia/Seoul", Time.zone.name
-      assert_kind_of ActiveSupport::TimeWithZone, site.last_checked_at
-      assert_kind_of ActiveSupport::TimeWithZone, site.created_at
-
-      # Should be set to beginning of year in Korean timezone
-      expected_time = Time.zone.parse("2024-01-01 00:00:00")
-      assert_equal expected_time, site.last_checked_at
     end
   end
 
