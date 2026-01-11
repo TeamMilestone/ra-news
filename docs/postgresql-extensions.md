@@ -20,6 +20,9 @@ Ruby-News 프로젝트는 한국어 전문 검색 및 벡터 검색을 위해 �
 # 1. PostgreSQL 확장 디렉토리로 이동
 cd /tmp
 
+# Homebrew 경로 동적 설정 (Apple Silicon: /opt/homebrew, Intel: /usr/local)
+BREW_PREFIX=$(brew --prefix)
+
 # 2. pg_bigm 설치
 git clone https://github.com/pgbigm/pg_bigm.git
 cd pg_bigm
@@ -30,14 +33,14 @@ cd ..
 # 3. mecab-ko 및 사전 설치
 brew unlink mecab  # 기존 mecab이 있다면
 brew install mecab-ko-dic
-echo "dicdir = /opt/homebrew/lib/mecab/dic/mecab-ko-dic" | sudo tee /opt/homebrew/etc/mecabrc
+echo "dicdir = ${BREW_PREFIX}/lib/mecab/dic/mecab-ko-dic" | sudo tee "${BREW_PREFIX}/etc/mecabrc"
 
 # 4. textsearch_ko 설치 (패치 필요)
 git clone https://github.com/i0seph/textsearch_ko.git
 cd textsearch_ko
 
 # 4-1. mecab 설정 경로 패치 적용
-cat > patch.txt << 'EOF'
+cat > patch.txt << EOF
 --- ts_mecab_ko.c.orig	2025-11-19 16:00:00.000000000 +0900
 +++ ts_mecab_ko.c	2025-11-19 16:00:00.000000000 +0900
 @@ -145,8 +145,8 @@
@@ -47,7 +50,7 @@ cat > patch.txt << 'EOF'
 -		int			argc = 1;
 -		char	   *argv[] = { "mecab" };
 +		int			argc = 5;
-+		char	   *argv[] = { "mecab", "-r", "/opt/homebrew/etc/mecabrc", "-d", "/opt/homebrew/lib/mecab/dic/mecab-ko-dic" };
++		char	   *argv[] = { "mecab", "-r", "${BREW_PREFIX}/etc/mecabrc", "-d", "${BREW_PREFIX}/lib/mecab/dic/mecab-ko-dic" };
  		_mecab = mecab_new(argc, argv);
  		mecab_assert(_mecab);
  	}
@@ -86,6 +89,9 @@ sudo make install USE_PGXS=1
 textsearch_ko는 mecab-ko (한국어 형태소 분석기)를 사용합니다.
 
 ```bash
+# Homebrew 경로 확인
+BREW_PREFIX=$(brew --prefix)
+
 # 기존 mecab과 충돌 방지
 brew unlink mecab
 
@@ -93,7 +99,7 @@ brew unlink mecab
 brew install mecab-ko-dic
 
 # mecab 설정 파일 생성
-echo "dicdir = /opt/homebrew/lib/mecab/dic/mecab-ko-dic" | sudo tee /opt/homebrew/etc/mecabrc
+echo "dicdir = ${BREW_PREFIX}/lib/mecab/dic/mecab-ko-dic" | sudo tee "${BREW_PREFIX}/etc/mecabrc"
 ```
 
 **확인:**
@@ -121,7 +127,10 @@ cd textsearch_ko
 `ts_mecab_ko.c` 파일의 `_PG_init` 함수에서 mecab 초기화 시 설정 파일 경로를 명시적으로 지정해야 합니다.
 
 ```bash
-cat > patch.txt << 'EOF'
+# Homebrew 경로 확인 (이전 단계에서 설정하지 않은 경우)
+BREW_PREFIX=$(brew --prefix)
+
+cat > patch.txt << EOF
 --- ts_mecab_ko.c.orig	2025-11-19 16:00:00.000000000 +0900
 +++ ts_mecab_ko.c	2025-11-19 16:00:00.000000000 +0900
 @@ -145,8 +145,8 @@
@@ -131,7 +140,7 @@ cat > patch.txt << 'EOF'
 -		int			argc = 1;
 -		char	   *argv[] = { "mecab" };
 +		int			argc = 5;
-+		char	   *argv[] = { "mecab", "-r", "/opt/homebrew/etc/mecabrc", "-d", "/opt/homebrew/lib/mecab/dic/mecab-ko-dic" };
++		char	   *argv[] = { "mecab", "-r", "${BREW_PREFIX}/etc/mecabrc", "-d", "${BREW_PREFIX}/lib/mecab/dic/mecab-ko-dic" };
  		_mecab = mecab_new(argc, argv);
  		mecab_assert(_mecab);
  	}
@@ -180,13 +189,14 @@ PG::ExternalRoutineException: ERROR:  mecab:
 **해결방법:**
 1. mecabrc 파일이 올바른 위치에 있는지 확인:
    ```bash
-   cat /opt/homebrew/etc/mecabrc
-   # dicdir = /opt/homebrew/lib/mecab/dic/mecab-ko-dic
+   cat "$(brew --prefix)/etc/mecabrc"
+   # dicdir = /opt/homebrew/lib/mecab/dic/mecab-ko-dic (Apple Silicon)
+   # dicdir = /usr/local/lib/mecab/dic/mecab-ko-dic (Intel)
    ```
 
 2. 사전 파일이 존재하는지 확인:
    ```bash
-   ls /opt/homebrew/lib/mecab/dic/mecab-ko-dic/
+   ls "$(brew --prefix)/lib/mecab/dic/mecab-ko-dic/"
    # char.bin  dicrc  left-id.def  matrix.bin  model.bin  pos-id.def  rewrite.def  ...
    ```
 
@@ -210,7 +220,7 @@ PG::ExternalRoutineException: ERROR:  mecab:
 
 **증상:**
 ```
-ERROR:  could not open extension control file "/opt/homebrew/share/postgresql@14/extension/pg_bigm.control": No such file or directory
+ERROR:  could not open extension control file "$(brew --prefix)/share/postgresql@14/extension/pg_bigm.control": No such file or directory
 ```
 
 **원인:** 확장이 제대로 설치되지 않음
@@ -218,8 +228,8 @@ ERROR:  could not open extension control file "/opt/homebrew/share/postgresql@14
 **해결방법:**
 ```bash
 # 확장 파일 존재 확인
-ls /opt/homebrew/share/postgresql@14/extension/pg_bigm.control
-ls /opt/homebrew/share/postgresql@14/extension/textsearch_ko.control
+ls "$(brew --prefix)/share/postgresql@14/extension/pg_bigm.control"
+ls "$(brew --prefix)/share/postgresql@14/extension/textsearch_ko.control"
 
 # 없다면 해당 확장 재설치
 cd /tmp/pg_bigm  # 또는 /tmp/textsearch_ko
@@ -242,20 +252,21 @@ brew install mecab-ko-dic
 
 ### Intel Mac에서 경로 차이
 
-Intel Mac에서는 Homebrew 경로가 다릅니다:
+Homebrew 경로는 아키텍처에 따라 다릅니다:
 - Apple Silicon: `/opt/homebrew`
 - Intel: `/usr/local`
 
-패치 파일의 경로를 Intel Mac 기준으로 수정:
-```c
-char *argv[] = { "mecab", "-r", "/usr/local/etc/mecabrc", "-d", "/usr/local/lib/mecab/dic/mecab-ko-dic" };
+이 문서의 모든 스크립트는 `$(brew --prefix)`를 사용하여 자동으로 올바른 경로를 감지합니다.
+직접 경로를 확인하려면:
+```bash
+brew --prefix  # /opt/homebrew 또는 /usr/local 출력
 ```
 
 ### PostgreSQL 로그 확인
 
 문제 발생 시 PostgreSQL 로그를 확인:
 ```bash
-tail -f /opt/homebrew/var/log/postgresql@14.log
+tail -f "$(brew --prefix)/var/log/postgresql@14.log"
 ```
 
 ## 다른 플랫폼
