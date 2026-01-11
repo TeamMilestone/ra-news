@@ -9,7 +9,8 @@ class SocialDeleteJob < ApplicationJob
   def perform(id)
     return unless Rails.env.production?
 
-    article = Article.kept.find_by(id: id)
+    article = Article.find_by(id: id)
+
     TwitterService.new.call(article, command: :delete)
     MastodonService.new.call(article, command: :delete)
   end
