@@ -5,24 +5,38 @@
 class SocialMediaService < ApplicationService
   include Rails.application.routes.url_helpers
 
-  attr_reader :article #: Article
+  attr_reader :article, :command #: Article
 
   #: (Article article) -> void
-  def initialize(article)
+  #: (Article article, Symbol command) -> void
+  def initialize(article, command: :post)
     @article = article
+    @command = command
   end
 
   def call #: void
-    unless should_post_article?(article)
-      logger.info "Skipping #{platform_name} post for article id: #{article.id} - not suitable for posting"
-      return
-    end
+    case @command
+    when :post
+      unless should_post_article?(article)
+        logger.info "Skipping #{platform_name} post for article id: #{article.id} - not suitable for posting"
+        return
+      end
 
-    begin
-      post_to_platform(article)
-    rescue StandardError => e
-      logger.error "Failed to post article id: #{article.id} to #{platform_name}: #{e.message}"
-      Honeybadger.notify(e, context: { article_id: article.id, article_url: article.url })
+      begin
+        post_to_platform(article)
+      rescue StandardError => e
+        logger.error "Failed to post article id: #{article.id} to #{platform_name}: #{e.message}"
+        Honeybadger.notify(e, context: { article_id: article.id, article_url: article.url })
+      end
+    when :delete
+      begin
+        delete_from_platform(article)
+      rescue StandardError => e
+        logger.error "Failed to delete article id: #{article.id} from #{platform_name}: #{e.message}"
+        Honeybadger.notify(e, context: { article_id: article.id, article_url: article.url })
+      end
+    else
+      raise ArgumentError, "Unknown command: #{@command}. Use :post or :delete"
     end
   end
 
@@ -50,6 +64,11 @@ class SocialMediaService < ApplicationService
   #: (Article article) -> void
   def post_to_platform(article)
     raise NotImplementedError, "Subclass must implement post_to_platform"
+  end
+
+  #: (Article article) -> void
+  def delete_from_platform(article)
+    raise NotImplementedError, "Subclass must implement delete_from_platform"
   end
 
   #: (Article article) -> String

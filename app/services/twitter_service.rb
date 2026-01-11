@@ -29,6 +29,22 @@ class TwitterService < SocialMediaService
     end
   end
 
+  #: (Article article) -> void
+  def delete_from_platform(article)
+    unless article.twitter_id.present?
+      logger.info "Skipping #{platform_name} delete for article id: #{article.id} - no twitter_id"
+      return
+    end
+
+    response = platform_client.delete(article.twitter_id)
+    if response.status >= 200 && response.status < 300
+      article.update(twitter_id: nil)
+      logger.info "Successfully deleted from #{platform_name} for article id: #{article.id}"
+    else
+      logger.error "Failed to delete from #{platform_name} for article id: #{article.id} - Status: #{response.status}"
+    end
+  end
+
   #: (Article article) -> String
   def build_post_text(article)
     content_data = base_content(article)

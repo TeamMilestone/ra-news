@@ -31,6 +31,22 @@ class MastodonService < SocialMediaService
     end
   end
 
+  #: (Article article) -> void
+  def delete_from_platform(article)
+    unless article.mastodon_id.present?
+      logger.info "Skipping #{platform_name} delete for article id: #{article.id} - no mastodon_id"
+      return
+    end
+
+    response = platform_client.delete(article.mastodon_id)
+    if response.status >= 200 && response.status < 300
+      article.update(mastodon_id: nil)
+      logger.info "Successfully deleted from #{platform_name} for article id: #{article.id}"
+    else
+      logger.error "Failed to delete from #{platform_name} for article id: #{article.id} - Status: #{response.status}"
+    end
+  end
+
   #: (Article article) -> String
   def build_post_text(article)
     content_data = base_content(article)

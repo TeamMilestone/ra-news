@@ -44,7 +44,7 @@ bin/rails jobs:stats      # 큐 상태 확인 (CI 실행 전 수동 점검)
 ## Core Architecture
 
 ### Domain Models
-- **Article**: Central content model with AI-generated summaries, embeddings for similarity; soft-delete(`discarded_at`)이 활성화되어 있습니다.
+- **Article**: Central content model with AI-generated summaries, embeddings for similarity; soft-delete(`discarded_at`)이 활성화되어 있습니다. 소셜 미디어 포스트 ID를 `social_post_ids` JSONB 컬럼에 저장하며, `store_accessor`를 통해 `:twitter_id`, `:mastodon_id`로 접근합니다.
 - **Site**: RSS/external feed sources (YouTube, HackerNews, Gmail) and maintains `kind` enum for 소스 구분.
 - **User**: Authentication with custom system (not Devise) and stores session tokens via `UserSession` 서비스.
 - **Comment**: Nested comment system using awesome_nested_set with `Comment::MAX_DEPTH` 제한을 준수합니다.
@@ -63,15 +63,38 @@ Key jobs:
 - `RssSiteJob`: RSS feed processing
 - `YoutubeSiteJob`: YouTube video content extraction
 - `GmailArticleJob`: Email newsletter processing
+- `SocialPostJob`: X.com(Twitter)과 Mastodon에 확인된 기사를 자동 게시 (production 환경만)
+- `SocialDeleteJob`: Article이 soft-delete될 때 소셜 미디어에서 게시물 삭제
 - 모든 Job은 Honeybadger 보고를 위해 `rescue_with_honeybadger`를 호출하고, 재시도 정책은 각 클래스의 `retry_on` 설정을 우선합니다.
 
 ### Client Architecture
 External service integrations follow consistent pattern:
 
 ```ruby
-# All clients inherit from ApplicationClient
+# Basic client pattern (inherits from ApplicationClient)
 class RssClient < ApplicationClient
   # Standardized error handling: Forbidden, RateLimit, NotFound
+end
+
+# OAuth2-based social media client pattern
+class TwitterClient
+  def initialize
+    oauth_config = Preference.get_object("xcom_oauth")
+    # OAuth2 token with automatic refresh capability
+  end
+
+  def post(text) # X.com에 트윗 게시
+  def delete(tweet_id) # 트윗 삭제
+end
+
+class MastodonClient
+  def initialize
+    oauth_config = Preference.get_object("mastodon_oauth")
+    # Bearer token authentication
+  end
+
+  def post(text) # Mastodon 상태 게시
+  def delete(status_id) # 상태 삭제
 end
 ```
 
@@ -90,6 +113,56 @@ Article.body_matching(query)   # English dictionary
 article.nearest_neighbors(:embedding, distance: "cosine")
 ```
 - 임베딩 컬럼은 1536차원 `vector` 타입이며, 신규 필드는 `lib/tasks/embeddings.rake`를 참고해 백필하세요.
+
+### Social Media Integration
+외부 소셜 미디어 플랫폼에 Article을 자동으로 게시하고 삭제하는 기능:
+
+**지원 플랫폼:**
+- **X.com (Twitter)**: 280자 제한, URL은 23자로 계산
+- **Mastodon**: 500자 제한 (ruby.social 인스턴스), URL은 실제 길이로 계산
+
+**아키텍처 패턴:**
+상속 기반 서비스 패턴으로 플랫폼별 차이를 추상화:
+
+```ruby
+# 기본 클래스: 공통 로직 구현
+class SocialMediaService < ApplicationService
+  def initialize(article, command: :post)  # :post 또는 :delete
+end
+
+# 플랫폼별 구현
+class TwitterService < SocialMediaService
+  def post_to_platform(article)
+    # X.com API 연동, 280자 제한 처리
+  end
+
+  def delete_from_platform(article)
+    # 트윗 삭제 및 twitter_id 초기화
+  end
+end
+```
+
+**OAuth 설정:**
+- Twitter: `Preference.get_object("xcom_oauth")`를 통해 OAuth 설정 로드
+- Mastodon: `Preference.get_object("mastodon_oauth")`를 통해 OAuth 설정 로드
+- Client는 자동으로 토큰 만료 확인 및 갱신 수행 (Twitter만 해당)
+
+**Post ID 추적:**
+Article 모델은 게시된 포스트의 ID를 추적하여 삭제 시 사용:
+```ruby
+article.twitter_id   # X.com 포스트 ID (store_accessor)
+article.mastodon_id  # Mastodon 포스트 ID (store_accessor)
+```
+
+**Lifecycle:**
+1. **게시**: `SocialPostJob`이 `is_posted: false`인 Article을 찾아 게시
+2. **삭제**: Article이 soft-delete되면 `after_discard` 콜백이 `SocialDeleteJob`을 예약
+3. **Production Only**: 모든 소셜 미디어 작업은 production 환경에서만 실행됨
+
+**에러 핸들링:**
+- 각 플랫폼별 실패는 독립적으로 처리 (한 플랫폼 실패가 다른 플랫폼에 영향 없음)
+- 모든 오류는 Honeybadger에 보고되며, article_id와 article_url을 컨텍스트로 포함
+- 포스트 ID가 없을 경우 삭제 작업은 조용히 스킵됨
 
 ### Authentication Pattern
 Custom authentication system (not Devise):

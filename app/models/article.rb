@@ -47,7 +47,11 @@ class Article < ApplicationRecord
 
   acts_as_taggable_on :tags
 
-  after_discard :clear_rss_cache
+  after_discard do
+    clear_rss_cache
+    SocialDeleteJob.perform_later(id)
+  end
+
   after_commit :clear_rss_cache, on: [ :create, :update, :destroy ]
 
   before_save do
