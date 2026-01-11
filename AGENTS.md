@@ -14,6 +14,7 @@ This file provides guidance to AI Agents when working with code in this reposito
 - **PostgreSQL** with vector embeddings, Korean/English full-text search, `pgvector` 확장을 필수로 사용합니다.
 - **AI Integration**: RubyLLM with Gemini models for content processing, 배포 환경에서는 API 키를 `config/credentials.yml.enc`에 보관합니다.
 - **Frontend**: Hotwire (Turbo/Stimulus), Tailwind CSS 4.2; 공통 CSS 토큰은 `app/assets/stylesheets/tokens.css`에 정의합니다.
+- **Service Layer**: Dry::Operation with Railway-Oriented Programming for service layer error handling and result chaining; `Success`/`Failure` 모나드를 통해 명시적인 에러 핸들링을 구현합니다.
 
 ## Development Commands
 
@@ -130,22 +131,33 @@ article.nearest_neighbors(:embedding, distance: "cosine")
 - **Mastodon**: 500자 제한 (ruby.social 인스턴스), URL은 실제 길이로 계산
 
 **아키텍처 패턴:**
-상속 기반 서비스 패턴으로 플랫폼별 차이를 추상화:
+Dry::Operation과 상속 기반 서비스 패턴으로 플랫폼별 차이를 추상화:
 
 ```ruby
-# 기본 클래스: 공통 로직 구현
-class SocialMediaService < ApplicationService
-  def initialize(article, command: :post)  # :post 또는 :delete
+# 기본 클래스: 공통 로직 + Result 모나드
+class SocialMediaService < Dry::Operation
+  def call(article, command: :post)
+    case command
+    when :post
+      step should_post_article?(article)
+      step post_to_platform(article)  # 자식 클래스 구현
+    when :delete
+      step delete_from_platform(article)  # 자식 클래스 구현
+    end
+  end
 end
 
 # 플랫폼별 구현
 class TwitterService < SocialMediaService
   def post_to_platform(article)
+    return Failure(:already_posted) if article.twitter_id.present?
     # X.com API 연동, 280자 제한 처리
+    Success(tweet_id)
   end
 
   def delete_from_platform(article)
     # 트윗 삭제 및 twitter_id 초기화
+    Success(article.id)
   end
 end
 ```
@@ -205,6 +217,63 @@ class ArticleBodyTool < RubyLLM::Tool
 end
 ```
 - 신규 Tool 추가 시 `tools.yml`에 등록하고 QA 환경에서 feature flag로 점진적 적용을 수행합니다.
+
+### Service Layer Pattern
+프로젝트는 서비스 계층에서 두 가지 패턴을 혼용합니다:
+
+**Pattern 1: ApplicationService (기본 패턴)**
+```ruby
+class ExampleService < ApplicationService
+  def call
+    # 단순 비즈니스 로직 수행
+    perform_action
+  end
+end
+```
+- 목적: 단순 비즈니스 로직 캡슐화
+- 사용처: 단일 작업, 명확한 성공/실패 케이스
+- 예시: `SitemapService`, `OauthClientService`
+
+**Pattern 2: Dry::Operation (Railway-Oriented Programming)**
+```ruby
+class ContentService < Dry::Operation
+  def call(article)
+    if article.is_youtube?
+      step execute_youtube(article.url)
+    else
+      step execute_html(article.url)
+    end
+  end
+
+  protected
+
+  def execute_html(url)
+    return Failure(:no_content) if content.blank?
+    Success(Readability::Document.new(html_content).content)
+  end
+end
+
+# 호출 및 결과 처리
+result = ContentService.new.call(article)
+if result.success?
+  content = result.value!
+else
+  error_type = result.failure  # :no_content, :not_youtube 등
+end
+```
+- 목적: 복잡한 워크플로우의 단계별 성공/실패 처리
+- 사용처: 다단계 처리, 조건부 분기, 플랫폼별 구현 차이
+- 예시: `SocialMediaService`, `ContentService`
+- 특징:
+  - `step` 메서드로 작업 체인 구성 (하나라도 실패하면 즉시 중단)
+  - `Success(value)` 또는 `Failure(error)` 명시적 반환
+  - 실패 이유를 심볼로 구분 (`:no_content`, `:not_suitable`, `:already_posted`)
+  - 상속 구조와 자연스럽게 결합 (부모는 흐름, 자식은 구현)
+
+**선택 기준:**
+- 간단한 단일 작업 → ApplicationService
+- 복잡한 다단계 워크플로우 + 명시적 에러 구분 필요 → Dry::Operation
+- 플랫폼별/타입별 구현 차이가 있는 경우 → Dry::Operation (상속 구조 활용)
 
 ### Error Handling
 - Rescue StandardError in ApplicationJob with Honeybadger reporting

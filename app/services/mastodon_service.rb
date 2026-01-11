@@ -21,7 +21,7 @@ class MastodonService < SocialMediaService
 
   #: (Article article) -> Dry::Monads::Result
   def post_to_platform(article)
-    return Failure(:already_posted) unless article.mastodon_id.present?
+    return Failure(:already_posted) if article.mastodon_id.present?
 
     post_text = build_post_text(article)
     response = platform_client.post(post_text)
