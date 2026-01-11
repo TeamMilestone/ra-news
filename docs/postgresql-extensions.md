@@ -288,16 +288,36 @@ tail -f "$(brew --prefix)/var/log/postgresql@14.log"
 
 ### Linux (Ubuntu/Debian)
 
+Linux 환경에서는 mecab이 표준 경로에 설치되므로 **패치 없이** textsearch_ko를 설치할 수 있습니다.
+
 ```bash
 # PostgreSQL 개발 패키지
 sudo apt-get install postgresql-server-dev-14
 
-# mecab-ko 설치
-sudo apt-get install mecab libmecab-dev
-# 또는 소스에서 빌드
+# mecab 및 한국어 사전 설치
+sudo apt-get install mecab libmecab-dev mecab-ko mecab-ko-dic
+# 또는 소스에서 빌드 (https://bitbucket.org/eunjeon/mecab-ko)
 
-# 나머지는 macOS와 동일
+# pg_bigm 설치
+cd /tmp
+git clone https://github.com/pgbigm/pg_bigm.git
+cd pg_bigm
+make USE_PGXS=1
+sudo make install USE_PGXS=1
+
+# textsearch_ko 설치 (패치 불필요)
+cd /tmp
+git clone https://github.com/stadia/textsearch_ko.git
+cd textsearch_ko
+make USE_PGXS=1
+sudo make install USE_PGXS=1
+
+# PostgreSQL 재시작
+sudo systemctl restart postgresql
 ```
+
+> **참고**: macOS와 달리 Linux에서는 mecab 설정 파일이 표준 경로(`/etc/mecabrc` 또는 `/usr/local/etc/mecabrc`)에
+> 위치하므로 textsearch_ko가 자동으로 설정을 찾을 수 있습니다.
 
 ### Docker 환경
 
