@@ -28,8 +28,10 @@ class Site < ApplicationRecord
     when "youtube"
         return nil if channel.blank?
         Youtube::Channel.new(id: channel)
+    # GitHub은 개별 저장소 URL을 받아 처리하므로 init_client 패턴에 맞지 않음
+    # GitHubSiteJob에서 직접 클라이언트를 생성함
     when "github"
-      GitHubRepoClient.new(repo_url: base_uri)
+      raise ArgumentError, "GitHub client should be initialized directly with repo_url in GitHubSiteJob"
     else
       raise ArgumentError, "Unsupported client type: #{client}"
     end

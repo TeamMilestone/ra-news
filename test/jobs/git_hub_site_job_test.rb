@@ -60,16 +60,10 @@ class GitHubSiteJobTest < ActiveSupport::TestCase
       site: @github_site
     )
 
-    mock_client = Minitest::Mock.new
-    mock_client.expect :fetch_repo_info, @mock_repo_info
-
-    GitHubRepoClient.stub :new, mock_client do
-      assert_no_difference "Article.count" do
-        GitHubSiteJob.perform_now(@repo_url, site_id: @github_site.id)
-      end
+    # 클론 전에 중복 체크가 이루어지므로 GitHubRepoClient.new가 호출되지 않음
+    assert_no_difference "Article.count" do
+      GitHubSiteJob.perform_now(@repo_url, site_id: @github_site.id)
     end
-
-    mock_client.verify
   end
 
   test "Site와 연결하여 Article을 생성할 수 있어야 한다" do

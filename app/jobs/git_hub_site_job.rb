@@ -8,16 +8,29 @@ class GitHubSiteJob < ApplicationJob
   # GitHub 저장소 URL을 받아 Article을 생성
   #: (String repo_url, ?site_id: Integer?) -> void
   def perform(repo_url, site_id: nil)
+    # 클론 전에 URL 정규화 및 중복 체크 (git clone 비용 절감)
+    normalized_url = GitHubRepoClient.normalize_url(repo_url)
+    logger.info "GitHubSiteJob: 저장소 처리 시작 - #{normalized_url}"
+
+    if Article.exists?(origin_url: normalized_url)
+      logger.info "GitHubSiteJob: 이미 존재하는 저장소, 스킵 - #{normalized_url}"
+      return
+    end
+
+    logger.debug "GitHubSiteJob: 저장소 클론 시작"
     client = GitHubRepoClient.new(repo_url: repo_url)
     repo_info = client.fetch_repo_info
-
-    # 이미 동일한 URL로 Article이 존재하는지 확인
-    return if Article.exists?(origin_url: repo_info[:url])
+    logger.debug "GitHubSiteJob: 저장소 정보 수집 완료 - 프로젝트 타입: #{repo_info[:project_type]}"
 
     site = find_or_create_site(site_id)
     article = create_article_from_repo(repo_info, site)
 
-    return unless article.persisted?
+    unless article.persisted?
+      logger.error "GitHubSiteJob: Article 생성 실패 - #{normalized_url}"
+      return
+    end
+
+    logger.info "GitHubSiteJob: Article 생성 완료 - ID: #{article.id}, #{normalized_url}"
 
     # AI 요약 생성을 위해 ArticleJob 호출
     ArticleJob.perform_later(article.id)

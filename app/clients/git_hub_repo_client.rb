@@ -28,35 +28,9 @@ class GitHubRepoClient
 
   attr_reader :repo_url, :owner, :repo_name
 
-  #: (repo_url: String) -> void
-  def initialize(repo_url:)
-    @repo_url = normalize_url(repo_url)
-    parse_repo_info
-  end
-
-  # 저장소 정보를 추출하여 반환
-  #: () -> Hash[Symbol, untyped]
-  def fetch_repo_info
-    Dir.mktmpdir("github_repo_") do |dir|
-      clone_repo(dir)
-
-      {
-        url: repo_url,
-        owner: owner,
-        name: repo_name,
-        documents: collect_root_documents(dir),
-        structure: get_directory_structure(dir),
-        config_files: collect_config_files(dir),
-        project_type: detect_project_type(dir),
-        recent_commits: get_recent_commits(dir)
-      }
-    end
-  end
-
-  private
-
+  # URL을 정규화하여 반환 (클론 전 중복 체크용)
   #: (String url) -> String
-  def normalize_url(url)
+  def self.normalize_url(url)
     url = url.strip
     # .git 확장자 제거
     url = url.sub(/\.git\z/, "")
@@ -65,6 +39,45 @@ class GitHubRepoClient
       url = url.sub(%r{^git@github\.com:}, "https://github.com/")
     end
     url
+  end
+
+  #: (repo_url: String) -> void
+  def initialize(repo_url:)
+    @repo_url = self.class.normalize_url(repo_url)
+    parse_repo_info
+  end
+
+  # 저장소 정보를 추출하여 반환
+  #: () -> Hash[Symbol, untyped]
+  def fetch_repo_info
+    Dir.mktmpdir("github_repo_") do |dir|
+      logger.debug "GitHubRepoClient: 클론 시작 - #{repo_url}"
+      clone_repo(dir)
+      logger.debug "GitHubRepoClient: 클론 완료"
+
+      project_type = detect_project_type(dir)
+      documents = collect_root_documents(dir)
+      config_files = collect_config_files(dir)
+
+      logger.debug "GitHubRepoClient: 수집 완료 - 문서 #{documents.size}개, 설정파일 #{config_files.size}개"
+
+      {
+        url: repo_url,
+        owner: owner,
+        name: repo_name,
+        documents: documents,
+        structure: get_directory_structure(dir),
+        config_files: config_files,
+        project_type: project_type,
+        recent_commits: get_recent_commits(dir)
+      }
+    end
+  end
+
+  private
+
+  def logger
+    Rails.logger
   end
 
   #: () -> void
