@@ -25,11 +25,6 @@ class GitHubSiteJob < ApplicationJob
     site = find_or_create_site(site_id)
     article = create_article_from_repo(repo_info, site)
 
-    unless article.persisted?
-      logger.error "GitHubSiteJob: Article 생성 실패 - #{normalized_url}"
-      return
-    end
-
     logger.info "GitHubSiteJob: Article 생성 완료 - ID: #{article.id}, #{normalized_url}"
 
     # AI 요약 생성을 위해 ArticleJob 호출
