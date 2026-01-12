@@ -57,7 +57,7 @@ class GitHubRepoClient
 
       project_type = detect_project_type(dir)
       documents = collect_root_documents(dir)
-      config_files = collect_config_files(dir)
+      config_files = collect_config_files(dir, project_type: project_type)
 
       logger.debug "GitHubRepoClient: 수집 완료 - 문서 #{documents.size}개, 설정파일 #{config_files.size}개"
 
@@ -183,8 +183,7 @@ class GitHubRepoClient
 
   # 프로젝트 유형에 맞는 설정 파일 수집
   #: (String dir) -> Array[Hash[Symbol, String]]
-  def collect_config_files(dir)
-    project_type = detect_project_type(dir)
+  def collect_config_files(dir, project_type:)
     config_files = []
 
     # Gemfile은 Ruby 프로젝트 공통
