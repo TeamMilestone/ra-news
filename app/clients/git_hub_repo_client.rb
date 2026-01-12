@@ -32,6 +32,8 @@ class GitHubRepoClient
   #: (String url) -> String
   def self.normalize_url(url)
     url = url.strip
+    # trailing slash 제거
+    url = url.chomp("/")
     # .git 확장자 제거
     url = url.sub(/\.git\z/, "")
     # HTTPS URL로 정규화

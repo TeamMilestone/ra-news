@@ -8,37 +8,14 @@ class GitHubSiteJobTest < ActiveSupport::TestCase
   def setup
     @github_site = sites(:github_repos)
     @repo_url = "https://github.com/rails/rails"
-    @mock_repo_info = {
-      url: @repo_url,
-      owner: "rails",
-      name: "rails",
-      documents: [
-        { name: "README.md", content: "# Rails\n\nRuby on Rails framework" }
-      ],
-      structure: [ "README.md", "Gemfile", "lib/", "test/" ],
-      config_files: [
-        { name: "Gemfile", content: 'source "https://rubygems.org"' }
-      ],
-      project_type: :rails,
-      recent_commits: [
-        { hash: "abc1234", message: "Fix bug", author: "DHH", date: "2024-01-01" }
-      ]
-    }
   end
 
   # ========== Job Execution Tests ==========
 
-  test "저장소 정보로 Article을 생성해야 한다" do
-    mock_client = Minitest::Mock.new
-    mock_client.expect :fetch_repo_info, @mock_repo_info
-
-    GitHubRepoClient.stub :new, mock_client do
-      assert_difference "Article.count", 1 do
-        perform_enqueued_jobs do
-          ArticleJob.stub :perform_later, true do
-            GitHubSiteJob.perform_now(@repo_url, site_id: @github_site.id)
-          end
-        end
+  test "저장소 URL로 Article을 생성해야 한다" do
+    assert_difference "Article.count", 1 do
+      ArticleJob.stub :perform_later, true do
+        GitHubSiteJob.perform_now(@repo_url, site_id: @github_site.id)
       end
     end
 
@@ -47,8 +24,7 @@ class GitHubSiteJobTest < ActiveSupport::TestCase
     assert_equal "rails/rails", article.title
     assert_equal "github.com", article.host
     assert_equal @github_site, article.site
-
-    mock_client.verify
+    assert_nil article.body, "body는 ContentService에서 생성되어야 함"
   end
 
   test "이미 존재하는 URL에 대해 중복 Article을 생성하지 않아야 한다" do
@@ -60,7 +36,6 @@ class GitHubSiteJobTest < ActiveSupport::TestCase
       site: @github_site
     )
 
-    # 클론 전에 중복 체크가 이루어지므로 GitHubRepoClient.new가 호출되지 않음
     assert_no_difference "Article.count" do
       GitHubSiteJob.perform_now(@repo_url, site_id: @github_site.id)
     end
@@ -69,109 +44,63 @@ class GitHubSiteJobTest < ActiveSupport::TestCase
   test "Site와 연결하여 Article을 생성할 수 있어야 한다" do
     site = Site.create!(name: "Custom GitHub Repos", client: :github, base_uri: @repo_url)
 
-    mock_client = Minitest::Mock.new
-    mock_client.expect :fetch_repo_info, @mock_repo_info
-
-    GitHubRepoClient.stub :new, mock_client do
-      ArticleJob.stub :perform_later, true do
-        GitHubSiteJob.perform_now(@repo_url, site_id: site.id)
-      end
+    ArticleJob.stub :perform_later, true do
+      GitHubSiteJob.perform_now(@repo_url, site_id: site.id)
     end
 
     article = Article.last
     assert_equal site, article.site
-
-    mock_client.verify
   end
 
   test "Article 생성 후 ArticleJob을 호출해야 한다" do
-    mock_client = Minitest::Mock.new
-    mock_client.expect :fetch_repo_info, @mock_repo_info
-
     article_job_called = false
 
-    GitHubRepoClient.stub :new, mock_client do
-      ArticleJob.stub :perform_later, ->(id) { article_job_called = true } do
-        GitHubSiteJob.perform_now(@repo_url, site_id: @github_site.id)
-      end
+    ArticleJob.stub :perform_later, ->(id) { article_job_called = true } do
+      GitHubSiteJob.perform_now(@repo_url, site_id: @github_site.id)
     end
 
     assert article_job_called, "ArticleJob should be called after creating article"
-    mock_client.verify
   end
 
-  # ========== Body Formatting Tests ==========
+  # ========== URL Normalization Tests ==========
 
-  test "body에 프로젝트 정보를 포함해야 한다" do
-    mock_client = Minitest::Mock.new
-    mock_client.expect :fetch_repo_info, @mock_repo_info
+  test "URL을 정규화하여 저장해야 한다" do
+    url_with_trailing_slash = "https://github.com/rails/rails/"
 
-    GitHubRepoClient.stub :new, mock_client do
-      ArticleJob.stub :perform_later, true do
-        GitHubSiteJob.perform_now(@repo_url, site_id: @github_site.id)
-      end
+    ArticleJob.stub :perform_later, true do
+      GitHubSiteJob.perform_now(url_with_trailing_slash, site_id: @github_site.id)
     end
 
     article = Article.last
-    body = article.body
-
-    assert_includes body, "rails/rails"
-    assert_includes body, "Project Type:** rails"
-    assert_includes body, "README.md"
-    assert_includes body, "Directory Structure"
-    assert_includes body, "Recent Commits"
-
-    mock_client.verify
+    assert_equal "https://github.com/rails/rails", article.origin_url
   end
 
-  test "문서 내용을 body에 포함해야 한다" do
-    mock_client = Minitest::Mock.new
-    mock_client.expect :fetch_repo_info, @mock_repo_info
-
-    GitHubRepoClient.stub :new, mock_client do
-      ArticleJob.stub :perform_later, true do
-        GitHubSiteJob.perform_now(@repo_url, site_id: @github_site.id)
-      end
+  test "URL에서 owner/repo를 추출하여 title을 설정해야 한다" do
+    ArticleJob.stub :perform_later, true do
+      GitHubSiteJob.perform_now("https://github.com/anthropics/claude-code", site_id: @github_site.id)
     end
 
     article = Article.last
-    assert_includes article.body, "Ruby on Rails framework"
-
-    mock_client.verify
+    assert_equal "anthropics/claude-code", article.title
   end
 
-  test "설정 파일 내용을 body에 포함해야 한다" do
-    mock_client = Minitest::Mock.new
-    mock_client.expect :fetch_repo_info, @mock_repo_info
+  # ========== Site Creation Tests ==========
 
-    GitHubRepoClient.stub :new, mock_client do
-      ArticleJob.stub :perform_later, true do
-        GitHubSiteJob.perform_now(@repo_url, site_id: @github_site.id)
-      end
+  test "site_id가 없으면 기본 GitHub Site를 생성해야 한다" do
+    ArticleJob.stub :perform_later, true do
+      GitHubSiteJob.perform_now(@repo_url)
     end
 
     article = Article.last
-    assert_includes article.body, "Configuration Files"
-    assert_includes article.body, "Gemfile"
-
-    mock_client.verify
+    assert_equal "GitHub Repositories", article.site.name
+    assert_equal "github", article.site.client
   end
 
   # ========== Error Handling Tests ==========
 
-  test "GitHubRepoClient 오류를 정상적으로 처리해야 한다" do
-    GitHubRepoClient.stub :new, ->(_) { raise GitHubRepoClient::CloneError, "Clone failed" } do
-      assert_raises(GitHubRepoClient::CloneError) do
-        GitHubSiteJob.perform_now(@repo_url, site_id: @github_site.id)
-      end
-    end
-  end
-
   test "잘못된 URL에 대해 오류를 발생시켜야 한다" do
-    GitHubRepoClient.stub :new, ->(_) { raise GitHubRepoClient::InvalidUrlError, "Invalid URL" } do
-      assert_raises(GitHubRepoClient::InvalidUrlError) do
-        GitHubSiteJob.perform_now("https://invalid-url.com", site_id: @github_site.id)
-      end
+    assert_raises(GitHubRepoClient::InvalidUrlError) do
+      GitHubSiteJob.perform_now("https://invalid-url.com", site_id: @github_site.id)
     end
   end
 

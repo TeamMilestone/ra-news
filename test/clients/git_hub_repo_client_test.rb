@@ -253,7 +253,7 @@ class GitHubRepoClientTest < ActiveSupport::TestCase
       File.write(File.join(dir, "tsconfig.json"), '{}')
 
       client = GitHubRepoClient.new(repo_url: "https://github.com/test/test")
-      config_files = client.send(:collect_config_files, dir)
+      config_files = client.send(:collect_config_files, dir, project_type: :node)
 
       names = config_files.map { |c| c[:name] }
       assert_includes names, "package.json"
@@ -266,7 +266,7 @@ class GitHubRepoClientTest < ActiveSupport::TestCase
       File.write(File.join(dir, "Gemfile"), 'source "https://rubygems.org"')
 
       client = GitHubRepoClient.new(repo_url: "https://github.com/test/test")
-      config_files = client.send(:collect_config_files, dir)
+      config_files = client.send(:collect_config_files, dir, project_type: :rails)
 
       names = config_files.map { |c| c[:name] }
       assert_includes names, "Gemfile"

@@ -12,6 +12,10 @@ class ContentServiceTest < ActiveSupport::TestCase
     end
   end
 
+  def setup
+    @site = sites(:github_repos)
+  end
+
   # HTML 콘텐츠 가져오기 테스트
   test "execute_html은 HTML 콘텐츠를 성공적으로 가져와 Readability로 파싱한다" do
     article = articles(:ruby_article)
@@ -340,5 +344,139 @@ class ContentServiceTest < ActiveSupport::TestCase
     end
 
     assert_equal 2, call_count
+  end
+
+  # ========== GitHub URL Detection Tests ==========
+
+  test "GitHub 저장소 URL을 올바르게 감지해야 한다" do
+    article = Article.new(url: "https://github.com/rails/rails", site: @site)
+    service = ContentService.new
+
+    assert service.send(:github_repo_url?, "https://github.com/rails/rails")
+    assert service.send(:github_repo_url?, "https://github.com/anthropics/claude-code")
+    assert service.send(:github_repo_url?, "https://www.github.com/owner/repo")
+  end
+
+  test "GitHub 저장소가 아닌 URL을 올바르게 구분해야 한다" do
+    article = Article.new(url: "https://example.com", site: @site)
+    service = ContentService.new
+
+    refute service.send(:github_repo_url?, "https://example.com/page")
+    refute service.send(:github_repo_url?, "https://github.com")
+    refute service.send(:github_repo_url?, "https://github.com/rails")
+    refute service.send(:github_repo_url?, "https://gist.github.com/user/123")
+  end
+
+  # ========== GitHub Content Fetching Tests ==========
+
+  test "GitHub 저장소 URL에 대해 execute_github을 호출해야 한다" do
+    article = Article.new(url: "https://github.com/rails/rails", site: @site)
+
+    mock_repo_info = {
+      url: "https://github.com/rails/rails",
+      owner: "rails",
+      name: "rails",
+      documents: [
+        { name: "README.md", content: "# Rails\n\nRuby on Rails framework" }
+      ],
+      structure: [ "README.md", "Gemfile", "lib/", "test/" ],
+      config_files: [
+        { name: "Gemfile", content: 'source "https://rubygems.org"' }
+      ],
+      project_type: :rails,
+      recent_commits: [
+        { hash: "abc1234", message: "Fix bug", author: "DHH", date: "2024-01-01" }
+      ]
+    }
+
+    mock_client = Minitest::Mock.new
+    mock_client.expect :fetch_repo_info, mock_repo_info
+
+    service = ContentService.new
+
+    GitHubRepoClient.stub :new, mock_client do
+      result = service.call(article)
+
+      assert result.success?
+      body = result.value!
+      assert_includes body, "rails/rails"
+      assert_includes body, "Project Type:** rails"
+      assert_includes body, "README.md"
+      assert_includes body, "Ruby on Rails framework"
+      assert_includes body, "Directory Structure"
+      assert_includes body, "Recent Commits"
+    end
+
+    mock_client.verify
+  end
+
+  # ========== Body Formatting Tests ==========
+
+  test "format_repo_body가 올바른 형식의 body를 생성해야 한다" do
+    service = ContentService.new
+
+    repo_info = {
+      url: "https://github.com/test/repo",
+      owner: "test",
+      name: "repo",
+      documents: [
+        { name: "README.md", content: "# Test Repo\n\nThis is a test" }
+      ],
+      structure: [ "README.md", "src/", "test/" ],
+      config_files: [
+        { name: "package.json", content: '{"name": "test"}' }
+      ],
+      project_type: :javascript,
+      recent_commits: [
+        { hash: "def5678", message: "Initial commit", author: "Tester", date: "2024-01-01" }
+      ]
+    }
+
+    result = service.send(:format_repo_body, repo_info)
+
+    # 프로젝트 기본 정보
+    assert_includes result, "# test/repo"
+    assert_includes result, "**Project Type:** javascript"
+    assert_includes result, "**URL:** https://github.com/test/repo"
+
+    # 문서
+    assert_includes result, "## Documents"
+    assert_includes result, "### README.md"
+    assert_includes result, "This is a test"
+
+    # 디렉토리 구조
+    assert_includes result, "## Directory Structure"
+    assert_includes result, "src/"
+
+    # 설정 파일
+    assert_includes result, "## Configuration Files"
+    assert_includes result, "### package.json"
+
+    # 최근 커밋
+    assert_includes result, "## Recent Commits"
+    assert_includes result, "def5678"
+    assert_includes result, "Initial commit"
+  end
+
+  test "빈 섹션은 body에 포함하지 않아야 한다" do
+    service = ContentService.new
+
+    repo_info = {
+      url: "https://github.com/test/repo",
+      owner: "test",
+      name: "repo",
+      documents: [],
+      structure: [],
+      config_files: [],
+      project_type: :unknown,
+      recent_commits: []
+    }
+
+    result = service.send(:format_repo_body, repo_info)
+
+    refute_includes result, "## Documents"
+    refute_includes result, "## Directory Structure"
+    refute_includes result, "## Configuration Files"
+    refute_includes result, "## Recent Commits"
   end
 end
